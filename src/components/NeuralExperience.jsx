@@ -8,7 +8,7 @@ export default function NeuralExperience({ region, onExit, lightMode }) {
     <div className={`experience-portal ${lightMode ? 'light' : 'dark'}`} style={{ borderLeft: `6px solid ${region.color}` }}>
       <div className="portal-header">
         <span className="portal-path">{`SECTION // ${region.id.toUpperCase()}`}</span>
-        <button className="portal-exit" onClick={onExit}>[ EXIT_VIEW ]</button>
+        <button className="portal-exit" onClick={onExit}>[ EXIT ]</button>
       </div>
       
       <div className="portal-content">
