@@ -14,7 +14,7 @@ export default function NeuralExperience({ region, onExit, lightMode }) {
       
       <div className="portal-scroll-area">
         <div className="container-inner">
-          <h1 className="portal-title">{region.label}</h1>
+          <h1 className="portal-title" style={{ textAlign: 'center', marginBottom: '4vh' }}>{region.label}</h1>
           
           {region.id === 'passion' ? (
             <SocialMatrix lightMode={lightMode} />

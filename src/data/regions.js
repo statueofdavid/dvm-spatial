@@ -6,7 +6,7 @@
 // 1. REGION REGISTRY: Ordered for sequential TAB navigation (1-7)
 export const BRAIN_REGIONS = [
   { id: 'action', color: '#ff810a', label: 'Me', type: 'DATA_SHEET' }, 
-  { id: 'passion', color: '#ff00ff', label: 'Social', type: 'CONNECTIVITY' },
+  { id: 'passion', color: '#ff00ff', label: 'Status', type: 'CONNECTIVITY' },
   { id: 'plan', color: '#ffff00', label: 'Projects', type: 'HUB' },
   { id: 'feel', color: '#00ff00', label: 'My Pillow', type: 'DATA_SHEET' },
   { id: 'create', color: '#00ffff', label: 'Synthesize', type: 'GENERATIVE' },

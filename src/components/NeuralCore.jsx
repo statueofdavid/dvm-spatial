@@ -120,7 +120,7 @@ export default function NeuralCore({ lightMode, selectedId, setSelectedId, maste
     <>
       <ambientLight intensity={lightMode ? 1.5 : 0.3} />
       <Environment preset={lightMode ? "city" : "studio"} />
-      <OrbitControls enableDamping minDistance={200} maxDistance={8000} enabled={!selectedId} onChange={handleOrbitChange} />
+      <OrbitControls enableDamping minDistance={200} maxDistance={8000} enabled={!selectedId} onChange={handleOrbitChange} makeDefault />
       <mesh position={[0,0,-5000]} onClick={() => setSelectedId(null)}><planeGeometry args={[40000, 40000]} /><meshBasicMaterial transparent opacity={0} /></mesh>
       <Center precise position={brainPosition}>
         <group scale={brainScale}>
