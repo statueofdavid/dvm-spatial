@@ -1,4 +1,14 @@
 :root {
+  /* Region Anchors */
+  --color-action: #ff810a;     /* Me / Action */
+  --color-status: #00ffff;     /* Status / Cyan */
+  --color-social: #ff00ff;     /* Legacy Pink */
+  
+  /* System Foundations */
+  --portal-bg: rgba(10, 10, 10, 0.98);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --font-mono: 'monospace';
+  
   --neon-cyan: #00ffff;
   --bg-dark: #030303;
   --bg-light: #f0f0f0;

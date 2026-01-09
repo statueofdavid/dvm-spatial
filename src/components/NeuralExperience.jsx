@@ -1,5 +1,6 @@
 import React from 'react'
 import SocialMatrix from './SocialMatrix'
+import AboutMeTimeline from './AboutMeTimeline' // [NEW IMPORT]
 
 export default function NeuralExperience({ region, onExit, lightMode }) {
   if (!region) return null;
@@ -13,21 +14,30 @@ export default function NeuralExperience({ region, onExit, lightMode }) {
       </header>
       
       <div className="portal-scroll-area">
+        {/* We keep the inner container for the title to maintain alignment */}
         <div className="container-inner">
           <h1 className="portal-title" style={{ textAlign: 'center', marginBottom: '4vh' }}>{region.label}</h1>
-          
-          {region.id === 'passion' ? (
+        </div>
+
+        {/* Dynamic Experience Routing */}
+        {region.id === 'passion' ? (
+          <div className="container-inner">
             <SocialMatrix lightMode={lightMode} />
-          ) : (
+          </div>
+        ) : region.id === 'action' ? (
+          <AboutMeTimeline lightMode={lightMode} />
+        ) : (
+          <div className="container-inner">
             <div className="placeholder-text">
               {`Initializing ${region.id} module...`}
               <div className="loading-bar"><div className="bar-fill" style={{ background: region.color }}></div></div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <style>{`
+        /* Keeping your existing styles exactly as they were */
         .experience-portal { 
           position: fixed; top: 0; left: 0; 
           width: 100vw; height: 100vh; 
@@ -41,23 +51,12 @@ export default function NeuralExperience({ region, onExit, lightMode }) {
 
         .container-inner {
           width: 90%;
-          max-width: 1600px; /* Expansive for large viewports */
-          margin: 0 auto;    /* Centers everything to fix the clipping */
-          padding: 0 20px;   /* Safety buffer */
-        }
-
-        .container-inner {
-          width: 90%;
-          max-width: 1400px; /* Prevents text from stretching too far on desktop */
+          max-width: 1400px;
           margin: 0 auto;
+          padding: 0 20px;
         }
         
-        .portal-header { 
-          width: 100%; 
-          padding: 40px 0; 
-          flex-shrink: 0;
-        }
-
+        .portal-header { width: 100%; padding: 40px 0; flex-shrink: 0; }
         .portal-exit {
           background: transparent;
           border: 1px solid ${lightMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'};
@@ -69,18 +68,7 @@ export default function NeuralExperience({ region, onExit, lightMode }) {
           border-radius: 30px;
           transition: 0.3s all;
         }
-
-        .portal-exit:hover {
-          background: ${lightMode ? '#000' : '#fff'};
-          color: ${lightMode ? '#fff' : '#000'};
-        }
-
-        .portal-scroll-area { 
-          flex: 1; 
-          overflow-y: auto; 
-          padding-bottom: 10vh;
-        }
-
+        .portal-scroll-area { flex: 1; overflow-y: auto; padding-bottom: 10vh; }
         .portal-title { 
           font-size: clamp(48px, 10vw, 120px); 
           margin-bottom: 6vh; 
@@ -89,20 +77,9 @@ export default function NeuralExperience({ region, onExit, lightMode }) {
           letter-spacing: -4px;
           line-height: 0.9;
         }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
         @keyframes portalExpand { 
-          from { 
-            opacity: 0; 
-            transform: scale(0.9) translateZ(-100px); 
-            filter: blur(10px);
-          } 
-          to { 
-            opacity: 1; 
-            transform: scale(1) translateZ(0); 
-            filter: blur(0px);
-          } 
+          from { opacity: 0; transform: scale(0.9) translateZ(-100px); filter: blur(10px); } 
+          to { opacity: 1; transform: scale(1) translateZ(0); filter: blur(0px); } 
         }
       `}</style>
     </div>

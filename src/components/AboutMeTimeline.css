@@ -1,0 +1,83 @@
+.timeline-parallax-container {
+  width: 100%;
+  position: relative;
+  background: transparent;
+}
+
+.parallax-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  /* Deep perspective prevents the 'blown up' effect */
+  perspective: 2500px;
+  perspective-origin: center center;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-layer {
+  position: absolute;
+  width: 90%;
+  max-width: 1200px;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.layer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.parallax-img {
+  width: 100%;
+  max-width: 500px; /* Prevents the 'blown up' photo */
+  height: auto;
+  border: 1px solid rgba(255, 129, 10, 0.4);
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+.parallax-text h1 {
+  font-size: clamp(32px, 5vw, 64px);
+  margin-bottom: 20px;
+  line-height: 0.9;
+}
+
+.parallax-text p {
+  font-size: clamp(18px, 2vw, 28px);
+  line-height: 1.4;
+  font-weight: 300;
+}
+
+/* Resume and CTA Styling */
+.resume-actions, .cta-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.resume-btn, .cta-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #ff810a;
+  color: #000;
+  text-decoration: none;
+  font-family: monospace;
+  font-size: 12px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.resume-btn.secondary {
+  background: transparent;
+  border: 1px solid #ff810a;
+  color: #ff810a;
+}
