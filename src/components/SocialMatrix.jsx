@@ -20,11 +20,11 @@ const tiles = [
 
   // --- SOCIAL (Community & Capital) ---
   { id: 'devto', name: 'DEV.TO', icon: <SiDevdotto />, category: 'Social', size: 'small', url: 'https://dev.to/statueofdavid' },
-  { id: 'stackoverflow', name: 'STACK_OVERFLOW', icon: <SiStackoverflow />, category: 'Social', size: 'small', url: 'https://stackoverflow.com/users/statueofdavid' },
+  { id: 'stackoverflow', name: 'STACK_OVERFLOW', icon: <SiStackoverflow />, category: 'Social', size: 'small', url: 'https://stackoverflow.com/users/6732430/dvm' },
   { id: 'linkedin', name: 'LINKEDIN', icon: <SiLinkedin />, category: 'Social', size: 'small', url: 'https://linkedin.com/in/dmill' },
   { id: 'twitter', name: 'X_TWITTER', icon: <SiX />, category: 'Social', size: 'small', url: 'https://twitter.com/StatueOfDavid' },
   { id: 'substack', name: 'SUBSTACK', icon: <SiSubstack />, category: 'Social', size: 'small', url: 'https://statueofdavid.substack.com' },
-  { id: 'reddit', name: 'REDDIT', icon: <SiReddit />, category: 'Social', size: 'small', url: 'https://reddit.com/user/statueofdavid' },
+  { id: 'reddit', name: 'REDDIT', icon: <SiReddit />, category: 'Social', size: 'small', url: 'https://www.reddit.com/user/declaredspace/' },
   { id: 'medium', name: 'MEDIUM', icon: <SiMedium />, category: 'Social', size: 'small', url: 'https://medium.com/@declaredspace' },
   { id: 'meetup', name: 'MEETUP', icon: <SiMeetup />, category: 'Social', size: 'small', url: 'https://meetup.com' },
   
