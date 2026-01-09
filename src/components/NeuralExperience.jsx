@@ -1,8 +1,18 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import SocialMatrix from './SocialMatrix'
-import AboutMeTimeline from './AboutMeTimeline' // [NEW IMPORT]
+import AboutMeTimeline from './AboutMeTimeline'
 
-export default function NeuralExperience({ region, onExit, lightMode }) {
+export default function NeuralExperience({ region, onExit, onNavigate, lightMode }) {
+  // Use a ref to target the scrollable div
+  const scrollRef = useRef(null);
+
+  // Reset scroll whenever the user jumps to a new region
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [region?.id]);
+
   if (!region) return null;
 
   return (
@@ -13,25 +23,21 @@ export default function NeuralExperience({ region, onExit, lightMode }) {
         </div>
       </header>
       
-      <div className="portal-scroll-area">
-        {/* We keep the inner container for the title to maintain alignment */}
+      {/* Attach the ref here to allow programmatic scrolling */}
+      <div className="portal-scroll-area" ref={scrollRef}>
         <div className="container-inner">
           <h1 className="portal-title" style={{ textAlign: 'center', marginBottom: '4vh' }}>{region.label}</h1>
         </div>
-
-        {/* Dynamic Experience Routing */}
+          
         {region.id === 'passion' ? (
           <div className="container-inner">
             <SocialMatrix lightMode={lightMode} />
           </div>
         ) : region.id === 'action' ? (
-          <AboutMeTimeline lightMode={lightMode} />
+          <AboutMeTimeline lightMode={lightMode} onNavigate={onNavigate} />
         ) : (
           <div className="container-inner">
-            <div className="placeholder-text">
-              {`Initializing ${region.id} module...`}
-              <div className="loading-bar"><div className="bar-fill" style={{ background: region.color }}></div></div>
-            </div>
+            <div className="placeholder-text">{`Initializing ${region.id} module...`}</div>
           </div>
         )}
       </div>

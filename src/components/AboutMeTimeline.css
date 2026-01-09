@@ -81,3 +81,39 @@
   border: 1px solid #ff810a;
   color: #ff810a;
 }
+
+.center-content {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.large-quip {
+  font-size: clamp(32px, 6vw, 84px) !important;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -3px;
+  max-width: 1000px !important;
+  margin: 0 auto;
+  color: #fff;
+}
+
+.layer-tag {
+  color: #ff810a; /* Action Orange */
+  font-family: 'monospace';
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  letter-spacing: 0.4em;
+  font-size: 14px;
+}
+
+.parallax-img {
+  max-width: 450px;
+  border: 1px solid rgba(255, 129, 10, 0.2);
+  transition: filter 0.5s ease;
+}
+
+.parallax-img.grayscale {
+  filter: grayscale(1) contrast(1.1);
+}
