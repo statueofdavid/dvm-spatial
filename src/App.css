@@ -85,31 +85,19 @@
   color: #333 !important;
 }
 
-.experience-portal.light .card-icon {
-  color: #1a1a1a !important; /* Overriding the neon-cyan brand color */
+.light .card-icon {
+  color: #000000; /* Or #1a1a1a for a slightly softer black */
   transition: color var(--transition-speed) ease;
 }
 
-/* 2. Ensure the label also maintains high contrast */
-.experience-portal.light .card-label {
-  color: #000000;
-  font-weight: 500;
+.light .card-label {
+  color: #1a1a1a;
+  font-weight: 600; /* Adding a bit of weight helps legibility in light mode */
 }
 
-/* 3. Refine the card background for better "Materiality" in Light Mode */
-.experience-portal.light .matrix-card {
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-/* 4. Interaction State: Maintain brand color ONLY on hover */
-.experience-portal.light .matrix-card:hover {
-  background: rgba(0, 0, 0, 0.06);
-  border-color: #000;
-}
-
-.experience-portal.light .matrix-card:hover .card-icon {
-  color: var(--neon-cyan) !important; /* Briefly return to brand cyan on interaction */
+/* Optional: Keep the neon cyan hover effect for brand consistency */
+.light .matrix-card:hover .card-icon {
+  color: var(--neon-cyan);
 }
 
 .theme-toggle { right: clamp(15px, 4vw, 30px); }
