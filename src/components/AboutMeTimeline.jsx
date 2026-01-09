@@ -14,25 +14,32 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
   }, []);
 
   const getLayerStyle = (index) => {
-    const spacing = 1500; 
+    const spacing = 1500; // Keep this spacing
     const start = index * spacing;
-    
-    // Slide 0 starts at Z:0. Others start in the distance.
     const zPos = (scrollProgress - start) * 1.5;
     
-    let opacity = 1;
-    if (zPos > 800) {
-      opacity = 1 - (zPos - 800) / 600; 
-    } else if (zPos < -1000) {
-      opacity = 1 - (Math.abs(zPos) - 1000) / 1000;
+    let opacity = 0;
+
+    // FADE IN: Layer emerges from the distance
+    if (zPos >= -1000 && zPos <= 0) {
+      opacity = (zPos + 1000) / 1000;
+    } 
+    // ACTIVE ZONE: Fully visible while in front of the camera
+    else if (zPos > 0 && zPos <= 400) {
+      opacity = 1;
+    } 
+    // FADE OUT: Tightened exit so it clears before the next step arrives
+    else if (zPos > 400 && zPos <= 900) {
+      opacity = 1 - (zPos - 400) / 500; // Vanishes over 500px instead of 600px
     }
 
     return {
       transform: `translateZ(${zPos}px)`,
       opacity: Math.max(0, opacity),
-      pointerEvents: zPos > -200 && zPos < 800 ? 'auto' : 'none',
+      pointerEvents: zPos > -200 && zPos < 600 ? 'auto' : 'none',
+      // 'display: none' ensures the invisible layers don't eat performance
       display: opacity <= 0 ? 'none' : 'flex',
-      transition: 'opacity 0.3s ease-out'
+      transition: 'opacity 0.2s ease-out'
     };
   };
 
@@ -52,7 +59,12 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
     { 
       tag: "PRIORITIES", 
       text: "Family and friends first. Technology as a force for good.",
-      img: "/images/dvm-profile-closeup-pic.jpg",
+      images: ["/images/dvm-profile-closeup-pic.jpg", 
+        "/images/family/amy-estelle-baby-snow.jpg", "/images/family/only-pic-of-jurrandjpg", 
+        "/images/family/first-year-as-mother-g.jpeg", "/images/family/estelle-rick-gram-gramps.JPG", 
+        "/images/family/greg-dan-amy-fish.jpg", "/images/family/dfrey-wedding.jpg", "/images/family/fam-selfie-2021.jpg",
+        "/images/family/lildavid-mom.jpg", "/images/family/firstfamall.jpg", "/images/family/prom-david-mom.jpg", "/images/family/don-me-wedding.jpg",
+        "/images/family/steal-a-kiss.jpg", "/images/family/dad-shirt.jpg"],
       isGrayscale: true 
     },
     { 
@@ -104,13 +116,53 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
     }
   ];
 
-  return (
-    <div className="timeline-parallax-container">
-      <div className="parallax-stage">
-        {storySteps.map((step, i) => (
+return (
+  <div className="timeline-parallax-container">
+    <div className="parallax-stage">
+      {storySteps.map((step, i) => {
+        // Standardize: Does this step have any visual media?
+        const hasVisuals = step.img || (step.images && step.images.length > 0);
+        
+        return (
           <section key={i} className="timeline-layer" style={getLayerStyle(i)}>
-            <div className={`layer-grid ${!step.img ? 'center-content' : ''}`}>
-              {step.img && <img src={step.img} alt={step.tag} className={`parallax-img ${step.isGrayscale ? 'grayscale' : ''}`} />}
+            {/* The 'center-content' class kicks in only if NO visuals exist */}
+            <div className={`layer-grid ${!hasVisuals ? 'center-content' : ''}`}>
+              
+              {/* VISUAL SLOT: Keeps the image area stable during fly-throughs */}
+              {hasVisuals && (
+                <div className="visual-slot">
+                  {/* Single Image Support (e.g., Slide 0) */}
+                  {step.img && (
+                    <img 
+                      src={step.img} 
+                      className={`parallax-img main-photo ${step.isGrayscale ? 'grayscale' : ''}`} 
+                      alt={step.tag} 
+                    />
+                  )}
+
+                  {/* Multi-Image Cloud Support (e.g., Priorities Slide) */}
+                  {step.images && (
+                    <div className={step.images.length > 5 ? "image-cloud-container" : "image-stack"}>
+                      {step.images.map((imgSrc, idx) => (
+                        <img 
+                          key={idx} 
+                          src={imgSrc} 
+                          style={{
+                            /* Deterministic scatter: staggered but stable on scroll */
+                            top: `${(idx * 17) % 70 - 15}%`, 
+                            left: `${(idx * 23) % 80 - 40}%`,
+                            transform: `rotate(${(idx * 11) % 20 - 10}deg) translateZ(${idx * 12}px)`,
+                            zIndex: idx
+                          }}
+                          className={`parallax-img cloud-item ${step.isGrayscale ? 'grayscale' : ''}`} 
+                          alt="Memory Artifact"
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="parallax-text">
                 <h2 className="layer-tag">// {step.tag}</h2>
                 {step.title && <h1>{step.title}</h1>}
@@ -119,9 +171,12 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
               </div>
             </div>
           </section>
-        ))}
-      </div>
-      <div style={{ height: `${storySteps.length * 1500}px` }}></div>
+        );
+      })}
     </div>
-  );
+    {/* Total scroll length based on 10 steps x 1500px spacing */}
+    <div style={{ height: `${storySteps.length * 1500}px` }}></div>
+  </div>
+);
+
 }

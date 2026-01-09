@@ -117,3 +117,54 @@
 .parallax-img.grayscale {
   filter: grayscale(1) contrast(1.1);
 }
+
+.image-cloud {
+  position: relative;
+  width: 600px;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cloud-item {
+  position: absolute;
+  max-width: 200px; /* Smaller size since there are many */
+  border: 1px solid rgba(255, 129, 10, 0.3);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  transition: all 0.5s ease;
+}
+
+/* We use nth-child to scatter the 14 images randomly */
+.cloud-item:nth-child(4n) { transform: translate(-120px, -100px) rotate(-5deg); }
+.cloud-item:nth-child(4n+1) { transform: translate(150px, 80px) rotate(3deg); }
+.cloud-item:nth-child(4n+2) { transform: translate(-180px, 120px) rotate(8deg); }
+.cloud-item:nth-child(4n+3) { transform: translate(100px, -150px) rotate(-3deg); }
+
+/* Hovering brings a specific memory to the front */
+.cloud-item:hover {
+  max-width: 400px;
+  z-index: 100;
+  transform: scale(1.1) rotate(0deg) !important;
+  border-color: #ff810a;
+}
+
+.visual-slot {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.main-photo {
+  max-width: 500px;
+  z-index: 2;
+}
+
+/* Ensure text stays sharp and doesn't blend into the photos */
+.parallax-text {
+  z-index: 10;
+  text-shadow: 0 0 20px rgba(0,0,0,0.8);
+  position: relative;
+}
