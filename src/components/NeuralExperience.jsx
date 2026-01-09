@@ -33,8 +33,10 @@ export default function NeuralExperience({ region, onExit, lightMode }) {
           width: 100vw; height: 100vh; 
           z-index: 2000; 
           display: flex; flex-direction: column; 
-          background: ${lightMode ? '#f8f8f8' : '#050505'}; /* Deeper blacks for contrast */
+          background: ${lightMode ? '#f8f8f8' : '#050505'};
           overflow: hidden;
+          animation: portalExpand 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          transform-origin: center center;
         }
 
         .container-inner {
@@ -89,6 +91,19 @@ export default function NeuralExperience({ region, onExit, lightMode }) {
         }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        @keyframes portalExpand { 
+          from { 
+            opacity: 0; 
+            transform: scale(0.9) translateZ(-100px); 
+            filter: blur(10px);
+          } 
+          to { 
+            opacity: 1; 
+            transform: scale(1) translateZ(0); 
+            filter: blur(0px);
+          } 
+        }
       `}</style>
     </div>
   )
