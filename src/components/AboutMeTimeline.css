@@ -1,3 +1,4 @@
+/* --- CONTAINER & STAGE --- */
 .timeline-parallax-container {
   width: 100%;
   position: relative;
@@ -8,7 +9,6 @@
   position: sticky;
   top: 0;
   height: 100vh;
-  /* Deep perspective prevents the 'blown up' effect */
   perspective: 2500px;
   perspective-origin: center center;
   overflow: hidden;
@@ -35,136 +35,123 @@
   align-items: center;
 }
 
-.parallax-img {
+/* --- STEP 1: IDENTITY (FIXED SIZE) --- */
+.main-photo-wrapper {
   width: 100%;
-  max-width: 500px; /* Prevents the 'blown up' photo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-photo {
+  width: 100%;
+  /* Size restricted to prevent 'blown up' look */
+  max-width: 320px; 
   height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 4px;
+  z-index: 2;
   border: 1px solid rgba(255, 129, 10, 0.4);
   box-shadow: 0 0 50px rgba(0,0,0,0.5);
 }
 
-.parallax-text h1 {
-  font-size: clamp(32px, 5vw, 64px);
-  margin-bottom: 20px;
-  line-height: 0.9;
-}
-
-.parallax-text p {
-  font-size: clamp(18px, 2vw, 28px);
-  line-height: 1.4;
-  font-weight: 300;
-}
-
-/* Resume and CTA Styling */
-.resume-actions, .cta-group {
-  display: flex;
-  gap: 15px;
-  margin-top: 30px;
-}
-
-.resume-btn, .cta-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: #ff810a;
-  color: #000;
-  text-decoration: none;
-  font-family: monospace;
-  font-size: 12px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-
-.resume-btn.secondary {
-  background: transparent;
-  border: 1px solid #ff810a;
-  color: #ff810a;
-}
-
-.center-content {
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.large-quip {
-  font-size: clamp(32px, 6vw, 84px) !important;
-  font-weight: 900;
-  line-height: 0.95;
-  letter-spacing: -3px;
-  max-width: 1000px !important;
-  margin: 0 auto;
-  color: #fff;
-}
-
-.layer-tag {
-  color: #ff810a; /* Action Orange */
-  font-family: 'monospace';
-  text-transform: uppercase;
-  margin-bottom: 2rem;
-  letter-spacing: 0.4em;
-  font-size: 14px;
-}
-
-.parallax-img {
-  max-width: 450px;
-  border: 1px solid rgba(255, 129, 10, 0.2);
-  transition: filter 0.5s ease;
-}
-
-.parallax-img.grayscale {
-  filter: grayscale(1) contrast(1.1);
-}
-
-.image-cloud {
-  position: relative;
-  width: 600px;
-  height: 500px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.cloud-item {
-  position: absolute;
-  max-width: 200px; /* Smaller size since there are many */
-  border: 1px solid rgba(255, 129, 10, 0.3);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-  transition: all 0.5s ease;
-}
-
-/* We use nth-child to scatter the 14 images randomly */
-.cloud-item:nth-child(4n) { transform: translate(-120px, -100px) rotate(-5deg); }
-.cloud-item:nth-child(4n+1) { transform: translate(150px, 80px) rotate(3deg); }
-.cloud-item:nth-child(4n+2) { transform: translate(-180px, 120px) rotate(8deg); }
-.cloud-item:nth-child(4n+3) { transform: translate(100px, -150px) rotate(-3deg); }
-
-/* Hovering brings a specific memory to the front */
-.cloud-item:hover {
-  max-width: 400px;
-  z-index: 100;
-  transform: scale(1.1) rotate(0deg) !important;
-  border-color: #ff810a;
-}
-
+/* --- STEP 2: PRIORITIES (VIEWPORT AWARE PILE) --- */
 .visual-slot {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 400px;
+  min-height: 500px;
 }
 
-.main-photo {
-  max-width: 500px;
-  z-index: 2;
+.image-cloud-container {
+  position: absolute; 
+  /* Centered within the slot to protect viewport edges */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 550px; 
+  height: 550px;
+  transform-style: preserve-3d;
 }
 
-/* Ensure text stays sharp and doesn't blend into the photos */
+.cloud-wrapper {
+  position: absolute;
+  width: fit-content;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.cloud-item {
+  display: block;
+  width: 250px; /* Slightly narrowed for better clustering */
+  border: 1px solid rgba(255, 129, 10, 0.3);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+  background: #000;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cloud-item.grayscale { filter: grayscale(1) contrast(1.1); }
+
+.active-layer .cloud-item {
+  border-color: #ff810a;
+  filter: grayscale(0) contrast(1.1);
+  box-shadow: 0 30px 100px rgba(255, 129, 10, 0.3), 0 20px 50px rgba(0,0,0,0.9);
+}
+
+/* --- TEXT BILLBOARD & PANORAMA --- */
 .parallax-text {
-  z-index: 10;
-  text-shadow: 0 0 20px rgba(0,0,0,0.8);
+  z-index: 2000;
+  transform: translateZ(800px); 
   position: relative;
+  text-shadow: 0 0 50px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.8);
+}
+
+.panorama-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: brightness(0.35) saturate(0.8);
+  transition: background-position 0.1s linear, background-image 1.2s ease-in-out;
+  will-change: background-position;
+}
+
+.journey-compass {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(0,0,0,0.8);
+  padding: 15px 25px;
+  border-left: 3px solid #ff810a;
+  z-index: 5000;
+  font-family: 'monospace';
+}
+
+/* --- TYPOGRAPHY --- */
+.layer-tag { color: #ff810a; font-family: 'monospace'; text-transform: uppercase; margin-bottom: 2rem; letter-spacing: 0.4em; font-size: 14px; }
+.parallax-text h1 { font-size: clamp(32px, 5vw, 64px); margin-bottom: 20px; line-height: 0.9; }
+.parallax-text p { font-size: clamp(18px, 2vw, 28px); line-height: 1.4; font-weight: 300; }
+.large-quip { font-size: clamp(32px, 6vw, 84px) !important; font-weight: 900; line-height: 0.95; letter-spacing: -3px; max-width: 1000px !important; margin: 0 auto; color: #fff; }
+
+.resume-actions, .cta-group { display: flex; gap: 15px; margin-top: 30px; }
+.resume-btn, .cta-btn { display: flex; align-items: center; gap: 8px; padding: 10px 24px; background: #ff810a; color: #000; text-decoration: none; font-family: 'monospace'; font-size: 12px; border-radius: 4px; font-weight: bold; transition: 0.3s all; }
+.resume-btn.secondary { background: transparent; border: 1px solid #ff810a; color: #ff810a; }
+
+.center-content { text-align: center; display: flex; justify-content: center; width: 100%; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+  .layer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+  .image-cloud-container { position: relative; top: 0; left: 0; width: 320px; height: 320px; }
+  .cloud-item { width: 180px; }
+  .parallax-text { transform: translateZ(100px); }
 }
