@@ -40,11 +40,33 @@
 }
 
 /* --- CTA BUTTONS (Validated Tactile Feel) --- */
-.resume-btn, .cta-btn {
-  padding: 14px 8px; background: #ff810a !important; color: #000 !important;
-  font-family: 'monospace'; font-size: 11px; font-weight: 900; border-radius: 4px;
-  text-decoration: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px;
-  box-shadow: 0 4px 0 #9b4e05; transition: transform 0.2s ease;
+.resume-actions, .cta-group { 
+  display: flex; 
+  flex-direction: row; /* Forces buttons side-by-side */
+  flex-wrap: nowrap;   /* Physically prevents them from dropping to a second row */
+  align-items: center; /* Ensures they line up perfectly if text heights differ */
+  gap: 12px;           /* Sets a clean gap between the buttons */
+  margin-top: 25px;    /* Spacing from the text above */
+}
+
+.resume-btn, .cta-btn { 
+  display: inline-flex; /* Ensures the button wraps tightly around the text */
+  align-items: center; 
+  gap: 10px; 
+  padding: 10px 18px;  /* Your preferred slim padding */
+  background: #ff810a !important; 
+  color: #000 !important; 
+  text-decoration: none; 
+  font-family: 'monospace'; 
+  font-size: 11px; 
+  font-weight: 900; 
+  border-radius: 4px; 
+  border: none; 
+  text-transform: uppercase; 
+  transition: 0.3s all;
+  box-shadow: 0 4px 0 #9b4e05;
+  white-space: nowrap; /* Forces text to stay on one line inside the button */
+  flex-shrink: 0;      /* Prevents the browser from squishing the buttons */
 }
 .resume-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #9b4e05; }
 .resume-btn.secondary { background: transparent !important; border: 2px solid #ff810a !important; color: #ff810a !important; box-shadow: none; }
