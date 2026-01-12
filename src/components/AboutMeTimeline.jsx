@@ -7,6 +7,8 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
   const [topIndex, setTopIndex] = useState(0);
   const [hoverIndex, setHoverIndex] = useState(null);
   const [isHovering, setIsHovering] = useState(false);
+  
+  const isHoveringRef = useRef(false);
   const ticking = useRef(false);
 
   useEffect(() => {
@@ -14,6 +16,9 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
     if (!portalArea) return;
 
     const handleScroll = () => {
+      // INTERACTION FREEZE: Prevents movement while hovering
+      if (isHoveringRef.current) return;
+
       if (!ticking.current) {
         window.requestAnimationFrame(() => {
           setScrollProgress(portalArea.scrollTop);
@@ -26,11 +31,25 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
     return () => portalArea.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    isHoveringRef.current = isHovering;
+  }, [isHovering]);
+
+  // --- SCROLL ENGINE: Variable Timing ---
   const stepHeight = 1600; 
+  const slowStepHeight = 2800; // Extra runway for the 26-photo mess
   const focalBuffer = 700; 
 
+  const getStepData = (index) => {
+    let start = 0;
+    if (index === 0) start = 0;
+    else if (index === 1) start = stepHeight;
+    else start = stepHeight + slowStepHeight + ((index - 2) * stepHeight);
+    return { start };
+  };
+
   const getLayerStyle = (index, isFinal) => {
-    const start = index * stepHeight;
+    const { start } = getStepData(index);
     const relativeScroll = scrollProgress - start;
     let zPos;
     let opacity;
@@ -57,9 +76,8 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
 
   const storySteps = [
     { 
-      tag: "IDENTITY", 
-      title: "DAVID VINCENT MILLER",
-      text: "Bridging the Business gaps between the analog and the digital worlds.",
+      tag: "IDENTITY", title: "DAVID VINCENT MILLER",
+      text: "Bridging the gaps between the analog and the digital worlds.",
       img: "/images/dvm-profile-pic.jpg",
       actions: (
         <div className="resume-actions">
@@ -69,8 +87,8 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
       )
     },
     { 
-      tag: "PRIORITIES", 
-      text: "Family and friends first. Technology as a force for good.",
+      tag: "PRIORITIES", text: "Everyday I choose family and friends first.", 
+      isQuip: true,
       images: [
         { src: "/images/family/amy-estelle-baby-snow.jpg", date: "2023-12-25" },
         { src: "/images/family/dad-shirt.jpg", date: "2022-06-15" },
@@ -101,15 +119,15 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
       ],
       isGrayscale: true 
     },
-    { tag: "THE_JOURNEY", text: "A lifetime of variety before the first line of code.", isQuip: true },
-    { tag: "BOYS_OF_SUMMER", text: "I knew I wanted to do business out of highschool." },
-    { tag: "RETAIL_ERA", text: "Inventory, logistics, and the intuition of service." },
-    { tag: "TELCO_DAYS", text: "Pulling cables. Understanding the physical pulse of the net." },
-    { tag: "THE_PIVOT", text: "To build the future, I had to master the machine.", isQuip: true },
-    { tag: "DISCIPLINE", text: "Architecture, testing, and engineering foundations." },
-    { tag: "OPPORTUNITIES", text: "Swisslog // UZURV. Complexity delivered without complication." },
+  { tag: "THE_JOURNEY", text: "A lifetime of variety before a line of code.", isQuip: true },
+  { tag: "THE_FORGE", text: "I forged my grit in the furnaces of the service industry.", isQuip: true },
+  { tag: "THE_LEAP", text: "Witnessing the work of an engineer, I jumped in with both feet.", isQuip: true },
+  { tag: "THE_VALUE", text: "Using my effervescence and persistence to redefine my value.", isQuip: true },
+  { tag: "THE_CONTROL", text: "Craving creative and systematic control in my life.", isQuip: true },
+  { tag: "THE_REFLECTION", text: "I turned the reflector I had been for so many back on me.", isQuip: true },
+  { tag: "THE_MISSION", text: "Quantizing the complicated analog experience into ambient digital clarity.", isQuip: true },
     { 
-      tag: "FUTURE", text: "System ready. What are we building next?", isQuip: true, isFinal: true,
+      tag: "FUTURE", text: "With my system ready, What will we build together?", isQuip: true, isFinal: true,
       actions: (
         <div className="cta-group">
           <a href="mailto:david@declared.space" className="cta-btn primary-cta"><VscMail /> CONTACT_DIRECT</a>
@@ -120,15 +138,16 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
   ];
 
   useEffect(() => {
-    const activeStepIndex = Math.floor(scrollProgress / stepHeight);
+    const activeStepIndex = scrollProgress < stepHeight ? 0 : 
+                          scrollProgress < (stepHeight + slowStepHeight) ? 1 : 2;
     const activeStep = storySteps[activeStepIndex];
     if (!activeStep?.images || isHovering) return;
     setTopIndex(Math.floor(scrollProgress / 60) % activeStep.images.length);
   }, [scrollProgress, isHovering]);
 
   // PANORAMA ENGINE (Step 3: Left to Right)
-  const journeyStart = 2 * stepHeight;
-  const journeyEnd = 3 * stepHeight;
+  const { start: journeyStart } = getStepData(2);
+  const journeyEnd = journeyStart + stepHeight;
   let panoOpacity = 0;
   if (scrollProgress > journeyStart - 800 && scrollProgress < journeyEnd + 800) {
     if (scrollProgress < journeyStart) panoOpacity = (scrollProgress - (journeyStart - 800)) / 800;
@@ -146,7 +165,8 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
       <div className="parallax-stage">
         {storySteps.map((step, i) => {
           const activeIndex = isHovering ? hoverIndex : topIndex;
-          const localScroll = Math.max(0, scrollProgress - (i * stepHeight));
+          const { start } = getStepData(i);
+          const localScroll = Math.max(0, scrollProgress - start);
 
           return (
             <section key={i} className={`timeline-layer layer-${step.tag.toLowerCase()}`} style={getLayerStyle(i, step.isFinal)}>
@@ -156,7 +176,7 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
                   {step.images && (
                     <div className="image-cloud-container">
                       {step.images.map((imgData, idx) => {
-                        // VIEWPORT AWARE DRIFT: Clamped offsets to prevent edge bleed
+                        // HOMERUN RADIAL CHAOS
                         const driftX = Math.min(20, Math.max(-20, (localScroll * 0.12) * ((idx % 5) - 2)));
                         const driftY = Math.min(15, Math.max(-15, (localScroll * 0.08) * ((idx % 3) - 1)));
                         const rotation = (idx * 13) % 40 - 20 + (localScroll * 0.02);
@@ -166,9 +186,9 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
                             onMouseEnter={() => { setHoverIndex(idx); setIsHovering(true); }}
                             onMouseLeave={() => setIsHovering(false)}
                             style={{
-                              // POSITION LOCK: Every photo anchored within a 20%-80% horizontal range
-                              top: `${(20 + ((idx * 41) % 60) + driftY)}%`, 
-                              left: `${(15 + ((idx * 67) % 65) + driftX)}%`,
+                              // DENSE SHATTER MATH: Using primes to break diagonals
+                              top: `${(50 + ((idx * 41) % 60 - 30) + driftY)}%`, 
+                              left: `${(50 + ((idx * 67) % 75 - 35) + driftX)}%`,
                               transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${idx === activeIndex ? 1.3 : 1})`,
                               zIndex: idx === activeIndex ? 500 : idx,
                             }}
@@ -191,7 +211,7 @@ export default function AboutMeTimeline({ lightMode, onNavigate }) {
           );
         })}
       </div>
-      <div style={{ height: `${storySteps.length * stepHeight}px` }}></div>
+      <div style={{ height: `${stepHeight + slowStepHeight + ((storySteps.length - 2) * stepHeight)}px` }}></div>
     </div>
   );
 }
