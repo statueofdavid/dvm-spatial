@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import SocialMatrix from './SocialMatrix'
-import AboutMeTimeline from './AboutMeTimeline'
+import TimelineManager from './AboutMe/TimelineManager';
 
 export default function NeuralExperience({ region, onExit, onNavigate, lightMode }) {
   // Use a ref to target the scrollable div
@@ -34,7 +34,7 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
             <SocialMatrix lightMode={lightMode} />
           </div>
         ) : region.id === 'action' ? (
-          <AboutMeTimeline lightMode={lightMode} onNavigate={onNavigate} />
+            <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
         ) : (
           <div className="container-inner">
             <div className="placeholder-text">{`Initializing ${region.id} module...`}</div>
