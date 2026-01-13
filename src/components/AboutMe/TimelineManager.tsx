@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { storySteps } from '../../data/StorySteps';
 import SceneDirector from './SceneDirector';
+import ScrollGuide from './ScrollGuide';
+import './AboutMeTimeline.css';
 
 const TimelineManager: React.FC = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -45,6 +47,7 @@ const TimelineManager: React.FC = () => {
   return (
     <div className="timeline-parallax-container">
       <SceneDirector currentStep={currentStep} progress={progress} />
+      <ScrollGuide scrollProgress={scrollProgress} />
       {/* Scrollable runway */}
       <div style={{ height: `${stepHeight + slowStepHeight + ((storySteps.length - 2) * stepHeight)}px` }}></div>
     </div>
