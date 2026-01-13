@@ -32,7 +32,7 @@ const Resume: React.FC<{ progress: number; step: StoryStep }> = ({ progress, ste
       }}>
         <h2 className="layer-tag">// {step.tag}</h2>
         <h1 className="hero-title">DAVID VINCENT MILLER</h1>
-        <p className="large-quip">{step.text}</p>
+        <p className="quip">{step.text}</p>
         
         <div className="resume-actions" style={{ pointerEvents: 'auto' }}>
           <a href="/dvm-resume.pdf" target="_blank" className="resume-btn raised">

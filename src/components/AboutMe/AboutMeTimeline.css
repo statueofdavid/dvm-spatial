@@ -88,6 +88,14 @@
   margin: 2rem 0;
 }
 
+.quip {
+  color: #ccc;
+  font-size: 1.2rem; /* Larger for readability on big screens */
+  max-width: 600px;
+  line-height: 1.5;
+  margin: 2rem 0;
+}
+
 .resume-actions {
   display: flex;
   flex-direction: row;
