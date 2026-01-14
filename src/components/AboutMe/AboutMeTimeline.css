@@ -181,6 +181,11 @@
   overflow: visible; 
 }
 
+.exit-view-button, .light-mode-button {
+  z-index: 4000 !important; /* Higher than SceneDirector's 3000 */
+  position: fixed;
+}
+
 /* RESPONSIVE: Maintain functionality on mobile/tall screens */
 @media (max-width: 1024px) {
   .layer-identity { grid-template-columns: 320px 1fr; gap: 5vw; }

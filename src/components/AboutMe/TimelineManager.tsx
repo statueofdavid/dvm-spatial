@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { storySteps } from '../../data/StorySteps';
 import SceneDirector from './SceneDirector';
 import ScrollGuide from './ScrollGuide';
-import './AboutMeTimeline.css';
 
 const TimelineManager: React.FC = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -12,7 +11,6 @@ const TimelineManager: React.FC = () => {
   useEffect(() => {
     const portalArea = document.querySelector('.portal-scroll-area');
     if (!portalArea) return;
-
     const handleScroll = () => {
       if (!ticking.current) {
         window.requestAnimationFrame(() => {
@@ -39,16 +37,21 @@ const TimelineManager: React.FC = () => {
     const currentStepHeight = index === 1 ? slowStepHeight : stepHeight;
     const progress = Math.max(0, Math.min(1, (scroll - start) / currentStepHeight));
 
-    return { currentStep: storySteps[index], progress };
+    const OVERLAP_THRESHOLD = 0.85; 
+    const isInOverlap = progress > OVERLAP_THRESHOLD;
+    // Safety check to prevent index-out-of-bounds
+    const nextStep = (isInOverlap && index < storySteps.length - 1) ? storySteps[index + 1] : null;
+    const transitionProgress = nextStep ? (progress - OVERLAP_THRESHOLD) / (1 - OVERLAP_THRESHOLD) : 0;
+
+    return { currentStep: storySteps[index], nextStep, progress, transitionProgress };
   };
 
-  const { currentStep, progress } = getActiveData(scrollProgress);
+  const { currentStep, progress, nextStep, transitionProgress } = getActiveData(scrollProgress);
 
   return (
     <div className="timeline-parallax-container">
-      <SceneDirector currentStep={currentStep} progress={progress} />
+      <SceneDirector currentStep={currentStep} progress={progress} nextStep={nextStep} transitionProgress={transitionProgress} />
       <ScrollGuide scrollProgress={scrollProgress} />
-      {/* Scrollable runway */}
       <div style={{ height: `${stepHeight + slowStepHeight + ((storySteps.length - 2) * stepHeight)}px` }}></div>
     </div>
   );

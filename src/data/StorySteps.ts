@@ -3,9 +3,7 @@
 export type SceneType = 
   | 'RESUME' 
   | 'GALLERY' 
-  | 'PANORAMA' 
-  | 'HEARTH' 
-  | 'CLIFF' 
+  | 'FORGE' 
   | 'LEAP' 
   | 'VALUE' 
   | 'CONTROL' 
@@ -67,7 +65,7 @@ export const storySteps: StoryStep[] = [
   },
   { 
     tag: "THE_FORGE", 
-    scene: "HEARTH", 
+    scene: "FORGE", 
     text: "I forged my grit in the furnaces of the service industry." 
   },
   { 
