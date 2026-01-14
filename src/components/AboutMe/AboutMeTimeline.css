@@ -82,7 +82,7 @@
 
 .large-quip {
   color: #ccc;
-  font-size: 1.4rem; /* Larger for readability on big screens */
+  font-size: 5rem; /* Larger for readability on big screens */
   max-width: 600px;
   line-height: 1.5;
   margin: 2rem 0;

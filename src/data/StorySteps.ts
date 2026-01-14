@@ -33,9 +33,9 @@ export const storySteps: StoryStep[] = [
     text: "Bridging the gaps between the analog and the digital worlds."
   },
   { 
-    tag: "PRIORITIES", 
+    tag: "CONNECTION", 
     scene: "GALLERY",
-    text: "Everyday I choose family and friends first.", 
+    text: "A lifetime of variety before a line of code.", 
     images: [
       { src: "/images/family/amy-estelle-baby-snow.jpg", date: "2023-12-25" },
       { src: "/images/family/dad-shirt.jpg", date: "2022-06-15" },
@@ -64,11 +64,6 @@ export const storySteps: StoryStep[] = [
       { src: "/images/family/sean-estelle-snowman.jpg", date: "2024-01-15" },
       { src: "/images/family/steal-a-kiss-wedding.jpg", date: "2023-02-14" }
     ]
-  },
-  { 
-    tag: "THE_JOURNEY", 
-    scene: "PANORAMA", 
-    text: "A lifetime of variety before a line of code." 
   },
   { 
     tag: "THE_FORGE", 
