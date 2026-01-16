@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import { logger } from '../utils/logger';
 import SocialMatrix from './SocialMatrix'
 import TimelineManager from './AboutMe/TimelineManager';
 
@@ -12,6 +13,24 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
       scrollRef.current.scrollTop = 0;
     }
   }, [region?.id]);
+
+  useEffect(() => {
+    // when a specific module is "Entered"
+    const startTime = performance.now();
+    logger.info(`PORTAL_INIT // ${region.id.toUpperCase()}`, { type: region.type });
+
+    // when the user leaves (Dwell Time)
+    return () => {
+      const duration = (performance.now() - startTime) / 1000;
+      logger.debug(`PORTAL_TERMINATED // ${region.id.toUpperCase()}`, { dwellTime: `${duration.toFixed(2)}s` });
+    };
+  }, [region.id]);
+
+  // when navigation occurs 
+  const handleInternalNavigate = (id) => {
+    logger.info(`PORTAL_REDIRECT // ${id.toUpperCase()}`);
+    onNavigate(id);
+  };
 
   if (!region) return null;
 

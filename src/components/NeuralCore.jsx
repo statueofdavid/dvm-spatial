@@ -1,9 +1,12 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react'
+import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, PerspectiveCamera, Center, Html, Environment } from '@react-three/drei'
-import * as THREE from 'three'
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader'
-import { BRAIN_REGIONS, PATH_DATA } from '../data/regions'
+
+// Local Data & Utilities
+import { BRAIN_REGIONS, PATH_DATA } from '@/data/regions'
+import { logger } from "@/utils/logger"
 
 function BrainPiece({ region, selectedId, onSelect, onMastered, lightMode }) {
   const meshRef = useRef()
@@ -20,6 +23,10 @@ function BrainPiece({ region, selectedId, onSelect, onMastered, lightMode }) {
         depth: 140, bevelEnabled: true, bevelThickness: 100, 
         bevelSize: 40, bevelOffset: -25, bevelSegments: 48 
       })
+
+      const polyCount = geo.attributes.position.count / 3;
+      logger.debug(`GEOMETRY_LOADED // ${region.id}`, { polygons: polyCount });
+
       return { center: new THREE.Box2().setFromPoints(s.getPoints()).getCenter(new THREE.Vector2()), geometry: geo }
     } catch (e) { return { center: new THREE.Vector2(), geometry: null } }
   }, [region.id])
@@ -39,7 +46,8 @@ function BrainPiece({ region, selectedId, onSelect, onMastered, lightMode }) {
       <group rotation={[Math.PI, 0, 0]}>
         <mesh ref={meshRef} geometry={geometry} 
           onClick={(e) => { 
-            e.stopPropagation(); 
+            e.stopPropagation();
+            logger.info(`REGION_FOCUS // ${region.id.toUpperCase()}`, { label: region.label }); 
             onSelect(region.id); 
             onMastered('selected'); // Mastered: Selection
           }}
@@ -110,14 +118,24 @@ export default function NeuralCore({ lightMode, selectedId, setSelectedId, maste
     return [isMobile ? -size.width * 0.10 : -size.width * 0.15, 0, 0];
   }, [selectedId, isMobile, size.width]);
 
+  useEffect(() => {
+    logger.info("SYSTEM_BOOT // NEURAL_CORE_READY", {
+      regions: BRAIN_REGIONS.length,
+      viewPort: `${size.width}x${size.height}`,
+      theme: lightMode ? 'LIGHT' : 'DARK'
+    });
+  }, []);
+
   const handleOrbitChange = (e) => {
     const cam = e.target.object
     // Track Zoom Mastery
     if (!mastery.zoomed && Math.abs(cam.position.length() - lastCamDist.current) > 20) {
+      logger.info("MASTERY_ACQUIRED // ZOOM_CONTROLS");
       onMastered('zoomed')
     }
     // Track Rotation Mastery
     if (!mastery.rotated && cam.position.distanceTo(lastCamPos.current) > 0.1) {
+      logger.info("MASTERY_ACQUIRED // ROTATION_AXIS");
       onMastered('rotated')
     }
     lastCamDist.current = cam.position.length()

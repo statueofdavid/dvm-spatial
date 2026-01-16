@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   SiGithub, SiSubstack, SiDevdotto, SiLinkedin, SiMedium, SiGitlab, 
   SiDuolingo, SiX, SiVenmo, SiReddit, SiSteam, SiEpicgames, 
@@ -43,6 +43,17 @@ const tiles = [
 
 export default function SocialMatrix({ lightMode }) {
   const telemetry = useSocialDataUplink();
+
+  useEffect(() => {
+    // Check for any "OFFLINE" or "LOCKED" tiles that might indicate an API failure
+    const offlineNodes = Object.entries(telemetry).filter(([_, data]) => data.status !== 'ONLINE');
+    if (offlineNodes.length > 0) {
+      logger.warn(`TELEMETRY_PARTIAL_OFFLINE`, { count: offlineNodes.length, nodes: offlineNodes.map(n => n[0]) });
+    } else {
+      logger.debug(`TELEMETRY_UPLINK_STABLE`);
+    }
+  }, [telemetry]);
+
   const [activeFilter, setActiveFilter] = useState('ALL');
 
   const theme = {

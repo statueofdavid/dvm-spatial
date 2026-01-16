@@ -1,5 +1,6 @@
 // src/components/AboutMe/scenes/Forge.tsx
 import React, { useRef, useMemo } from 'react';
+import { logger } from '../../../utils/logger'
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Text, Float, MeshDistortMaterial, Environment } from '@react-three/drei';
 import * as THREE from 'three';
@@ -28,7 +29,7 @@ const GritParticles: React.FC<{ progress: number }> = ({ progress }) => {
     <points ref={points}>
       <bufferGeometry><bufferAttribute attach="attributes-position" args={[particles, 3]} /></bufferGeometry>
       <pointsMaterial 
-        size={0.1} 
+        size={0.12} 
         color="#cc3300" 
         transparent 
         opacity={Math.min(0.7, progress * 2)} 
@@ -45,10 +46,19 @@ const ForgeContent: React.FC<{ progress: number }> = ({ progress }) => {
   const textRef = useRef<any>(null);
 
   useFrame((state) => {
+    // --- 1. HEARTBEAT LOGGING (Relocated) ---
+    if (state.clock.elapsedTime % 1 < 0.02) {
+      logger.debug("FORGE_HEARTBEAT", { 
+        time: state.clock.getElapsedTime().toFixed(2),
+        activeObjects: state.scene.children.length 
+      });
+    }
+  });
+
+  useFrame((state) => {
     const time = state.clock.elapsedTime;
     
-    // SEAMLESS SCALE MATH
-    // $totalScale = baseScale + burstScale$
+    // prevents the "Size Jump"
     const baseScale = 0.005 + progress * 8; 
     const burstScale = progress < 0.6 ? 0 : Math.pow((progress - 0.6) * 15, 3);
     const totalScale = baseScale + burstScale;
@@ -58,6 +68,7 @@ const ForgeContent: React.FC<{ progress: number }> = ({ progress }) => {
       outerEmberRef.current.scale.setScalar(totalScale);
       outerEmberRef.current.position.z = emberZ;
       
+      // an attempt to show heat with white center
       const innerScaleFactor = progress < 0.3 ? 0 : (progress - 0.3) * 1.5;
       innerCoreRef.current.scale.setScalar(totalScale * Math.min(0.95, innerScaleFactor));
       innerCoreRef.current.position.z = emberZ + 0.01;
@@ -73,17 +84,17 @@ const ForgeContent: React.FC<{ progress: number }> = ({ progress }) => {
       }
     }
 
-    // THE HAZY SETTLE & DRIFT
+    // stays in front and drifts later
     if (textRef.current) {
       const driftPhase = Math.max(0, (progress - 0.7) * 5);
       const driftX = Math.sin(time * 2) * 0.1 * driftPhase;
       const driftY = Math.cos(time * 1.5) * 0.1 * driftPhase;
       
+      // quip leads the ember by 3 units to stay in front
       textRef.current.position.set(driftX, driftY, emberZ + 3);
       
       const flicker = 1.0 - (Math.random() * 0.2 * driftPhase);
       const textFade = progress < 0.4 ? 0 : progress < 0.7 ? (progress - 0.4) * 3 : (1 - (progress - 0.7) * 4) * flicker;
-      
       textRef.current.fillOpacity = Math.max(0, textFade);
     }
   });
@@ -105,15 +116,9 @@ const ForgeContent: React.FC<{ progress: number }> = ({ progress }) => {
       </group>
 
       <Float speed={1} rotationIntensity={0.2} floatIntensity={0.5}>
-        <Text 
-          ref={textRef} 
-          fontSize={0.5} 
-          color="#ffffff" 
-          maxWidth={8} 
-          textAlign="center"
-        >
+        <Text ref={textRef} fontSize={0.5} color="#ffffff" maxWidth={8} textAlign="center">
           I FORGED MY GRIT IN THE FURNACES OF THE SERVICE INDUSTRY.
-          {/* THE FIX: Move depthTest here */}
+          {/* THE FIX: depthTest MUST be on the material, not the text */}
           <meshStandardMaterial 
             attach="material" 
             emissive="#ff4400" 
@@ -131,11 +136,11 @@ const ForgeContent: React.FC<{ progress: number }> = ({ progress }) => {
 };
 
 const Forge: React.FC<{ progress: number }> = ({ progress }) => {
-  return (
+return (
     <div className="forge-canvas-container" style={{ 
       width: '100vw', 
       height: '100vh', 
-      background: 'transparent', 
+      background: 'transparent', // FIX: Prevents overlapping UI
       pointerEvents: 'none' 
     }}>
       <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>

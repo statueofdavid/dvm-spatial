@@ -64,27 +64,27 @@ export const storySteps: StoryStep[] = [
     ]
   },
   { 
-    tag: "THE_FORGE", 
+    tag: "FORGE", 
     scene: "FORGE", 
     text: "I forged my grit in the furnaces of the service industry." 
   },
   { 
-    tag: "THE_LEAP", 
+    tag: "LEAP", 
     scene: "LEAP", 
     text: "Witnessing the work of an engineer, I jumped in with both feet." 
   },
   { 
-    tag: "THE_VALUE", 
+    tag: "VALUE", 
     scene: "VALUE", 
     text: "Using my effervescence and persistence to redefine my value." 
   },
   { 
-    tag: "THE_CONTROL", 
+    tag: "CONTROL", 
     scene: "CONTROL", 
     text: "Craving creative and systematic control in my life." 
   },
   { 
-    tag: "THE_REFLECTION", 
+    tag: "REFLECTION", 
     scene: "MIRROR", 
     text: "I turned the reflector I had been for so many back on me." 
   },

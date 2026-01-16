@@ -1,5 +1,5 @@
-// src/components/AboutMe/TimelineManager.tsx
 import React, { useState, useEffect, useRef } from 'react';
+import { logger } from '../../utils/logger'
 import { storySteps } from '../../data/StorySteps';
 import SceneDirector from './SceneDirector';
 import ScrollGuide from './ScrollGuide';
@@ -39,9 +39,19 @@ const TimelineManager: React.FC = () => {
 
     const OVERLAP_THRESHOLD = 0.85; 
     const isInOverlap = progress > OVERLAP_THRESHOLD;
-    // Safety check to prevent index-out-of-bounds
+    
     const nextStep = (isInOverlap && index < storySteps.length - 1) ? storySteps[index + 1] : null;
     const transitionProgress = nextStep ? (progress - OVERLAP_THRESHOLD) / (1 - OVERLAP_THRESHOLD) : 0;
+
+    const lastIndex = useRef(0);
+    if (index !== lastIndex.current) {
+      logger.info(`SCENE_TRANSITION // ${storySteps[index].scene}`, {
+        index,
+        tag: storySteps[index].tag,
+        scrollPosition: scroll
+      });
+      lastIndex.current = index;
+    }
 
     return { currentStep: storySteps[index], nextStep, progress, transitionProgress };
   };
