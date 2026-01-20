@@ -1,13 +1,12 @@
 // src/components/AboutMe/scenes/Forge.tsx
 import React, { useRef, useMemo } from 'react';
-import { logger } from '../../../utils/logger'
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Text, Float, MeshDistortMaterial, Environment } from '@react-three/drei';
+import { Text, Float, MeshDistortMaterial, Environment, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 
 const GritParticles: React.FC<{ progress: number }> = ({ progress }) => {
   const points = useRef<THREE.Points>(null);
-  const count = 4000;
+  const count = 2000;
   const particles = useMemo(() => {
     const temp = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -20,7 +19,7 @@ const GritParticles: React.FC<{ progress: number }> = ({ progress }) => {
 
   useFrame(() => {
     if (!points.current) return;
-    const speed = 0.1 + (progress > 0.3 ? (progress - 0.3) * 6 : 0);
+    const speed = 0.05 + (progress * 18);
     points.current.position.z += speed;
     if (points.current.position.z > 20) points.current.position.z = -100;
   });
@@ -28,74 +27,64 @@ const GritParticles: React.FC<{ progress: number }> = ({ progress }) => {
   return (
     <points ref={points}>
       <bufferGeometry><bufferAttribute attach="attributes-position" args={[particles, 3]} /></bufferGeometry>
-      <pointsMaterial 
-        size={0.12} 
-        color="#cc3300" 
-        transparent 
-        opacity={Math.min(0.7, progress * 2)} 
-        blending={THREE.AdditiveBlending} 
-        depthWrite={false} 
-      />
+      <pointsMaterial size={0.08} color="#ff4400" transparent opacity={0.4} blending={THREE.AdditiveBlending} depthWrite={false} />
     </points>
   );
 };
 
-const ForgeContent: React.FC<{ progress: number }> = ({ progress }) => {
-  const outerEmberRef = useRef<THREE.Mesh>(null);
-  const innerCoreRef = useRef<THREE.Mesh>(null);
-  const textRef = useRef<any>(null);
+const ForgeContent: React.FC<{ progress: number; text: string }> = ({ progress, text }) => {
+  const coreRef = useRef<THREE.Mesh>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
+  const exitRef = useRef<THREE.Mesh>(null);
+  const cliffRef = useRef<THREE.Group>(null);
+  
+  const words = useMemo(() => text.split(' '), [text]);
 
-  useFrame((state) => {
-    // --- 1. HEARTBEAT LOGGING (Relocated) ---
-    if (state.clock.elapsedTime % 1 < 0.02) {
-      logger.debug("FORGE_HEARTBEAT", { 
-        time: state.clock.getElapsedTime().toFixed(2),
-        activeObjects: state.scene.children.length 
-      });
-    }
-  });
+  // SYNC MATH: Text and Aperture shared expansion
+  // The expansion accelerates at the end (pow 3) to match the blinding exit
+  const currentApertureScale = 0.01 + Math.pow(progress, 3) * 65;
+  const textRadius = currentApertureScale * 0.14; 
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
-    
-    // prevents the "Size Jump"
-    const baseScale = 0.005 + progress * 8; 
-    const burstScale = progress < 0.6 ? 0 : Math.pow((progress - 0.6) * 15, 3);
-    const totalScale = baseScale + burstScale;
-    const emberZ = progress * 15;
+    const flicker = Math.sin(time * 10) * 0.2 + 0.8;
 
-    if (outerEmberRef.current && innerCoreRef.current) {
-      outerEmberRef.current.scale.setScalar(totalScale);
-      outerEmberRef.current.position.z = emberZ;
-      
-      // an attempt to show heat with white center
-      const innerScaleFactor = progress < 0.3 ? 0 : (progress - 0.3) * 1.5;
-      innerCoreRef.current.scale.setScalar(totalScale * Math.min(0.95, innerScaleFactor));
-      innerCoreRef.current.position.z = emberZ + 0.01;
+    // 1. THE FIRE APERTURE: Radial tunnel entrance
+    if (coreRef.current && glowRef.current) {
+      [coreRef.current, glowRef.current].forEach((ring, i) => {
+        ring.scale.set(currentApertureScale, currentApertureScale, 1);
+        ring.rotation.z = time * (i === 0 ? 0.2 : -0.15);
+        if (ring.material instanceof THREE.MeshStandardMaterial) {
+          ring.material.emissiveIntensity = (i === 0 ? 25 : 65) * flicker * (0.5 + progress * 2.5);
+          ring.material.opacity = Math.min(1, progress * 4);
+        }
+      });
+    }
 
-      const pulse = 0.8 + Math.sin(time * (3 + progress * 8)) * 0.2;
-      
-      if (outerEmberRef.current.material instanceof THREE.MeshStandardMaterial) {
-        outerEmberRef.current.material.emissiveIntensity = THREE.MathUtils.lerp(8, 40, progress) * pulse;
-      }
-      
-      if (innerCoreRef.current.material instanceof THREE.MeshStandardMaterial) {
-        innerCoreRef.current.material.emissiveIntensity = THREE.MathUtils.lerp(0, 100, progress) * pulse;
+    state.camera.position.set(0, 0, 15);
+    state.camera.lookAt(0, 0, -100);
+
+    // 2. THE BLINDING EXIT: Grows from the center of the aperture
+    if (exitRef.current) {
+      // Portal expansion triggers at 85% scroll
+      const exitOpacity = progress > 0.85 ? (progress - 0.85) * 8 : 0;
+      const exitScale = Math.pow(progress, 4) * 120; // Blasts outward
+      exitRef.current.scale.setScalar(exitScale);
+      if (exitRef.current.material instanceof THREE.MeshBasicMaterial) {
+        exitRef.current.material.opacity = Math.min(1, exitOpacity);
       }
     }
 
-    // stays in front and drifts later
-    if (textRef.current) {
-      const driftPhase = Math.max(0, (progress - 0.7) * 5);
-      const driftX = Math.sin(time * 2) * 0.1 * driftPhase;
-      const driftY = Math.cos(time * 1.5) * 0.1 * driftPhase;
-      
-      // quip leads the ember by 3 units to stay in front
-      textRef.current.position.set(driftX, driftY, emberZ + 3);
-      
-      const flicker = 1.0 - (Math.random() * 0.2 * driftPhase);
-      const textFade = progress < 0.4 ? 0 : progress < 0.7 ? (progress - 0.4) * 3 : (1 - (progress - 0.7) * 4) * flicker;
-      textRef.current.fillOpacity = Math.max(0, textFade);
+    // 3. THE CLIFF: Fades in precisely as the whiteness hits 100%
+    if (cliffRef.current) {
+      const cliffFade = progress > 0.94 ? (progress - 0.94) * 15 : 0;
+      cliffRef.current.position.set(0, -11, -10); 
+      cliffRef.current.children.forEach((child: any) => {
+        if (child.material) {
+          child.material.transparent = true;
+          child.material.opacity = Math.min(1, cliffFade);
+        }
+      });
     }
   });
 
@@ -103,48 +92,67 @@ const ForgeContent: React.FC<{ progress: number }> = ({ progress }) => {
     <>
       <GritParticles progress={progress} />
       
-      <group position={[0, 0, 0]}>
-        <mesh ref={outerEmberRef}>
-          <sphereGeometry args={[1, 64, 64]} />
-          <MeshDistortMaterial color="#110000" emissive="#cc3300" speed={3} distort={0.4} toneMapped={false} />
-        </mesh>
+      {/* ON FIRE APERTURE */}
+      <mesh ref={coreRef} position={[0, 0, -20]}>
+        <torusGeometry args={[2, 0.02, 16, 100]} />
+        <meshStandardMaterial color="#ffffff" emissive="#ffff00" transparent opacity={0} />
+      </mesh>
 
-        <mesh ref={innerCoreRef}>
-          <sphereGeometry args={[0.98, 32, 32]} />
-          <meshStandardMaterial color="#ffffff" emissive="#ffffff" toneMapped={false} />
+      <mesh ref={glowRef} position={[0, 0, -20.1]}>
+        <torusGeometry args={[2.1, 0.1, 16, 100]} />
+        <MeshDistortMaterial color="#ff4400" emissive="#ff2200" distort={0.6} speed={5} transparent opacity={0} />
+      </mesh>
+
+      {/* HORIZON-LOCKED SPIRAL: Words stay upright for readability */}
+      {progress > 0.05 && words.map((word, i) => {
+        const spiralAngle = i * 0.6;
+        // Text Z-depth accelerates toward the visitor
+        const spiralZ = -60 + (progress * 90) + (i * -3.5); 
+        const dynamicFontSize = 0.15 + (progress * 0.45);
+
+        return (
+          <Float key={i} speed={2} rotationIntensity={0.2}>
+            <Text
+              position={[Math.cos(spiralAngle) * textRadius, Math.sin(spiralAngle) * textRadius, spiralZ]}
+              rotation={[0, 0, 0]} 
+              fontSize={dynamicFontSize}
+              color="#ffffff"
+              fillOpacity={Math.min(1, (progress - 0.05) * 5)}
+              anchorX="center"
+              anchorY="middle"
+            >
+              {word}
+              <meshStandardMaterial attach="material" emissive="#ff6600" emissiveIntensity={2} />
+            </Text>
+          </Float>
+        );
+      })}
+
+      {/* THE WHITE END: Blinding exit portal centered in the tunnel */}
+      <mesh ref={exitRef} position={[0, 0, -85]}>
+        <circleGeometry args={[1, 32]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0} />
+      </mesh>
+
+      <group ref={cliffRef}>
+        <mesh>
+          <boxGeometry args={[45, 4, 15]} />
+          <meshStandardMaterial color="#050505" />
         </mesh>
       </group>
 
-      <Float speed={1} rotationIntensity={0.2} floatIntensity={0.5}>
-        <Text ref={textRef} fontSize={0.5} color="#ffffff" maxWidth={8} textAlign="center">
-          I FORGED MY GRIT IN THE FURNACES OF THE SERVICE INDUSTRY.
-          {/* THE FIX: depthTest MUST be on the material, not the text */}
-          <meshStandardMaterial 
-            attach="material" 
-            emissive="#ff4400" 
-            emissiveIntensity={2} 
-            depthTest={false} 
-            transparent={true}
-          />
-        </Text>
-      </Float>
-
-      <pointLight position={[0, 0, 5]} intensity={THREE.MathUtils.lerp(10, 150, progress)} color="#ffaa88" />
+      <PerspectiveCamera makeDefault fov={55} />
       <Environment preset="night" />
     </>
   );
 };
 
-const Forge: React.FC<{ progress: number }> = ({ progress }) => {
-return (
-    <div className="forge-canvas-container" style={{ 
-      width: '100vw', 
-      height: '100vh', 
-      background: 'transparent', // FIX: Prevents overlapping UI
-      pointerEvents: 'none' 
-    }}>
-      <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
-        <ForgeContent progress={progress} />
+const Forge: React.FC<{ progress: number; step: any }> = ({ progress, step }) => {
+  if (!step) return null;
+  return (
+    <div className="forge-canvas-container" style={{ width: '100vw', height: '100vh', pointerEvents: 'none' }}>
+      <Canvas style={{ pointerEvents: 'none' }}>
+        <ForgeContent progress={progress} text={step.text} />
       </Canvas>
     </div>
   );

@@ -6,6 +6,7 @@ import {
   SiInstagram, SiDribbble, SiLeetcode, SiMeetup, SiGoogle, SiYoutube, 
   SiYoutubemusic, SiMonkeytype 
 } from 'react-icons/si';
+import { logger } from "../utils/logger"
 import { TbBrandZwift } from "react-icons/tb"; // Correct Zwift Export
 import { VscRepo, VscStarFull, VscHistory, VscCircleFilled, VscLock, VscCheck } from "react-icons/vsc";
 import { useSocialDataUplink } from '../hooks/useSocialDataUplink'; 

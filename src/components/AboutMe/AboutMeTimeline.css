@@ -186,6 +186,20 @@
   position: fixed;
 }
 
+/* --- FORGE OVERHAUL STYLES --- */
+.forge-canvas-container {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: radial-gradient(circle at center, #1a0500 0%, #000 70%);
+  transition: opacity 0.8s ease;
+}
+
+/* Ensure the scene director doesn't clip the 3D depth */
+.scene-viewport {
+  perspective: 2000px;
+}
+
 /* RESPONSIVE: Maintain functionality on mobile/tall screens */
 @media (max-width: 1024px) {
   .layer-identity { grid-template-columns: 320px 1fr; gap: 5vw; }
