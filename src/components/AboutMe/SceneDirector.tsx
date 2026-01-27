@@ -45,8 +45,7 @@ const SceneDirector: React.FC<SceneDirectorProps> = ({ currentStep, progress, ne
         <div style={{ 
           position: 'absolute', 
           inset: 0, 
-          // THE FIX: Forge amber appears at 50% transition for a cleaner handoff
-          opacity: Math.max(transitionProgress > 0.5 ? (transitionProgress - 0.5) * 2 : 0, revealProgress), 
+                    opacity: Math.max(transitionProgress > 0.5 ? (transitionProgress - 0.5) * 2 : 0, revealProgress), 
           pointerEvents: 'none',
           visibility: transitionProgress > 0.1 ? 'visible' : 'hidden'
         }}>

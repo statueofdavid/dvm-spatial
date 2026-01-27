@@ -61,7 +61,7 @@ const LeapContent: React.FC<{ progress: number; step: any }> = ({ progress, step
       const walkProgress = progress / EDGE_THRESHOLD;
       const walkZ = 12 - (walkProgress * pathLength); 
       state.camera.position.set(0, 1.8, walkZ);
-      state.camera.rotation.x = -0.2; 
+      state.camera.lookAt(0, 1.8, -100);
     } else {
       // PHASE: The Long Fall. Camera pitches down and accelerates
       const fallFactor = (progress - EDGE_THRESHOLD) / (1 - EDGE_THRESHOLD);
@@ -94,18 +94,20 @@ const LeapContent: React.FC<{ progress: number; step: any }> = ({ progress, step
         return (
           <Text
             key={i}
-            position={[0, 0.1, wordZ]}
+            position={[0, 0, wordZ]}
             rotation={[-Math.PI / 2, 0, 0]}
             fontSize={1.2}
             color="#ffffff"
+            anchorX="center"
+            anchorY="middle"
           >
             {word.toUpperCase()}
             <meshStandardMaterial attach="material" emissive="#00ffff" emissiveIntensity={progress < EDGE_THRESHOLD ? 2 : 0.5} />
           </Text>
         );
       })}
-
-      <mesh ref={cliffRef} position={[0, -0.5, -(pathLength / 2) + 5]}>
+      
+      <mesh ref={cliffRef} position={[0, -10, -(pathLength / 2) + 5]}>
         <boxGeometry args={[40, 1, pathLength + 10]} />
         <meshStandardMaterial color="#050505" />
       </mesh>
@@ -116,9 +118,9 @@ const LeapContent: React.FC<{ progress: number; step: any }> = ({ progress, step
         <meshBasicMaterial color="#003366" transparent opacity={0} />
       </mesh>
 
-      <PerspectiveCamera makeDefault fov={60} />
+      <PerspectiveCamera makeDefault fov={55} />
       <Environment preset="night" />
-      <pointLight position={[0, 10, -20]} intensity={40} color="#00ffff" />
+      <pointLight position={[0, 10, -10]} intensity={40} color="#00ffff" />
     </>
   );
 };

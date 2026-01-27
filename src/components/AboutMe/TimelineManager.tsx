@@ -1,4 +1,3 @@
-// src/components/AboutMe/TimelineManager.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { storySteps } from '../../data/StorySteps';
 import SceneDirector from './SceneDirector';
@@ -31,7 +30,7 @@ const TimelineManager: React.FC = () => {
   const getActiveData = (scroll: number) => {
     let index = 0;
     
-    // 1. CUMULATIVE HEIGHTS
+    // CUMULATIVE HEIGHTS
     const h0 = stepHeight; // IDENTITY
     const h1 = h0 + slowStepHeight; // GALLERY
     const h2 = h1 + slowStepHeight; // FORGE
@@ -41,7 +40,7 @@ const TimelineManager: React.FC = () => {
     const h6 = h5 + slowStepHeight; // MIRROR 1
     const h7 = h6 + slowStepHeight; // MIRROR 2
     
-    // 2. DETERMINE CURRENT INDEX
+    // DETERMINE CURRENT INDEX
     if (scroll < h0) index = 0;
     else if (scroll < h1) index = 1;
     else if (scroll < h2) index = 2;
@@ -52,7 +51,7 @@ const TimelineManager: React.FC = () => {
     else if (scroll < h7) index = 7;
     else index = storySteps.length - 1;
 
-    // 3. START POINT SELECTION
+    // START POINT SELECTION
     let start = 0;
     switch(index) {
       case 0: start = 0; break;
@@ -66,11 +65,11 @@ const TimelineManager: React.FC = () => {
       default: start = h7 + (index - 8) * stepHeight;
     }
 
-    // 4. PROGRESS & TRANSITION
+    // PROGRESS & TRANSITION
     const currentStepHeight = index === 3 ? leapStepHeight : (index >= 1 && index <= 7) ? slowStepHeight : stepHeight;
     const progress = Math.max(0, Math.min(1, (scroll - start) / currentStepHeight));
 
-    // THE FIX: Higher threshold (0.97) reduces the time two heavy scenes are active simultaneously
+    // reduces the time two heavy scenes are active simultaneously
     const OVERLAP_THRESHOLD = 0.97; 
     const isInOverlap = progress > OVERLAP_THRESHOLD;
     const nextStep = (isInOverlap && index < storySteps.length - 1) ? storySteps[index + 1] : null;

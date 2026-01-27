@@ -61,8 +61,8 @@ const ForgeContent: React.FC<{ progress: number; text: string }> = ({ progress, 
       });
     }
 
-    state.camera.position.set(0, 0, 15);
-    state.camera.lookAt(0, 0, -100);
+    state.camera.position.set(0, 1.8, 15);
+    state.camera.lookAt(0, 1.8, -100);
 
     // 2. THE BLINDING EXIT: Grows from the center of the aperture
     if (exitRef.current) {
@@ -78,7 +78,7 @@ const ForgeContent: React.FC<{ progress: number; text: string }> = ({ progress, 
     // 3. THE CLIFF: Fades in precisely as the whiteness hits 100%
     if (cliffRef.current) {
       const cliffFade = progress > 0.94 ? (progress - 0.94) * 15 : 0;
-      cliffRef.current.position.set(0, -11, -10); 
+      cliffRef.current.position.set(0, -10, -10); 
       cliffRef.current.children.forEach((child: any) => {
         if (child.material) {
           child.material.transparent = true;
@@ -133,13 +133,6 @@ const ForgeContent: React.FC<{ progress: number; text: string }> = ({ progress, 
         <circleGeometry args={[1, 32]} />
         <meshBasicMaterial color="#ffffff" transparent opacity={0} />
       </mesh>
-
-      <group ref={cliffRef}>
-        <mesh>
-          <boxGeometry args={[45, 4, 15]} />
-          <meshStandardMaterial color="#050505" />
-        </mesh>
-      </group>
 
       <PerspectiveCamera makeDefault fov={55} />
       <Environment preset="night" />
