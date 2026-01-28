@@ -22,12 +22,23 @@ const FallingGrit: React.FC<FallingGritProps> = ({ active, progress }) => {
     return temp;
   }, []);
 
-  useFrame(() => {
+  useFrame((state) => {
     if (!points.current || !active) return;
-    // THE SHOOSH: Speed increases significantly as the fall progress deepens
-    const fallSpeed = 1.5 + (progress * 5.5);
-    points.current.position.y += fallSpeed;
-    if (points.current.position.y > 60) points.current.position.y = -60;
+
+    // 1. Keep the container locked to the camera so particles are always in view
+    points.current.position.y = state.camera.position.y;
+
+    // 2. Particle Animation:
+    // Before splash: Particles rotate fast for "wind"
+    // After splash (progress > 0.9): Particles float UP for "bubbles"
+    if (progress < 0.9) {
+      const fallSpeed = 1.5 + (progress * 5.5);
+      points.current.rotation.y += fallSpeed;
+    } else {
+      // SINKING: Move the internal geometry up to simulate rising bubbles
+      points.current.position.y += 0.5; 
+      points.current.rotation.y += 0.01; 
+    }
   });
 
   return (
@@ -37,7 +48,8 @@ const FallingGrit: React.FC<FallingGritProps> = ({ active, progress }) => {
         size={0.18} 
         color="#00ffff" 
         transparent 
-        opacity={active ? Math.min(0.8, (progress - 0.5) * 4) : 0} 
+        opacity={active ? Math.min(0.8, (progress - 0.6)  * 2) : 0}
+        // opacity={active ? 0.8 : 0}
         blending={THREE.AdditiveBlending} 
       />
     </points>
@@ -57,28 +69,56 @@ const LeapContent: React.FC<{ progress: number; step: any }> = ({ progress, step
     const isFalling = progress > EDGE_THRESHOLD;
     
     if (!isFalling) {
-      // PHASE: Walking the path. "WITNESSING" starts at viewport bottom
+      // Walking the path. "WITNESSING" starts at viewport bottom
       const walkProgress = progress / EDGE_THRESHOLD;
       const walkZ = 12 - (walkProgress * pathLength); 
       state.camera.position.set(0, 1.8, walkZ);
-      state.camera.lookAt(0, 1.8, -100);
     } else {
-      // PHASE: The Long Fall. Camera pitches down and accelerates
+      // The Long Fall. Camera pitches down and accelerates
       const fallFactor = (progress - EDGE_THRESHOLD) / (1 - EDGE_THRESHOLD);
-      const pitch = Math.pow(fallFactor, 1.2) * (Math.PI / 1.5);
-      const diveDepth = Math.pow(fallFactor, 2.5) * -450; // Massively deep dive
+      const pitch = fallFactor * (Math.PI / 2.1);
+      const diveDepth = Math.pow(fallFactor, 2) * -750; // Massively deep dive
+      const sinkingExtra = progress > 0.95 ? (progress - 0.95) * -100 : 0;
       
       state.camera.rotation.x = -pitch;
-      state.camera.position.y = 1.8 + diveDepth;
-      state.camera.position.z = 12 - pathLength - (fallFactor * 40);
+      state.camera.position.y = 1.8 + diveDepth + sinkingExtra;
+
+      if (splashRef.current && splashRef.current.material instanceof THREE.MeshBasicMaterial) {
+        // Make the flash more violent right at the end
+        const isSinking = progress > 0.92;
+        const splashOpacity = progress > 0.92 ? (progress - 0.92) * 12 : 0; 
+        splashRef.current.material.opacity = Math.min(1, splashOpacity);
+
+        if (isSinking) {
+          // LOCK TO CAMERA: Move the plane so it's always 1 unit in front of the lens
+          splashRef.current.position.copy(state.camera.position);
+          splashRef.current.quaternion.copy(state.camera.quaternion);
+          splashRef.current.translateZ(-1); 
+        }
+      }
+
+      const forwardMomentum = pathLength + (fallFactor * 60);
+      state.camera.position.z = 12 - forwardMomentum;
       
       // Turbulence shake
-      state.camera.position.x = (Math.random() - 0.5) * 0.25 * fallFactor;
+      state.camera.position.x = (Math.random() - 0.5) * 0.15 * fallFactor;
     }
 
     // THE WATER SPLASH: Blue-out occurs at the very end of the fall
+    // if (splashRef.current) {
+    //   // stay exactly in front of the camera lens
+    //   splashRef.current.position.copy(state.camera.position);
+    //   splashRef.current.quaternion.copy(state.camera.quaternion);
+    //   splashRef.current.translateZ(-1); // Move it 1 unit in front of the "glass"
+  
+    //   // Update opacity as you already have
+    //   if (splashRef.current.material instanceof THREE.MeshBasicMaterial) {
+    //     const splashOpacity = progress > 0.85 ? (progress - 0.85) * 6.6 : 0;
+    //     splashRef.current.material.opacity = Math.min(1, splashOpacity);
+    //   }
+    // }
     if (splashRef.current && splashRef.current.material instanceof THREE.MeshBasicMaterial) {
-      const splashOpacity = progress > 0.96 ? (progress - 0.96) * 25 : 0;
+      const splashOpacity = progress > 0.85 ? (progress - 0.85) * 6.6 : 0;
       splashRef.current.material.opacity = Math.min(1, splashOpacity);
     }
   });
@@ -86,8 +126,8 @@ const LeapContent: React.FC<{ progress: number; step: any }> = ({ progress, step
   return (
     <>
       <color attach="background" args={['#000000']} />
-      <FallingGrit active={progress > 0.45} progress={progress} />
-      <Stars radius={150} depth={50} count={7000} factor={4} fade speed={2} />
+      <FallingGrit active={true} progress={progress} />
+      <Stars radius={300} depth={100} count={10000} factor={6} saturation={0} fade speed={2} />
 
       {words.map((word: string, i: number) => {
         const wordZ = -i * 14; 
@@ -113,8 +153,8 @@ const LeapContent: React.FC<{ progress: number; step: any }> = ({ progress, step
       </mesh>
 
       {/* SPLASH OVERLAY: Bridge to the Underwater scene */}
-      <mesh ref={splashRef} position={[0, 0, -5]}>
-        <planeGeometry args={[100, 100]} />
+      <mesh ref={splashRef} position={[0, -550, -5]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[500, 500]} />
         <meshBasicMaterial color="#003366" transparent opacity={0} />
       </mesh>
 
