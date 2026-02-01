@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { logger } from '../utils/logger';
 import SocialMatrix from './SocialMatrix'
 import TimelineManager from './AboutMe/TimelineManager';
+import FitCheck from './AboutMe/FitCheck';
 
 export default function NeuralExperience({ region, onExit, onNavigate, lightMode }) {
   // Use a ref to target the scrollable div
@@ -44,9 +45,11 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
       
       {/* Attach the ref here to allow programmatic scrolling */}
       <div className="portal-scroll-area" ref={scrollRef}>
-        <div className="container-inner">
-          <h1 className="portal-title" style={{ textAlign: 'center', marginBottom: '4vh' }}>{region.label}</h1>
-        </div>
+        {region.id !== 'fit_check' && (
+          <div className="container-inner">
+            <h1 className="portal-title" style={{ textAlign: 'center', marginBottom: '4vh' }}>{region.label}</h1>
+          </div>
+        )}
           
         {region.id === 'passion' ? (
           <div className="container-inner">
@@ -54,6 +57,8 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
           </div>
         ) : region.id === 'action' ? (
             <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
+        ) : region.id === 'fit_check' ? ( 
+            <FitCheck onExit={onExit} lightMode={lightMode} />
         ) : (
           <div className="container-inner">
             <div className="placeholder-text">{`Initializing ${region.id} module...`}</div>

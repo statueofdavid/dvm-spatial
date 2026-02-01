@@ -3,7 +3,12 @@ import { storySteps } from '../../data/StorySteps';
 import SceneDirector from './SceneDirector';
 import ScrollGuide from './ScrollGuide';
 
-const TimelineManager: React.FC = () => {
+interface TimelineManagerProps {
+  lightMode: boolean;
+  onNavigate: (id: string) => void;
+}
+
+const TimelineManager: React.FC<TimelineManagerProps> = ({ lightMode, onNavigate }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const ticking = useRef(false);
 
@@ -75,7 +80,12 @@ const TimelineManager: React.FC = () => {
     const nextStep = (isInOverlap && index < storySteps.length - 1) ? storySteps[index + 1] : null;
     const transitionProgress = nextStep ? (progress - OVERLAP_THRESHOLD) / (1 - OVERLAP_THRESHOLD) : 0;
 
-    return { currentStep: storySteps[index], nextStep, progress, transitionProgress };
+    return { 
+      currentStep: storySteps[index], 
+      nextStep, 
+      progress, 
+      transitionProgress 
+    };
   };
 
   const { currentStep, progress, nextStep, transitionProgress } = getActiveData(scrollProgress);
@@ -86,7 +96,8 @@ const TimelineManager: React.FC = () => {
         currentStep={currentStep} 
         progress={progress} 
         nextStep={nextStep} 
-        transitionProgress={transitionProgress} 
+        transitionProgress={transitionProgress}
+        onNavigate={onNavigate} 
       />
       <ScrollGuide scrollProgress={scrollProgress} />
       

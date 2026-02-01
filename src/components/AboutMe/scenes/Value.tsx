@@ -47,7 +47,7 @@ const UnderwaterMosaicShader = {
 
 // --- PARTICLES ---
 
-// 1. Large "Jellyfish" Bubbles (Slow, wobbling)
+// Large "Jellyfish" Bubbles (Slow, wobbling)
 const MacroBubbles: React.FC<{ progress: number }> = ({ progress }) => {
   const count = 60;
   const meshRef = useRef<THREE.InstancedMesh>(null);
@@ -94,7 +94,7 @@ const MacroBubbles: React.FC<{ progress: number }> = ({ progress }) => {
   );
 };
 
-// 2. Tiny "Fizz" Bubbles (Fast, upward streams)
+// Tiny "Fizz" Bubbles (Fast, upward streams)
 const MicroBubbles: React.FC<{ progress: number }> = ({ progress }) => {
   const count = 400;
   const pointsRef = useRef<THREE.Points>(null);
@@ -290,7 +290,7 @@ const ValueContent: React.FC<{ progress: number; step: any }> = ({ progress, ste
 const Value: React.FC<{ progress: number; step: any }> = ({ progress, step }) => {
   if (!step) return null;
   return (
-    // FIX APPLIED: pointerEvents: 'none' on container and canvas ensuring scroll pass-through
+    // 'none' on container and canvas ensuring scroll pass-through
     <div className="value-canvas-container" style={{ width: '100vw', height: '100vh', pointerEvents: 'none' }}>
       <Canvas 
         dpr={[1, 2]} 

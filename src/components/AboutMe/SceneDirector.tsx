@@ -15,6 +15,7 @@ interface SceneDirectorProps {
   progress: number;
   nextStep?: StoryStep | null;
   transitionProgress?: number;
+  onNavigate: (id: string) => void;
 }
 
 const SceneMap: Partial<Record<SceneType, React.FC<any>>> = {
@@ -27,7 +28,7 @@ const SceneMap: Partial<Record<SceneType, React.FC<any>>> = {
   MIRROR: Mirror,
 };
 
-const SceneDirector: React.FC<SceneDirectorProps> = ({ currentStep, progress, nextStep, transitionProgress = 0 }) => {
+const SceneDirector: React.FC<SceneDirectorProps> = ({ currentStep, progress, nextStep, transitionProgress = 0, onNavigate }) => {
   const ActiveScene = SceneMap[currentStep.scene];
   const NextScene = (nextStep && nextStep.scene) ? SceneMap[nextStep.scene] : null;
 

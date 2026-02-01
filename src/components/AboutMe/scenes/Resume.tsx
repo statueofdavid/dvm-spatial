@@ -1,12 +1,17 @@
-// src/components/AboutMe/scenes/Resume.tsx
 import React from 'react';
-import { VscFilePdf, VscCloudDownload } from 'react-icons/vsc';
+import { VscFilePdf, VscCircuitBoard } from 'react-icons/vsc';
 import { StoryStep } from '../../../data/StorySteps';
 
-const Resume: React.FC<{ progress: number; step: StoryStep }> = ({ progress, step }) => {
+interface ResumeProps {
+  progress: number;
+  step: StoryStep;
+  onNavigate: (id: string) => void;
+}
+
+const Resume: React.FC<ResumeProps> = ({ progress, step, onNavigate }) => {
   if (!step) return null;
 
-  // Keeping your "Pixel Perfect" 14" MBP math
+  // Dynamic layering based on scroll progress
   const dynamicPadding = 35 - (progress * 15); 
   const imageLift = progress * -30; 
   const textLift = progress * -80; 
@@ -38,9 +43,17 @@ const Resume: React.FC<{ progress: number; step: StoryStep }> = ({ progress, ste
           <a href="/dvm-resume.pdf" target="_blank" className="resume-btn raised">
             <VscFilePdf /> VIEW_RESUME
           </a>
-          <a href="/dvm-resume.pdf" download className="resume-btn secondary raised">
-            <VscCloudDownload /> DOWNLOAD
-          </a>
+          <button 
+            onClick={() => onNavigate('fit_check')} 
+            className="resume-btn secondary raised"
+            style={{ 
+              border: 'none', 
+              cursor: 'pointer',
+              fontSize: '13px'
+            }}
+          >
+            <VscCircuitBoard /> FIT_CHECK
+          </button>
         </div>
       </div>
     </div>
