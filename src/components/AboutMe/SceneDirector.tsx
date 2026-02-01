@@ -39,7 +39,13 @@ const SceneDirector: React.FC<SceneDirectorProps> = ({ currentStep, progress, ne
     <div className="scene-viewport" style={{ position: 'fixed', inset: 0, zIndex: 3000, pointerEvents: 'none' }}>
       {ActiveScene && (
         <div style={{ opacity: 1 - transitionProgress }}>
-          <ActiveScene progress={progress} step={currentStep} isExiting={!!nextStep} exitFactor={transitionProgress} />
+          <ActiveScene 
+            progress={progress} 
+            step={currentStep} 
+            isExiting={!!nextStep}
+            exitFactor={transitionProgress} 
+            onNavigate={onNavigate}
+          />
         </div>
       )}
       {NextScene && (
