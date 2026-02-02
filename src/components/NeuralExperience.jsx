@@ -16,6 +16,7 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
   }, [region?.id]);
 
   useEffect(() => {
+    if (!region) return;
     // when a specific module is "Entered"
     const startTime = performance.now();
     logger.info(`PORTAL_INIT // ${region.id.toUpperCase()}`, { type: region.type });
@@ -25,7 +26,7 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
       const duration = (performance.now() - startTime) / 1000;
       logger.debug(`PORTAL_TERMINATED // ${region.id.toUpperCase()}`, { dwellTime: `${duration.toFixed(2)}s` });
     };
-  }, [region.id]);
+  }, [region?.id]);
 
   // when navigation occurs 
   const handleInternalNavigate = (id) => {

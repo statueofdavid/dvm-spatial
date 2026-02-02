@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { VscArrowLeft } from 'react-icons/vsc';
 import { logger } from '../../utils/logger';
+import './AboutMeTimeline.css';
 
 // Types defining our semantic structure
 interface Question {

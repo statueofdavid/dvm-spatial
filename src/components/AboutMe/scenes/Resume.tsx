@@ -45,7 +45,7 @@ const Resume: React.FC<ResumeProps> = ({ progress, step, onNavigate }) => {
           </a>
           <button 
             onClick={() => onNavigate('fit_check')} 
-            className="resume-btn secondary raised"
+            className="resume-btn raised"
             style={{ 
               border: 'none', 
               cursor: 'pointer',
