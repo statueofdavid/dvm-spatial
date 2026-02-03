@@ -3,38 +3,46 @@ import { logger } from '../../utils/logger';
 import './AboutMeTimeline.css';
 
 // Define the User Buckets
-type UserBucket = 'RECRUITER' | 'MANAGER' | 'CLIENT' | null;
+type UserBucket = 'MOBILE' | 'WEB' | 'TEST' | 'INFRA' | 'CREATE' | null;
 
 interface Question {
-  id: string; // Changed to string for better tracking (e.g., 'recruiter_q1')
+  id: string; // Changed to string for better tracking (e.g., 'mobile_q1')
   text: string;
   options: string[];
 }
 
-// 2. The Router Question (Always appears first)
+// The Router Question
 const ROUTER_QUESTION: Question = {
   id: 'router',
   text: "What gaps need to be bridged?",
   options: [
     "Mobile Tactical Awareness", 
-    "Creative Web Experiences",  
+    "Creative Cross Platform Experiences",  
     "Testing and Delivery",
     "Digital Infrastructure",
     "Something New and Experimental"     
   ]
 };
 
-// 3. The Question Matrix
+// The Question Matrix
 const QUESTION_BANK: Record<string, Question[]> = {
-  RECRUITER: [
-    { id: 'r_stack', text: "What gaps need to be bridged?", options: ["A Mobile Experience", "A"] },
+  MOBILE: [
+    { id: 'r_stack', text: "What   ", options: ["A Mobile Experience", "A"] },
     { id: 'r_timeline', text: "What is the expected time-to-hire?", options: ["Immediate (<2 weeks)", "Standard (1 month)", "Pipeline Building"] },
   ],
-  MANAGER: [
+  WEB: [
     { id: 'm_conflict', text: "A senior dev pushes code that works but breaks style guidelines. You:", options: ["Merge & Refactor Later", "Block & Request Changes"] },
     { id: 'm_velocity', text: "How do you measure team velocity?", options: ["Story Points", "Impact/Outcome", "Lines of Code"] },
   ],
-  CLIENT: [
+  TEST: [
+    { id: 'c_vision', text: "How defined is your project scope?", options: ["I have a full spec", "I have a rough dream", "I need you to define it"] },
+    { id: 'c_budget', text: "Does the budget allow for experimental R&D?", options: ["Yes, innovation first", "No, efficiency first"] },
+  ],
+  INFRA: [
+    { id: 'c_vision', text: "How defined is your project scope?", options: ["I have a full spec", "I have a rough dream", "I need you to define it"] },
+    { id: 'c_budget', text: "Does the budget allow for experimental R&D?", options: ["Yes, innovation first", "No, efficiency first"] },
+  ],
+  CREATE: [
     { id: 'c_vision', text: "How defined is your project scope?", options: ["I have a full spec", "I have a rough dream", "I need you to define it"] },
     { id: 'c_budget', text: "Does the budget allow for experimental R&D?", options: ["Yes, innovation first", "No, efficiency first"] },
   ]
