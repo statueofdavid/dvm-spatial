@@ -59,7 +59,7 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
         ) : region.id === 'action' ? (
             <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
         ) : region.id === 'fit_check' ? ( 
-            <FitCheck onExit={onExit} lightMode={lightMode} />
+            <FitCheck onExit={onExit} lightMode={lightMode} onNavigate={onNavigate} />
         ) : (
           <div className="container-inner">
             <div className="placeholder-text">{`Initializing ${region.id} module...`}</div>
