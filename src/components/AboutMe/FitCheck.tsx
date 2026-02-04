@@ -1,5 +1,16 @@
+// src/components/AboutMe/FitCheck.tsx
 import React, { useState } from 'react';
-import { VscFilePdf, VscDebugRestart, VscHistory } from 'react-icons/vsc';
+import { 
+  VscFilePdf, 
+  VscDebugRestart, 
+  VscHistory, 
+  VscTerminal, 
+  VscTelescope, 
+  VscRocket, 
+  VscVerified, 
+  VscRadioTower,
+  VscDebugDisconnect
+} from 'react-icons/vsc';
 import { logger } from '../../utils/logger';
 import './AboutMeTimeline.css';
 
@@ -23,7 +34,7 @@ interface Question {
   options: WeightedOption[];
 }
 
-type UserBucket = 'MOBILE' | 'CREATIVE' | 'TESTING' | 'INFRA' | 'EXPERIMENTAL' | null;
+type UserBucket = 'MOBILE' | 'CREATIVE' | 'TESTING' | 'INFRA' | 'EXPERIMENTAL';
 
 // --- DATA CONSTANTS ---
 
@@ -33,43 +44,43 @@ const ROUTER_QUESTION: Question = {
   options: [
     { 
       text: "Mobile Tactical Awareness", 
-      weight: { tech: 10, vision: 6, velocity: 3, experience: 7, affinity: 6 } 
+      weight: { tech: 10, vision: 8, velocity: 5, experience: 9, affinity: 7 } 
     }, 
     { 
       text: "Creative Web Experiences", 
-      weight: { tech: 10, vision: 10, velocity: 5, experience: 10, affinity: 10 } 
+      weight: { tech: 9, vision: 10, velocity: 6, experience: 7, affinity: 10 } 
     },
     { 
       text: "Testing and Delivery", 
-      weight: { tech: 3, vision: 0, velocity: 10, experience: 8, affinity: 4 } 
+      weight: { tech: 8, vision: 4, velocity: 10, experience: 10, affinity: 5 } 
     },
     { 
       text: "Digital Infrastructure", 
-      weight: { tech: 8, vision: 3, velocity: 10, experience: 9, affinity: 7 } 
+      weight: { tech: 9, vision: 5, velocity: 7, experience: 10, affinity: 6 } 
     },
     { 
       text: "Something New and Experimental", 
-      weight: { tech: 10, vision: 10, velocity: 8, experience: 8, affinity: 10 } 
+      weight: { tech: 8, vision: 10, velocity: 8, experience: 8, affinity: 9 } 
     }
   ]
 };
 
-const QUESTION_BANK: Record<string, Question[]> = {
+const QUESTION_BANK: Record<UserBucket, Question[]> = {
   MOBILE: [
     { 
       id: 'mob_platform', text: "The target environment is:", 
       options: [
-        { text: "Cross Platform", weight: { tech: 6, vision: 3, velocity: 10, experience: 8, affinity: 7 } },
-        { text: "Native", weight: { tech: 10, vision: 4, velocity: 2, experience: 5, affinity: 4 } }, 
-        { text: "PWA / Mobile Web", weight: { tech: 8, vision: 6, velocity: 6, experience: 10, affinity: 9 } }
+        { text: "Native Android / Field Hardware", weight: { tech: 10, vision: 7, velocity: 6, experience: 10, affinity: 9 } },
+        { text: "Cross-Platform (React Native)", weight: { tech: 8, vision: 6, velocity: 9, experience: 8, affinity: 7 } }, 
+        { text: "Consumer Mobile Web", weight: { tech: 4, vision: 4, velocity: 7, experience: 5, affinity: 3 } }
       ]
     },
     { 
-      id: 'mob_connectivity', text: "Data synchronization strategy:", 
+      id: 'mob_connectivity', text: "Operational connectivity:", 
       options: [
-        { text: "Real-time / Multiplayer", weight: { tech: 9, vision: 8, velocity: 3, experience: 7, affinity: 10 } },
-        { text: "Offline-first sync", weight: { tech: 8, vision: 6, velocity: 6, experience: 8, affinity: 6 } },
-        { text: "Standard REST API", weight: { tech: 3, vision: 4, velocity: 10, experience: 10, affinity: 5 } }
+        { text: "Offline / Mesh / Tactical", weight: { tech: 10, vision: 10, velocity: 4, experience: 9, affinity: 10 } },
+        { text: "Real-time Cloud Sync", weight: { tech: 7, vision: 6, velocity: 8, experience: 7, affinity: 6 } },
+        { text: "Standard API Polling", weight: { tech: 3, vision: 2, velocity: 10, experience: 10, affinity: 2 } }
       ]
     }
   ],
@@ -77,17 +88,17 @@ const QUESTION_BANK: Record<string, Question[]> = {
     { 
       id: 'cr_fidelity', text: "Visual output priority:", 
       options: [
-        { text: "High-end WebGL / Shaders", weight: { tech: 10, vision: 10, velocity: 6, experience: 9, affinity: 10 } },
-        { text: "Clean Micro-interactions", weight: { tech: 5, vision: 3, velocity: 8, experience: 10, affinity: 8 } },
-        { text: "Static / Informational", weight: { tech: 2, vision: 1, velocity: 10, experience: 10, affinity: 3 } }
+        { text: "High-end WebGL / Narrative", weight: { tech: 10, vision: 10, velocity: 5, experience: 8, affinity: 10 } },
+        { text: "Clean Micro-interactions", weight: { tech: 6, vision: 5, velocity: 8, experience: 7, affinity: 7 } },
+        { text: "Static / Informational", weight: { tech: 2, vision: 1, velocity: 10, experience: 4, affinity: 1 } }
       ]
     },
     { 
       id: 'cr_assets', text: "Creative asset pipeline:", 
       options: [
-        { text: "Assets provided, ready to code", weight: { tech: 5, vision: 3, velocity: 10, experience: 10, affinity: 9 } },
-        { text: "Need design & creation from scratch", weight: { tech: 9, vision: 10, velocity: 5, experience: 8, affinity: 10 } },
-        { text: "Stock assets / Standard UI", weight: { tech: 1, vision: 1, velocity: 10, experience: 10, affinity: 2 } }
+        { text: "Assets provided, ready to code", weight: { tech: 5, vision: 4, velocity: 10, experience: 9, affinity: 6 } },
+        { text: "Need procedural / Generative", weight: { tech: 9, vision: 10, velocity: 6, experience: 7, affinity: 10 } },
+        { text: "Stock assets / Standard UI", weight: { tech: 1, vision: 1, velocity: 10, experience: 5, affinity: 1 } }
       ]
     }
   ],
@@ -95,17 +106,17 @@ const QUESTION_BANK: Record<string, Question[]> = {
     { 
       id: 'qa_culture', text: "Current testing suite status:", 
       options: [
-        { text: "Non-existent, need a pioneer", weight: { tech: 7, vision: 10, velocity: 7, experience: 6, affinity: 8 } },
-        { text: "Robust CI/CD exists", weight: { tech: 10, vision: 3, velocity: 10, experience: 8, affinity: 7 } },
-        { text: "Manual QA only", weight: { tech: 1, vision: 2, velocity: 10, experience: 10, affinity: 1 } }
+        { text: "Non-existent / Needs Architect", weight: { tech: 10, vision: 8, velocity: 6, experience: 10, affinity: 8 } },
+        { text: "Exists, needs optimization", weight: { tech: 7, vision: 5, velocity: 10, experience: 9, affinity: 6 } },
+        { text: "Manual QA only", weight: { tech: 2, vision: 2, velocity: 2, experience: 5, affinity: 2 } }
       ]
     },
     { 
       id: 'qa_scale', text: "Deployment frequency target:", 
       options: [
-        { text: "Multiple times per day", weight: { tech: 10, vision: 10, velocity: 10, experience: 7, affinity: 9 } },
-        { text: "Bi-weekly sprints", weight: { tech: 7, vision: 7, velocity: 8, experience: 10, affinity: 7 } },
-        { text: "Quarterly releases", weight: { tech: 4, vision: 4, velocity: 4, experience: 10, affinity: 4 } }
+        { text: "Continuous / Multiple per day", weight: { tech: 10, vision: 8, velocity: 10, experience: 9, affinity: 8 } },
+        { text: "Bi-weekly sprints", weight: { tech: 6, vision: 5, velocity: 7, experience: 10, affinity: 6 } },
+        { text: "Quarterly releases", weight: { tech: 3, vision: 2, velocity: 3, experience: 4, affinity: 3 } }
       ]
     }
   ],
@@ -113,17 +124,17 @@ const QUESTION_BANK: Record<string, Question[]> = {
     { 
       id: 'inf_scale', text: "System load expectations:", 
       options: [
-        { text: "Massive concurrent user spikes", weight: { tech: 10, vision: 10, velocity: 1, experience: 6, affinity: 8 } },
-        { text: "Complex Graph / Data Relations", weight: { tech: 9, vision: 8, velocity: 3, experience: 8, affinity: 9 } },
-        { text: "Standard CRUD operations", weight: { tech: 3, vision: 3, velocity: 10, experience: 10, affinity: 5 } }
+        { text: "Massive scale / High Uptime", weight: { tech: 10, vision: 6, velocity: 4, experience: 10, affinity: 7 } },
+        { text: "Complex Physical/Digital Link", weight: { tech: 9, vision: 9, velocity: 5, experience: 9, affinity: 9 } },
+        { text: "Internal Tool / Low Traffic", weight: { tech: 4, vision: 2, velocity: 9, experience: 8, affinity: 4 } }
       ]
     },
     { 
       id: 'inf_stack', text: "Backend philosophy:", 
       options: [
-        { text: "Serverless / Edge Functions", weight: { tech: 9, vision: 7, velocity: 9, experience: 9, affinity: 10 } },
-        { text: "Containerized Microservices", weight: { tech: 7, vision: 6, velocity: 7, experience: 7, affinity: 7 } },
-        { text: "Monolithic Legacy", weight: { tech: 3, vision: 2, velocity: 4, experience: 8, affinity: 2 } }
+        { text: "Cloud Native / Serverless", weight: { tech: 9, vision: 7, velocity: 9, experience: 8, affinity: 8 } },
+        { text: "Edge / On-Prem / Hybrid", weight: { tech: 10, vision: 5, velocity: 4, experience: 10, affinity: 6 } },
+        { text: "Monolithic Legacy", weight: { tech: 3, vision: 1, velocity: 3, experience: 9, affinity: 2 } }
       ]
     }
   ],
@@ -131,20 +142,92 @@ const QUESTION_BANK: Record<string, Question[]> = {
     { 
       id: 'exp_ambiguity', text: "How defined is the end goal?", 
       options: [
-        { text: "Problem known, solution unknown", weight: { tech: 9, vision: 10, velocity: 7, experience: 8, affinity: 10 } },
-        { text: "Rough prototype to refine", weight: { tech: 8, vision: 8, velocity: 8, experience: 9, affinity: 9 } },
-        { text: "Just chasing a buzzword", weight: { tech: 2, vision: 1, velocity: 5, experience: 5, affinity: 2 } }
+        { text: "Problem known, solution unknown", weight: { tech: 9, vision: 10, velocity: 6, experience: 8, affinity: 10 } },
+        { text: "Rough prototype to refine", weight: { tech: 8, vision: 8, velocity: 9, experience: 9, affinity: 9 } },
+        { text: "Just chasing a buzzword", weight: { tech: 1, vision: 0, velocity: 4, experience: 2, affinity: 0 } }
       ]
     },
     { 
       id: 'exp_risk', text: "Failure consequence:", 
       options: [
-        { text: "Pivot and learn (R&D Budget)", weight: { tech: 9, vision: 9, velocity: 9, experience: 9, affinity: 10 } },
-        { text: "Project cancelled", weight: { tech: 5, vision: 5, velocity: 4, experience: 10, affinity: 5 } },
-        { text: "Termination", weight: { tech: 1, vision: 1, velocity: 1, experience: 10, affinity: 0 } }
+        { text: "Mission Critical / Must adapt", weight: { tech: 10, vision: 8, velocity: 5, experience: 10, affinity: 9 } },
+        { text: "Pivot and learn (R&D Budget)", weight: { tech: 7, vision: 10, velocity: 8, experience: 6, affinity: 8 } },
+        { text: "Project cancelled", weight: { tech: 4, vision: 2, velocity: 4, experience: 4, affinity: 3 } }
       ]
     }
   ]
+};
+
+// --- SEMANTIC RESULT MATRIX (The "Quips") ---
+const RESULT_MATRIX: Record<string, Record<keyof WeightVector, string>> = {
+  MOBILE: {
+    tech: "You need native performance. I've ported complex tactical stacks from React Native to Native Android to ensure field agents never lose a frame.",
+    vision: "You need tactical awareness. I specialize in bridging the gap between IoT devices and mobile interfaces in mission-critical environments.",
+    velocity: "You need to move fast. My background in React Native allows for rapid prototyping without sacrificing the option to drop to native code.",
+    experience: "You need a veteran. I've navigated the chaotic shift from legacy mobile frameworks to modern native architectures.",
+    affinity: "We both believe the device in the pocket is the ultimate edge node."
+  },
+  CREATIVE: {
+    tech: "Beauty needs a backbone. I apply the same rigorous engineering standards to WebGL that I applied to warehouse logistics systems.",
+    vision: "You have a big idea. I specialize in quantizing complex narratives into procedural 3D clarity.",
+    velocity: "Prototyping is the only way to find the fun. I move from 'Rough Concept' to 'Interactive Experience' at the speed of thought.",
+    experience: "I don't just build pretty demos. I build production-ready systems that can handle real-world scale.",
+    affinity: "We share the conviction that the web is a spatial canvas, not just a document reader."
+  },
+  TESTING: {
+    tech: "Efficiency is an engineering discipline. I've increased test execution efficiency by 40% using custom AWS CodePipe integrations.",
+    vision: "Quality Assurance is about foresight. I build systems that predicted and prevented release failures by 10% in complex agile environments.",
+    velocity: "Slow tests kill momentum. I spearheaded pipelines that slashed testing time by 30%, keeping the release train moving.",
+    experience: "I've managed 200+ releases across multiple agile teams. I know exactly where the bottlenecks hide.",
+    affinity: "We both sleep better knowing the green checkmark actually means 'safe'."
+  },
+  INFRA: {
+    tech: "You're building for reliability. I maintained a 99.9% uptime across 20 production sites. I take stability personally.",
+    vision: "Infrastructure is the invisible narrative. I design systems that support massive physical/digital throughput without breaking character.",
+    velocity: "You need to scale fast. I've optimized retrieval system integrations to reduce project cycles by 20%.",
+    experience: "I've conducted F.A.T. events for major warehousing projects. I know the stakes when software meets the physical world.",
+    affinity: "We value the unseen architecture that makes the visible world possible."
+  },
+  EXPERIMENTAL: {
+    tech: "Experiments fail without rigorous code. I apply standard engineering discipline to non-standard problems, ensuring your R&D yields usable IP.",
+    vision: "We are walking off the map. This is my natural habitat—bridging the gap between 'Impossible' and 'MVP'.",
+    velocity: "Fail fast, learn faster. I iterate on novel concepts at the speed of thought, backed by a decade of engineering rigor.",
+    experience: "I've turned vague R&D briefs into deployed tactical solutions. Ambiguity is where I thrive.",
+    affinity: "We both prefer the map edges to the safe roads."
+  },
+  DEFAULT: {
+    tech: "You value deep technical grit. My work on complex JNI integrations is the solution you're looking for.",
+    vision: "You value narrative clarity. I turn raw data into semantic visual stories.",
+    velocity: "You value speed. I reduce friction in the release process so we can ship value sooner.",
+    experience: "You need a steady hand. I’ve managed go-live events for major warehousing and network projects.",
+    affinity: "We share a philosophy that code is a means to a human end."
+  }
+};
+
+// --- HELPER: GET RESONANCE ICON ---
+const getResonanceIcon = (dominantVector: keyof WeightVector, fitPercentage: number) => {
+  if (fitPercentage < 45) return <VscDebugDisconnect size={140} color="#ff810a" />;
+
+  switch (dominantVector) {
+    case 'tech': return <VscTerminal size={140} color="#ff810a" />;
+    case 'vision': return <VscTelescope size={140} color="#ff810a" />;
+    case 'velocity': return <VscRocket size={140} color="#ff810a" />;
+    case 'experience': return <VscVerified size={140} color="#ff810a" />;
+    case 'affinity': return <VscRadioTower size={140} color="#ff810a" />;
+    default: return <VscVerified size={140} color="#ff810a" />;
+  }
+};
+
+// --- HELPER: GET RESULT QUIP ---
+const getResultQuip = (
+  bucket: UserBucket | null, 
+  dominantVector: keyof WeightVector, 
+  percentage: number
+): string => {
+  if (percentage < 45) return "Our protocols might be out of sync. But friction often sparks the best R&D. Perhaps we bridge the gap?";
+
+  const category = bucket ? RESULT_MATRIX[bucket] : RESULT_MATRIX.DEFAULT;
+  return category?.[dominantVector] || RESULT_MATRIX.DEFAULT[dominantVector];
 };
 
 // --- COMPONENT LOGIC ---
@@ -157,7 +240,7 @@ interface FitCheckProps {
 
 export default function FitCheck({ onExit, onNavigate, lightMode }: FitCheckProps) {
   const [viewState, setViewState] = useState<'intro' | 'active' | 'calculating' | 'result'>('intro');
-  const [bucket, setBucket] = useState<UserBucket>(null);
+  const [bucket, setBucket] = useState<UserBucket | null>(null);
   const [activeQuestions, setActiveQuestions] = useState<Question[]>([ROUTER_QUESTION]);
   const [currentStep, setCurrentStep] = useState(0);
   
@@ -176,7 +259,6 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: FitCheckProp
 
   const handleRetry = () => {
     logger.info("FIT_CHECK // SESSION_RESET");
-    // Reset all state to defaults
     setBucket(null);
     setActiveQuestions([ROUTER_QUESTION]);
     setCurrentStep(0);
@@ -185,7 +267,13 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: FitCheckProp
     setViewState('intro');
   };
 
+  // --- SAFE GUARDED ANSWER HANDLER ---
   const handleAnswer = (option: WeightedOption) => {
+    if (!option || !option.weight) {
+      logger.error("FIT_CHECK // CRITICAL: Invalid option passed to handler", option);
+      return; 
+    }
+
     const newScore = {
       tech: totalScore.tech + option.weight.tech,
       vision: totalScore.vision + option.weight.vision,
@@ -195,17 +283,27 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: FitCheckProp
     };
     setTotalScore(newScore);
 
+    // Router Logic
     if (currentStep === 0 && bucket === null) {
-      let selected: UserBucket = 'EXPERIMENTAL'; 
+      let selected: UserBucket = 'EXPERIMENTAL'; // Default fallback
       
-      if (option.text.includes("Mobile")) selected = 'MOBILE';
-      else if (option.text.includes("Creative")) selected = 'CREATIVE';
-      else if (option.text.includes("Testing")) selected = 'TESTING';
-      else if (option.text.includes("Infrastructure")) selected = 'INFRA';
-      else if (option.text.includes("Something New")) selected = 'EXPERIMENTAL';
+      const txt = option.text || "";
+      if (txt.includes("Mobile")) selected = 'MOBILE';
+      else if (txt.includes("Creative")) selected = 'CREATIVE';
+      else if (txt.includes("Testing")) selected = 'TESTING';
+      else if (txt.includes("Infrastructure")) selected = 'INFRA';
+      else if (txt.includes("Something New")) selected = 'EXPERIMENTAL';
       
       setBucket(selected);
-      setActiveQuestions([ROUTER_QUESTION, ...QUESTION_BANK[selected!]]);
+      
+      const nextQuestions = QUESTION_BANK[selected];
+      if (!nextQuestions) {
+        logger.error(`FIT_CHECK // CRITICAL: Bucket ${selected} not found in bank.`);
+        setActiveQuestions([ROUTER_QUESTION]);
+      } else {
+        setActiveQuestions([ROUTER_QUESTION, ...nextQuestions]);
+      }
+
       setCurrentStep(1);
       logger.info(`FIT_CHECK // PATH_SELECTED: ${selected}`);
       return;
@@ -220,17 +318,26 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: FitCheckProp
 
   const calculateFinalFit = (finalScores: WeightVector) => {
     setViewState('calculating');
-    // Max Possible = 3 questions * 5 dims * 10 points = 150
-    const maxPossible = 150;
-    const aggregate = 
-      finalScores.tech + 
-      finalScores.vision + 
-      finalScores.velocity + 
-      finalScores.experience + 
-      finalScores.affinity;
 
-    const percentage = Math.min(100, Math.round((aggregate / maxPossible) * 100));
-    setFitPercentage(percentage);
+    const coreScore = finalScores.tech + finalScores.vision + finalScores.velocity;
+    const boostScore = finalScores.experience + finalScores.affinity;
+
+    const numQuestions = 3; 
+    const maxCorePerQ = 30;   
+    const maxBoostPerQ = 20;  
+    
+    const maxCoreTotal = maxCorePerQ * numQuestions;
+    const maxBoostTotal = maxBoostPerQ * numQuestions;
+
+    const coreRatio = coreScore / maxCoreTotal;    
+    const boostRatio = boostScore / maxBoostTotal; 
+
+    let weightedTotal = (coreRatio * 90) + (boostRatio * 10);
+    if (weightedTotal > 60) weightedTotal += 2; 
+
+    const percentage = Math.min(100, Math.round(weightedTotal));
+    
+    setFitPercentage(percentage || 0); 
 
     setTimeout(() => {
         setViewState('result');
@@ -273,24 +380,34 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: FitCheckProp
   }
 
   if (viewState === 'result') {
+    const dominantVector = (Object.keys(totalScore) as Array<keyof WeightVector>).reduce((a, b) => 
+      totalScore[a] > totalScore[b] ? a : b
+    );
+
+    const dynamicQuip = getResultQuip(bucket, dominantVector, fitPercentage);
+
+    // Get the semantic icon instead of text
+    const ResonanceIcon = getResonanceIcon(dominantVector, fitPercentage);
+
     return (
       <div className={`fit-module-container ${themeClass}`} style={{ color: textColor }}>
         <div className="fit-content-wrapper">
           <span className="fit-label">// ANALYSIS_COMPLETE</span>
-          <h1 className="fit-score-display">{fitPercentage}%</h1>
+          
+          {/* THE HERO IMAGE */}
+          <div style={{ margin: '2rem 0', filter: 'drop-shadow(0 0 20px rgba(255, 129, 10, 0.4))' }}>
+            {ResonanceIcon}
+          </div>
+          
+          <h2 style={{ fontFamily: 'monospace', color: '#ff810a', letterSpacing: '2px', fontSize: '16px', marginTop: '-10px', marginBottom: '30px' }}>
+             {fitPercentage < 45 ? "SIGNAL_LOST" : `${dominantVector.toUpperCase()}_RESONANCE`}
+          </h2>
+
           <p className="fit-score-details">
-            {fitPercentage > 85 ? 
-              "We should probably build something together." :
-              fitPercentage > 60 ?
-              "We may have different philosophies, but when managed that can create something innovative." :
-              "We might solve problems very differently."
-            }
+            {dynamicQuip}
           </p>
           
-          {/* ACTION GRID */}
           <div className="fit-options-grid">
-            
-            {/* RETRY */}
             <button 
               className="fit-option-btn" 
               onClick={handleRetry} 
@@ -299,7 +416,6 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: FitCheckProp
               <VscDebugRestart /> RETRY_SCAN
             </button>
 
-            {/* VIEW RESUME */}
             <a 
               href="/dvm-resume.pdf" 
               target="_blank" 
@@ -309,7 +425,6 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: FitCheckProp
               <VscFilePdf /> VIEW_RESUME
             </a>
 
-            {/* RETURN TO TIMELINE */}
             <button 
               className="resume-btn raised" 
               onClick={() => onNavigate('action')}
@@ -317,7 +432,6 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: FitCheckProp
             >
               <VscHistory /> RETURN_TO_TIMELINE
             </button>
-
           </div>
         </div>
       </div>
