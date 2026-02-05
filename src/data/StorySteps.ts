@@ -69,7 +69,7 @@ export const storySteps: StoryStep[] = [
   { 
     tag: "LEAP", 
     scene: "LEAP", 
-    text: "Witnessing the work of an engineer, I jumped in with both feet." 
+    text: "But then I witnessed the work of an engineer, so I jumped in with both feet." 
   },
   { 
     tag: "VALUE", 

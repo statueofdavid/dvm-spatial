@@ -1,4 +1,3 @@
-// src/components/AboutMe/scenes/Forge.tsx
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Text, Float, MeshDistortMaterial, Environment, PerspectiveCamera } from '@react-three/drei';
@@ -49,17 +48,17 @@ const ForgeContent: React.FC<{ progress: number; text: string }> = ({ progress, 
     const time = state.clock.elapsedTime;
     const flicker = Math.sin(time * 10) * 0.2 + 0.8;
 
-    // 1. THE FIRE APERTURE: Radial tunnel entrance
-    if (coreRef.current && glowRef.current) {
-      [coreRef.current, glowRef.current].forEach((ring, i) => {
-        ring.scale.set(currentApertureScale, currentApertureScale, 1);
-        ring.rotation.z = time * (i === 0 ? 0.2 : -0.15);
-        if (ring.material instanceof THREE.MeshStandardMaterial) {
-          ring.material.emissiveIntensity = (i === 0 ? 25 : 65) * flicker * (0.5 + progress * 2.5);
-          ring.material.opacity = Math.min(1, progress * 4);
-        }
-      });
-    }
+    // // 1. THE FIRE APERTURE: Radial tunnel entrance
+    // if (coreRef.current && glowRef.current) {
+    //   [coreRef.current, glowRef.current].forEach((ring, i) => {
+    //     ring.scale.set(currentApertureScale, currentApertureScale, 1);
+    //     ring.rotation.z = time * (i === 0 ? 0.2 : -0.15);
+    //     if (ring.material instanceof THREE.MeshStandardMaterial) {
+    //       ring.material.emissiveIntensity = (i === 0 ? 25 : 65) * flicker * (0.5 + progress * 2.5);
+    //       ring.material.opacity = Math.min(1, progress * 4);
+    //     }
+    //   });
+    // }
 
     state.camera.position.set(0, 1.8, 15);
     state.camera.lookAt(0, 1.8, -100);
@@ -128,11 +127,11 @@ const ForgeContent: React.FC<{ progress: number; text: string }> = ({ progress, 
         );
       })}
 
-      {/* THE WHITE END: Blinding exit portal centered in the tunnel */}
+      {/* THE WHITE END: Blinding exit portal centered in the tunnel
       <mesh ref={exitRef} position={[0, 0, -85]}>
         <circleGeometry args={[1, 32]} />
         <meshBasicMaterial color="#ffffff" transparent opacity={0} />
-      </mesh>
+      </mesh> */}
 
       <PerspectiveCamera makeDefault fov={55} />
       <Environment preset="night" />

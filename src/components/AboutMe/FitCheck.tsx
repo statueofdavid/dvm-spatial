@@ -26,21 +26,38 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
 
   if (viewState === 'calculating') return (
     <div className={`fit-module-container ${themeClass}`} style={{ color: textColor }}>
-      <div className="fit-content-wrapper"><div className="fit-loader" /><span className="fit-label">ANALYZING SIGNAL...</span></div>
+      <div className="fit-content-wrapper">
+        <div className="fit-loader" />
+        <span className="fit-label">ANALYZING SIGNAL...</span>
+      </div>
     </div>
   );
 
   if (viewState === 'result') {
     const dominantVector = (Object.keys(totalScore) as Array<keyof WeightVector>).reduce((a, b) => totalScore[a] > totalScore[b] ? a : b);
+    const resultHeader = fitPercentage < 45 ? "PROTOCOL_MISMATCH" : `${dominantVector.toUpperCase()}_RESONANCE`;
+
     return (
       <div className={`fit-module-container ${themeClass}`} style={{ color: textColor }}>
         <div className="fit-content-wrapper">
           <span className="fit-label">// ANALYSIS_COMPLETE</span>
-          <div style={{ margin: '2rem 0', filter: 'drop-shadow(0 0 20px rgba(255, 129, 10, 0.4))' }}>{getResonanceIcon(dominantVector, fitPercentage)}</div>
+          
+          <div style={{ margin: '2rem 0', filter: 'drop-shadow(0 0 20px rgba(255, 129, 10, 0.4))' }}>
+            {getResonanceIcon(dominantVector, fitPercentage)}
+          </div>
+          
+          <h2 style={{ fontFamily: 'monospace', color: '#ff810a', letterSpacing: '2px', fontSize: '16px', marginTop: '-10px', marginBottom: '30px' }}>
+             {resultHeader}
+          </h2>
+
           <p className="fit-score-details">{getResultQuip(bucket, dominantVector, fitPercentage)}</p>
+          
           <div className="fit-options-grid">
             <button className="fit-option-btn" onClick={handleRetry}><VscDebugRestart /> RETRY</button>
-            <button className="resume-btn raised" onClick={() => onNavigate('action')} style={{ border: 'none' }}><VscHistory /> TIMELINE</button>
+            <button className="fit-option-btn" onClick={() => onNavigate('action')}><VscHistory /> TIMELINE</button>
+            <a href="/dvm-resume.pdf" target="_blank" className="resume-btn raised">
+              <VscFilePdf /> VIEW_RESUME
+            </a>
           </div>
         </div>
       </div>
@@ -48,15 +65,34 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
   }
 
   const question = activeQuestions[currentStep];
+  
+  if (!question) return null;
+
   return (
     <div className={`fit-module-container ${themeClass}`} style={{ color: textColor }}>
-      <div className="fit-progress-track"><div className="fit-progress-fill" style={{ width: `${(currentStep / activeQuestions.length) * 100}%` }} /></div>
+      <div className="fit-progress-track">
+        <div className="fit-progress-fill" style={{ width: `${(currentStep / activeQuestions.length) * 100}%` }} />
+      </div>
+      
       <div className="fit-content-wrapper" key={currentStep}>
         <span className="fit-label">{bucket ? `// ${bucket}_SEQ_0${currentStep}` : '// PROTOCOL_SELECTION'}</span>
-        <h2 className="fit-question">{question?.text}</h2>
+        <h2 className="fit-question">{question.text}</h2>
         <div className="fit-options-grid">
-          {question?.options.map((opt, i) => <button key={i} onClick={() => handleAnswer(opt)} className="fit-option-btn">{opt.text}</button>)}
+          {question.options.map((opt, i) => (
+            <button key={i} onClick={() => handleAnswer(opt)} className="fit-option-btn">
+              {opt.text}
+            </button>
+          ))}
         </div>
+      </div>
+
+      <div style={{ position: 'absolute', bottom: '40px', opacity: 0.5 }}>
+        <button 
+            onClick={() => onNavigate('action')} 
+            style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontFamily: 'monospace', fontSize: '12px' }}
+        >
+            [ ABORT_CHECK ]
+        </button>
       </div>
     </div>
   );
