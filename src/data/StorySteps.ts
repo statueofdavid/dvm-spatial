@@ -1,5 +1,3 @@
-// src/data/StorySteps.ts
-
 export type SceneType = 
   | 'RESUME' 
   | 'GALLERY' 
