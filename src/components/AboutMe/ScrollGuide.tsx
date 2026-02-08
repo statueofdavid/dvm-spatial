@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { VscChevronDown } from 'react-icons/vsc';
 
-const ScrollGuide: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) => {
+interface ScrollGuideProps {
+  scrollProgress: number;
+  isFinal?: boolean;
+}
+
+const ScrollGuide: React.FC< ScrollGuideProps > = ({ scrollProgress, isFinal }) => {
   const [show, setShow] = useState(true);
 
   useEffect(() => {
@@ -10,6 +15,8 @@ const ScrollGuide: React.FC<{ scrollProgress: number }> = ({ scrollProgress }) =
     const timer = setTimeout(() => setShow(true), 2500); // Fade in after pause
     return () => clearTimeout(timer);
   }, [scrollProgress]);
+
+  if (isFinal) return null;
 
   // Teleport the component to the very top of the DOM tree
   return ReactDOM.createPortal(

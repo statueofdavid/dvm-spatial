@@ -30,6 +30,7 @@ const TimelineManager: React.FC<TimelineManagerProps> = ({ lightMode, onNavigate
 
   const stepHeight = 1600; 
   const slowStepHeight = 4800; // Forge, Value, Control, Mirror
+  const futureStepHeight  = 6000;
   const leapStepHeight = 8200; // The Abyss Fall
 
   const getActiveData = (scroll: number) => {
@@ -44,6 +45,7 @@ const TimelineManager: React.FC<TimelineManagerProps> = ({ lightMode, onNavigate
     const h5 = h4 + slowStepHeight; // CONTROL
     const h6 = h5 + slowStepHeight; // MIRROR 1
     const h7 = h6 + slowStepHeight; // MIRROR 2
+    const h8 = h7 + futureStepHeight;
     
     // DETERMINE CURRENT INDEX
     if (scroll < h0) index = 0;
@@ -54,6 +56,7 @@ const TimelineManager: React.FC<TimelineManagerProps> = ({ lightMode, onNavigate
     else if (scroll < h5) index = 5;
     else if (scroll < h6) index = 6;
     else if (scroll < h7) index = 7;
+    else if (scroll < h8) index = 8;
     else index = storySteps.length - 1;
 
     // START POINT SELECTION
@@ -67,11 +70,18 @@ const TimelineManager: React.FC<TimelineManagerProps> = ({ lightMode, onNavigate
       case 5: start = h4; break;
       case 6: start = h5; break;
       case 7: start = h6; break;
-      default: start = h7 + (index - 8) * stepHeight;
+      case 8: start = h7; break;
+      default: start = h7 + (index - 9) * stepHeight;
     }
 
     // PROGRESS & TRANSITION
-    const currentStepHeight = index === 3 ? leapStepHeight : (index >= 1 && index <= 7) ? slowStepHeight : stepHeight;
+    // const currentStepHeight = index === 3 ? leapStepHeight : (index >= 1 && index <= 7) ? slowStepHeight : stepHeight;
+    const currentStepHeight = 
+    index === 3 ? leapStepHeight : 
+    index === 8 ? futureStepHeight :
+    (index >= 1 && index <= 7) ? slowStepHeight : 
+    stepHeight;
+
     const progress = Math.max(0, Math.min(1, (scroll - start) / currentStepHeight));
 
     // reduces the time two heavy scenes are active simultaneously
@@ -84,11 +94,12 @@ const TimelineManager: React.FC<TimelineManagerProps> = ({ lightMode, onNavigate
       currentStep: storySteps[index], 
       nextStep, 
       progress, 
-      transitionProgress 
+      transitionProgress,
+      isFinal: !!storySteps[index].isFinal
     };
   };
 
-  const { currentStep, progress, nextStep, transitionProgress } = getActiveData(scrollProgress);
+  const { currentStep, progress, nextStep, transitionProgress, isFinal } = getActiveData(scrollProgress);
 
   return (
     <div className="timeline-parallax-container">
@@ -99,10 +110,13 @@ const TimelineManager: React.FC<TimelineManagerProps> = ({ lightMode, onNavigate
         transitionProgress={transitionProgress}
         onNavigate={onNavigate} 
       />
-      <ScrollGuide scrollProgress={scrollProgress} />
+      <ScrollGuide 
+        scrollProgress={scrollProgress} 
+        isFinal={currentStep.isFinal}  
+      />
       
       {/* TOTAL HEIGHT: IDENTITY(1) + GALLERY(1) + FORGE(1) + LEAP(1) + VALUE(1) + CONTROL(1) + MIRROR(2) + FUTURE(1) */}
-      <div style={{ height: `${stepHeight + (slowStepHeight * 6) + leapStepHeight + (stepHeight * (storySteps.length - 8))}px` }}></div>
+      <div style={{ height: `${stepHeight + (slowStepHeight * 6) + leapStepHeight + futureStepHeight + (stepHeight * (storySteps.length - 9))}px` }}></div>
     </div>
   );
 };

@@ -8,6 +8,7 @@ import Leap from './scenes/Leap';
 import Value from './scenes/Value';
 import Control from './scenes/Control';
 import Mirror from './scenes/Mirror';
+import Future from './scenes/Future';
 import "./AboutMeTimeline.css"
 
 interface SceneDirectorProps {
@@ -21,11 +22,12 @@ interface SceneDirectorProps {
 const SceneMap: Partial<Record<SceneType, React.FC<any>>> = {
   RESUME: Resume,
   GALLERY: Gallery,
-  FORGE: Forge,
-  LEAP: Leap,
-  VALUE: Value,
-  CONTROL: Control,
-  MIRROR: Mirror,
+  // FORGE: Forge,
+  // LEAP: Leap,
+  // VALUE: Value,
+  // CONTROL: Control,
+  // MIRROR: Mirror,
+  FUTURE: Future,
 };
 
 const SceneDirector: React.FC<SceneDirectorProps> = ({ currentStep, progress, nextStep, transitionProgress = 0, onNavigate }) => {
