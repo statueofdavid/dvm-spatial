@@ -181,11 +181,6 @@
   overflow: visible; 
 }
 
-.exit-view-button, .light-mode-button {
-  z-index: 4000 !important; /* Higher than SceneDirector's 3000 */
-  position: fixed;
-}
-
 /* --- FORGE OVERHAUL STYLES --- */
 .forge-canvas-container, .leap-canvas-container {
   position: absolute;

@@ -19,7 +19,7 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
       <header className="portal-header" style={{ position: 'relative', zIndex: 10000 }}>
         <div className="container-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {/* This flex container ensures buttons stay on the same horizontal plane */}
-          <button className="portal-exit" onClick={onExit}>[ EXIT_VIEW ]</button>
+          <button className="portal-exit exit-view-button" onClick={onExit}>[ EXIT_VIEW ]</button>
           {/* Light mode toggle should live here or be caught by the same flex alignment */}
         </div>
       </header>
@@ -61,6 +61,35 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
         }
         .portal-scroll-area { flex: 1; overflow-y: auto; padding-bottom: 5vh; }
         .portal-title { font-size: clamp(32px, 8vw, 80px); text-transform: uppercase; font-weight: 900; letter-spacing: -2px; }
+        .portal-exit {
+        background: transparent; 
+        border: 1px solid ${lightMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'};
+        color: inherit; 
+        padding: 10px 24px; 
+        cursor: pointer; 
+        font-family: 'monospace'; 
+        font-size: 12px; 
+        border-radius: 30px; 
+        transition: 0.3s all;
+        position: fixed;
+        top: 20px;           
+        left: 20px;          
+        z-index: 5000;       
+      }
+
+      .portal-exit:hover {
+        background: ${lightMode ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)'};
+        transform: translateY(1px);
+      }
+
+      /* MOBILE RESPONSIVE TWEAK */
+      @media (max-width: 800px) {
+        .portal-exit {
+          top: 20px;
+          left: 20px;
+        }
+      }
+
       `}</style>
     </div>
   )
