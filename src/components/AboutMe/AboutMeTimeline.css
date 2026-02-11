@@ -1,0 +1,79 @@
+.timeline-parallax-container { width: 100%; position: relative; }
+
+.scene-viewport {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 3000;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  perspective: 2000px;
+}
+
+/* Shared Typography */
+.layer-tag {
+  font-family: 'monospace';
+  color: #ff810a;
+  letter-spacing: 4px;
+  font-size: 12px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.parallax-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+  z-index: 10;
+}
+
+.large-quip {
+  color: #ccc;
+  font-size: clamp(2rem, 4vw, 5rem);
+  max-width: 600px;
+  line-height: 1.5;
+  margin: 2rem 0;
+}
+
+.quip {
+  color: #ccc;
+  font-size: 1.2rem;
+  max-width: 600px;
+  line-height: 1.5;
+  margin: 2rem 0;
+}
+
+/* Scroll Guide & System HUD */
+.scroll-nudge-fixed {
+  position: fixed;
+  bottom: 40px; 
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999 !important; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+.nudge-text {
+  font-family: 'monospace';
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: #ff810a;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 1);
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.4); 
+  padding: 4px 16px;
+  border-radius: 20px;
+}
+
+@media (max-width: 800px) {
+  .parallax-text { align-items: center; text-align: center; }
+}

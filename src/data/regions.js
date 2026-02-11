@@ -3,7 +3,7 @@
  * Centralized registry for brain regions, labels, and SVG path geometry.
  */
 
-// 1. REGION REGISTRY: Ordered for sequential TAB navigation (1-7)
+// Ordered for sequential TAB navigation (1-7)
 export const BRAIN_REGIONS = [
   { id: 'action', color: '#ff810a', label: 'Me', type: 'DATA_SHEET' }, 
   { id: 'passion', color: '#ff00ff', label: 'Status', type: 'CONNECTIVITY' },
@@ -11,10 +11,11 @@ export const BRAIN_REGIONS = [
   { id: 'feel', color: '#00ff00', label: 'My Pillow', type: 'DATA_SHEET' },
   { id: 'create', color: '#00ffff', label: 'Synthesize', type: 'GENERATIVE' },
   { id: 'listen', color: '#9900ff', label: 'Sounds', type: 'WIDGET' },
-  { id: 'vision', color: '#ffcc00', label: 'Panopticon', type: 'OBSERVATORY' }
+  { id: 'vision', color: '#ffcc00', label: 'Panopticon', type: 'OBSERVATORY' },
+  { id: 'fit_check', color: '#ff810a', label: 'Compatibility', type: 'RECRUIT' }
 ];
 
-// 2. PATH GEOMETRY: Extracted from original architectural blueprints
+// PATH GEOMETRY
 export const PATH_DATA = {
   passion: "m345.03412 528.7769l-3.1102295 17.648254l-12.380585 11.430481l-15.236206 6.666687l-14.286102 -0.9527588l-12.380585 -6.666687l-14.286072 -7.619446l-12.380585 -12.380554l-0.9527588 -19.047241l-0.9527588 -11.43045l-4.761154 -15.236237l-3.81102 -14.286072l-8.572174 -9.524933l-1.9028931 -11.427826l1.9028931 -10.477692l2.858261 -5.7138977l1.9055176 -7.619446l12.380569 2.8582764l13.3333435 7.6194153l11.427826 5.713928l8.572174 8.572174l3.8083801 7.6194153l2.8582764 12.380585l2.8556519 14.286072l8.191589 11.81366l9.976379 7.4829407z",
   plan: "m648.49866 439.81628l-10.80835 -14.965881l-4.9868774 -19.955383l-4.989502 -19.952759l11.640381 -17.45932l-7.48291 -11.640411l-3.3254395 -14.965881l8.314941 -11.637817l-3.328064 -9.978973l1.6640015 -27.4357l-6.650879 -6.65094l4.1574707 -15.797882l13.301819 -17.45932l-0.83203125 -30.761154l-11.640381 -23.280853l4.1574707 -31.59317l-9.976379 -18.291336l0.83203125 -32.42257l17.45929 -22.448822l-2.4934082 -17.45932l57.36743 9.144356l118.05774 84.80315l23.280823 27.438324l10.808411 11.637802l23.278198 13.304459l14.13385 7.4829407l16.629944 24.11023l5.8189087 18.291351l5.8189087 21.61679l-6.65094 35.75064l-14.13385 39.07614l-39.905518 42.40155l-59.863525 19.952759l-61.522278 8.314972l-59.863525 -4.989502z",

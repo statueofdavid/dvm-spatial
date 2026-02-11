@@ -37,7 +37,8 @@ export default function App() {
       {selectedId && (
         <NeuralExperience 
           region={selectedRegion} 
-          onExit={() => setSelectedId(null)} 
+          onExit={() => setSelectedId(null)}
+          onNavigate={(id) => setSelectedId(id)}
           lightMode={lightMode} 
         />
       )}
