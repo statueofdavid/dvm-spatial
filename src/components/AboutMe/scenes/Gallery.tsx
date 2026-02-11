@@ -1,6 +1,7 @@
 // src/components/AboutMe/scenes/Gallery.tsx
 import React, { useState } from 'react';
 import { StoryStep } from '../../../data/StorySteps';
+import "./style/Gallery.css"
 
 interface GalleryProps {
   progress: number;

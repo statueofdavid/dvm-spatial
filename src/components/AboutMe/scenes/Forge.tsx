@@ -698,6 +698,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Text, Float, Environment, PerspectiveCamera, Center } from '@react-three/drei';
 import * as THREE from 'three';
 import { SVGLoader } from 'three-stdlib';
+import "./style/Forge.css"
 
 // ------------------------------------------------------------------
 // 1. DATA INGESTION

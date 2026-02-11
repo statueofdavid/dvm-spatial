@@ -1,6 +1,7 @@
 import React from 'react';
 import { VscFilePdf, VscCircuitBoard } from 'react-icons/vsc';
 import { StoryStep } from '../../../data/StorySteps';
+import "./style/Resume.css"
 
 interface ResumeProps {
   progress: number;
