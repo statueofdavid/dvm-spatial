@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import SocialMatrix from './SocialMatrix'
 import TimelineManager from './AboutMe/TimelineManager';
+import Pillow from './Pillow/Pillow';
 import FitCheck from './AboutMe/FitCheck';
 
 export default function NeuralExperience({ region, onExit, onNavigate, lightMode }) {
@@ -37,6 +38,10 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
           </div>
         ) : region.id === 'action' ? (
             <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
+        ) : region.id === 'feel' ? (
+          <div className="container-innner">
+            <Pillow lightMode={lightMode} onNavigate={onNavigate}/>
+          </div>
         ) : region.id === 'fit_check' ? ( 
             <FitCheck onExit={onExit} lightMode={lightMode} onNavigate={onNavigate} />
         ) : (

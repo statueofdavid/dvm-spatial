@@ -165,7 +165,7 @@ export default function NeuralCore({ lightMode, selectedId, setSelectedId, maste
         precise 
         position={brainPosition}
       >
-        <group scale={brainScale}>
+        <group scale={brainScale} rotation={[Math.PI / -12, Math.PI, 0]}>
           {BRAIN_REGIONS.map(region => (
             <BrainPiece key={region.id} region={region} selectedId={selectedId} onSelect={setSelectedId} onMastered={onMastered} lightMode={lightMode} />
           ))}
