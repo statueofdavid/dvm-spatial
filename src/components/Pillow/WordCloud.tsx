@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { Text, Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 import { logger } from '../../utils/logger';
 
 export default function WordCloud({ lightMode }: any) {
   const [words, setWords] = useState<any[]>([]);
-  const groupRef = useRef<THREE.Group>(null!);
   
-  // Track the user's scroll depth
+  // Track the user's depth target
   const scrollTarget = useRef(0);
+  const { camera } = useThree();
 
   useEffect(() => {
     async function fetchCloud() {
@@ -18,10 +18,9 @@ export default function WordCloud({ lightMode }: any) {
         const json = await res.json();
         
         if (json.status === 'SUCCESS' && json.data?.length > 0) {
-          // Sort largest/most frequent words to the front
           const sorted = json.data
             .sort((a: any, b: any) => (b.size || b.value || 0) - (a.size || a.value || 0))
-            .slice(0, 100); // Expanded to 100 to make the sea deeper!
+            .slice(0, 150); // Increased count for a deeper ocean
           setWords(sorted);
         }
       } catch (err) {
@@ -34,11 +33,11 @@ export default function WordCloud({ lightMode }: any) {
   // Map the words into a deep Z-axis corridor
   const wordPositions = useMemo(() => {
     return words.map((item, i) => {
-      // The larger the index (smaller the word), the deeper it goes into the screen
-      const z = -(i * 2); 
+      // Spread them deep into negative Z space
+      const z = -(i * 2.5); 
       
-      // Randomly scatter X and Y to create a wide visual tunnel
-      const x = (Math.random() - 0.5) * 20;
+      // Scatter X and Y wider to create a massive tunnel
+      const x = (Math.random() - 0.5) * 25;
       const y = (Math.random() - 0.5) * 15;
 
       return {
@@ -48,38 +47,53 @@ export default function WordCloud({ lightMode }: any) {
     });
   }, [words]);
 
-  // Handle native scroll wheel to move the sea of words
+  // Handle native scroll wheel to set camera thrust target
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      // Increment target Z based on scroll direction
-      scrollTarget.current += e.deltaY * 0.02;
+      // Scrolling down pushes the target deeper (negative Z)
+      scrollTarget.current -= e.deltaY * 0.02;
       
-      // Clamp the scrolling so they can't scroll past the front or back
-      const maxDepth = words.length * 2;
-      scrollTarget.current = Math.max(0, Math.min(scrollTarget.current, maxDepth));
+      // Clamp the camera so they can't fly backwards out of the scene
+      // or fly infinitely past the last word
+      const maxDepth = -(words.length * 2.5) - 5;
+      scrollTarget.current = Math.max(maxDepth, Math.min(scrollTarget.current, 5));
     };
 
     window.addEventListener('wheel', handleWheel);
     return () => window.removeEventListener('wheel', handleWheel);
   }, [words.length]);
 
-  // Smoothly interpolate the group's Z position to the scroll target
-  useFrame(() => {
-    if (groupRef.current) {
-      groupRef.current.position.z = THREE.MathUtils.lerp(
-        groupRef.current.position.z, 
-        scrollTarget.current, 
-        0.05
-      );
-    }
+  // Smoothly animate the camera through the space
+  useFrame((state) => {
+    // 1. Z-Axis Thrust (Scrolling)
+    camera.position.z = THREE.MathUtils.lerp(
+      camera.position.z, 
+      scrollTarget.current, 
+      0.05
+    );
+
+    // 2. X/Y Parallax Pan (Mouse Movement)
+    // state.pointer maps the mouse from -1 to 1 across the screen
+    const targetX = state.pointer.x * 6; // How far they can lean left/right
+    const targetY = state.pointer.y * 4; // How far they can lean up/down
+
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetX, 0.05);
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, 0.05);
+
+    // Keep the camera looking slightly ahead into the tunnel
+    camera.lookAt(
+        camera.position.x * 0.5, 
+        camera.position.y * 0.5, 
+        camera.position.z - 20
+    );
   });
 
   return (
     <>
-      {/* Optional: Add fog so deep words fade smoothly into the background abyss */}
-      <fog attach="fog" args={[lightMode ? '#f0f0f0' : '#030303', 5, 40]} />
+      {/* Thicker fog to obscure the end of the tunnel */}
+      <fog attach="fog" args={[lightMode ? '#f0f0f0' : '#030303', 5, 50]} />
       
-      <group ref={groupRef}>
+      <group>
         {wordPositions.map((item, i) => {
           const safeText = item.word || item.text || "ANOMALY";
           const safeSize = item.size || item.value || 1;
@@ -99,13 +113,12 @@ export default function WordCloud({ lightMode }: any) {
   );
 }
 
-// Renamed from FloatingWord: Removes the sine-wave math to lock them in place
 function StaticWord({ position, text, size, lightMode }: any) {
   const baseSize = 0.4;
   const scale = baseSize + (size * 0.08); 
   
-  // Brightest opacity for the big words in front, dim for the deep sea words
-  const opacity = Math.min(0.3 + (size * 0.15), 1);
+  // Big words glow brightly, small distant words fade heavily
+  const opacity = Math.min(0.2 + (size * 0.15), 1);
   const color = lightMode ? '#1a1a1a' : '#00ffcc';
 
   const displayString = typeof text === 'string' ? text : String(text);
