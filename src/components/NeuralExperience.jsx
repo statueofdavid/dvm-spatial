@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react'
+import { Canvas } from '@react-three/fiber'
 import SocialMatrix from './SocialMatrix'
 import TimelineManager from './AboutMe/TimelineManager';
+import Pillow from './Pillow/Pillow';
 import FitCheck from './AboutMe/FitCheck';
 
 export default function NeuralExperience({ region, onExit, onNavigate, lightMode }) {
@@ -37,7 +39,15 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
           </div>
         ) : region.id === 'action' ? (
             <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
-        ) : region.id === 'fit_check' ? ( 
+        ) : region.id === 'feel' ? (
+          // We must give this div a height, or the Canvas will be invisible!
+          <div className="container-inner" style={{ height: '60vh', width: '100%' }}>
+            <Canvas camera={{ position: [0, 0, 5] }}>
+              <ambientLight intensity={lightMode ? 1 : 0.2} />
+              <Pillow lightMode={lightMode} onNavigate={onNavigate}/>
+            </Canvas>
+          </div>
+        ) : region.id === 'fit_check' ? (
             <FitCheck onExit={onExit} lightMode={lightMode} onNavigate={onNavigate} />
         ) : (
           <div className="container-inner">

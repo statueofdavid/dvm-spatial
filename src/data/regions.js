@@ -8,7 +8,7 @@ export const BRAIN_REGIONS = [
   { id: 'action', color: '#ff810a', label: 'Me', type: 'DATA_SHEET' }, 
   { id: 'passion', color: '#ff00ff', label: 'Status', type: 'CONNECTIVITY' },
   { id: 'plan', color: '#ffff00', label: 'Projects', type: 'HUB' },
-  { id: 'feel', color: '#00ff00', label: 'My Pillow', type: 'DATA_SHEET' },
+  { id: 'feel', color: '#00ff00', label: 'Pillow', type: 'DATA_SHEET' },
   { id: 'create', color: '#00ffff', label: 'Synthesize', type: 'GENERATIVE' },
   { id: 'listen', color: '#9900ff', label: 'Sounds', type: 'WIDGET' },
   { id: 'vision', color: '#ffcc00', label: 'Panopticon', type: 'OBSERVATORY' },
