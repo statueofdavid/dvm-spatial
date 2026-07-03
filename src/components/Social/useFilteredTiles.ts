@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { SocialTiles } from '../data/SocialTiles';
+import { SocialTiles } from '../../data/SocialTiles';
 
 export function useFilteredTiles(activeFilter: string, telemetry: any) {
   return useMemo(() => {

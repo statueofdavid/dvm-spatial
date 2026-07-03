@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
-import SocialMatrix from './SocialMatrix'
-import TimelineManager from './AboutMe/TimelineManager';
-import Pillow from './Pillow/Pillow';
-import FitCheck from './AboutMe/FitCheck';
+import SocialMatrix from '../components/Social/SocialMatrix'
+import TimelineManager from '../components/AboutMe/TimelineManager';
+import Pillow from '../components/Pillow/Pillow';
+import FitCheck from '../components/AboutMe/FitCheck';
 
 export default function NeuralExperience({ region, onExit, onNavigate, lightMode }) {
   const scrollRef = useRef(null);

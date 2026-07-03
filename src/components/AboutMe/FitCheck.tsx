@@ -1,8 +1,8 @@
 import React from 'react';
 import { VscFilePdf, VscDebugRestart, VscHistory } from 'react-icons/vsc';
-import { useFitCheck } from '../../hooks/useFitCheck';
+import { useFitCheck } from './useFitCheck';
 import { getResonanceIcon, getResultQuip } from './util/FitHelper';
-import { WeightVector } from '../../data/FitCheckConst';
+import { WeightVector, WeightedOption } from '../../data/FitCheckConst';
 
 export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
   const { 
@@ -78,7 +78,7 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
         <span className="fit-label">{bucket ? `// ${bucket}_SEQ_0${currentStep}` : '// PROTOCOL_SELECTION'}</span>
         <h2 className="fit-question">{question.text}</h2>
         <div className="fit-options-grid">
-          {question.options.map((opt, i) => (
+          {question.options.map((opt: WeightedOption, i: number) => (
             <button key={i} onClick={() => handleAnswer(opt)} className="fit-option-btn">
               {opt.text}
             </button>

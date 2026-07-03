@@ -1,10 +1,10 @@
 // src/components/AboutMe/hooks/useFitCheck.ts
 import { useState } from 'react';
-import { logger } from '../utils/logger';
+import { logger } from '../../utils/logger';
 import { 
   WeightVector, UserBucket, Question, WeightedOption, 
   ROUTER_QUESTION, QUESTION_BANK 
-} from '../data/FitCheckConst';
+} from '../../data/FitCheckConst';
 
 export function useFitCheck() {
   const [viewState, setViewState] = useState<'intro' | 'active' | 'calculating' | 'result'>('intro');

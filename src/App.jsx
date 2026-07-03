@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { BRAIN_REGIONS } from './data/regions.js'
-import NeuralCore from './components/NeuralCore'
-import NeuralExperience from './components/NeuralExperience'
-import CTAPrompting from './components/CTAPrompting'
+import NeuralCore from './engine/NeuralCore'
+import NeuralExperience from './engine/NeuralExperience'
+import CTAPrompting from './engine/CTAPrompting.jsx'
 import './App.css'
 
 export default function App() {

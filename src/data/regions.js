@@ -11,8 +11,7 @@ export const BRAIN_REGIONS = [
   { id: 'feel', color: '#00ff00', label: 'Pillow', type: 'DATA_SHEET' },
   { id: 'create', color: '#00ffff', label: 'Synthesize', type: 'GENERATIVE' },
   { id: 'listen', color: '#9900ff', label: 'Sounds', type: 'WIDGET' },
-  { id: 'vision', color: '#ffcc00', label: 'Panopticon', type: 'OBSERVATORY' },
-  { id: 'fit_check', color: '#ff810a', label: 'Compatibility', type: 'RECRUIT' }
+  { id: 'vision', color: '#ffcc00', label: 'Panopticon', type: 'OBSERVATORY' }
 ];
 
 // PATH GEOMETRY

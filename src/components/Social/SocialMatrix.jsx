@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { VscRepo, VscStarFull, VscHistory, VscCircleFilled, VscLock, VscCheck } from "react-icons/vsc";
-import { useSocialDataUplink } from '../hooks/useSocialDataUplink'; 
-import { useFilteredTiles } from '../hooks/useFilteredTiles';
-import { colors } from '../theme/colors';
+import { useSocialDataUplink } from './useSocialDataUplink'; 
+import { useFilteredTiles } from './useFilteredTiles';
+import { colors } from '../../theme/colors';
 import './SocialMatrix.css';
 import { 
   SiGithub, SiSubstack, SiDevdotto, SiLinkedin, SiMedium, SiGitlab, 
