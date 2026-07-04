@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useCallback } from 'react'
-import { Canvas } from '@react-three/fiber'
-import { BRAIN_REGIONS } from './data/regions.js'
-import NeuralCore from './engine/NeuralCore'
-import NeuralExperience from './engine/NeuralExperience'
-import CTAPrompting from './engine/CTAPrompting.jsx'
-import './App.css'
+import React, { useState, useMemo, useCallback } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { BRAIN_REGIONS } from './data/regions.js';
+import NeuralCore from './engine/NeuralCore';
+import NeuralExperience from './engine/NeuralExperience';
+import FitCheck from './components/AboutMe/FitCheck';
+import CTAPrompting from './engine/CTAPrompting.jsx';
+import './App.css';
 
 export default function App() {
   const [lightMode, setLightMode] = useState(false)
@@ -34,13 +35,23 @@ export default function App() {
 
       {!selectedId && <CTAPrompting lightMode={lightMode} mastery={mastery} />}
 
-      {selectedId && (
+      {selectedRegion && (
         <NeuralExperience 
           region={selectedRegion} 
           onExit={() => setSelectedId(null)}
           onNavigate={(id) => setSelectedId(id)}
           lightMode={lightMode} 
         />
+      )}
+
+      {selectedId === 'fit_check' && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 99999 }}>
+          <FitCheck 
+            onExit={() => setSelectedId(null)} 
+            onNavigate={(id) => setSelectedId(id)} 
+            lightMode={lightMode} 
+          />
+        </div>
       )}
 
       <button className={`theme-toggle ${lightMode ? 'light' : 'dark'}`} onClick={() => setLightMode(!lightMode)}>
