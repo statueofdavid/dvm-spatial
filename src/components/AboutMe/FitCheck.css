@@ -1,0 +1,183 @@
+/* =========================================
+   ENTERPRISE THEME VARIABLES
+========================================= */
+.fit-module-container.dark-theme {
+  --fit-bg: #0a0a0a;
+  --fit-surface: #141414;
+  --fit-text-main: #ededed;
+  --fit-text-muted: #888888;
+  --fit-accent: #ff810a;
+  --fit-border: rgba(255, 255, 255, 0.08);
+  --fit-border-hover: rgba(255, 255, 255, 0.25);
+  --fit-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.fit-module-container.light-theme {
+  --fit-bg: #f5f5f7;
+  --fit-surface: #ffffff;
+  --fit-text-main: #111111;
+  --fit-text-muted: #666666;
+  --fit-accent: #ff810a;
+  --fit-border: rgba(0, 0, 0, 0.08);
+  --fit-border-hover: rgba(0, 0, 0, 0.25);
+  --fit-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================
+   MAIN OVERLAY
+========================================= */
+.fit-module-container {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  z-index: 99999;
+  background-color: var(--fit-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  /* Enterprise font stack */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  overflow-y: auto;
+}
+
+/* =========================================
+   THE SURFACE CARD
+========================================= */
+.fit-content-wrapper {
+  width: 100%;
+  max-width: 640px;
+  background: var(--fit-surface);
+  border: 1px solid var(--fit-border);
+  border-radius: 12px;
+  padding: 48px;
+  box-shadow: var(--fit-shadow);
+  animation: fitSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes fitSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   TYPOGRAPHY
+========================================= */
+.fit-label {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--fit-text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+  display: block;
+  text-transform: uppercase;
+}
+
+.fit-question {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0 0 40px 0;
+  color: var(--fit-text-main);
+  letter-spacing: -0.5px;
+}
+
+/* =========================================
+   INTERACTIVE BUTTONS
+========================================= */
+.fit-options-grid {
+  display: flex;
+  flex-direction: column;
+  /* 💥 THE FIX 1: This stops the buttons from stretching full-width */
+  align-items: center; 
+  gap: 12px;
+}
+
+.fit-option-btn {
+  background: transparent;
+  color: var(--fit-text-main);
+  border: 1px solid var(--fit-border);
+  padding: 18px 32px; /* Increased side padding slightly so they don't look squished */
+  font-size: 15px;
+  
+  /* 💥 THE FIX 2: Center the text! */
+  text-align: center; 
+  
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+  
+  /* Optional: Set a max-width so extremely long questions wrap nicely */
+  max-width: 80%; 
+}
+
+.fit-option-btn:hover {
+  border-color: var(--fit-border-hover);
+  background: rgba(255, 129, 10, 0.03); 
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.resume-btn.raised {
+  background: var(--fit-text-main);
+  color: var(--fit-surface);
+  border: none;
+  padding: 16px 32px;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  
+  /* 💥 THE FIX 3: Remove width: 100% and center the button! */
+  width: auto; 
+  margin: 0 auto 12px auto; 
+  display: block; /* Ensures margin: 0 auto works to center it */
+}
+
+/* =========================================
+   SYSTEM PROGRESS BAR
+========================================= */
+.fit-progress-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--fit-border);
+}
+
+.fit-progress-fill {
+  height: 100%;
+  background: var(--fit-accent);
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =========================================
+   CANCEL BUTTON (Bottom of screen)
+========================================= */
+.fit-cancel-container {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.fit-cancel-btn {
+  background: transparent;
+  border: none;
+  color: var(--fit-text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: color 0.2s ease;
+}
+
+.fit-cancel-btn:hover {
+  color: var(--fit-text-main);
+}

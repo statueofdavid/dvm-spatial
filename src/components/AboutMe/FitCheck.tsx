@@ -61,11 +61,14 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
 
           <div className="fit-options-grid">
             <button className="resume-btn raised" onClick={() => onNavigate('action')}>
-              RETURN_TO_SYSTEM
+              Return to Timeline
             </button>
             <button className="fit-option-btn" style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }} onClick={handleRetry}>
-              <VscDebugRestart /> RECALIBRATE_SCAN
+              <VscDebugRestart /> Recalibrate Our Fit
             </button>
+            <a href="/dvm-resume.pdf" target="_blank" className="resume-btn raised">
+              <VscFilePdf /> View Resume
+            </a>
           </div>
         </div>
       </div>

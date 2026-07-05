@@ -86,7 +86,7 @@ const Future = ({ progress, step, onNavigate }: { progress: number; step: any; o
         className="future-filter-stack" 
         style={{ opacity: isInitialized ? uiOpacity : 0, transition: '0.5s' }}
       >
-        <span className="future-filter-label">// FILTER_STACK</span>
+        <span className="future-filter-label"> Filters </span>
         {FILTERS.map((f) => (
           <button 
             key={f.id} 
@@ -108,15 +108,15 @@ const Future = ({ progress, step, onNavigate }: { progress: number; step: any; o
         style={{ opacity: isInitialized ? uiOpacity : 0, transition: '0.5s' }}
       >
         <h2 className="future-title">
-           {step?.text || "What gaps can we build together..."}
+           {step?.text || "What gaps can we bridge together..."}
         </h2>
         
         <div className="future-actions">
              <button className="btn-primary" onClick={() => onNavigate('passion')}>
-              [ CONNECT ]
+              Check Out My Socials
             </button>
             <a href="mailto:admin@declared.space" className="btn-secondary">
-              [ EMAIL_ME ]
+              Email me
             </a>
         </div>
       </div>
