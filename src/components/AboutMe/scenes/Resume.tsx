@@ -1,7 +1,7 @@
 import React from 'react';
 import { VscFilePdf, VscCircuitBoard } from 'react-icons/vsc';
 import { StoryStep } from '../../../data/StorySteps';
-import "./style/Resume.css"
+import "./style/Resume.css" // Keeps your existing path
 
 interface ResumeProps {
   progress: number;
@@ -12,7 +12,6 @@ interface ResumeProps {
 const Resume: React.FC<ResumeProps> = ({ progress, step, onNavigate }) => {
   if (!step) return null;
 
-  // Dynamic layering based on scroll progress
   const dynamicPadding = 35 - (progress * 15); 
   const imageLift = progress * -30; 
   const textLift = progress * -80; 
@@ -25,6 +24,7 @@ const Resume: React.FC<ResumeProps> = ({ progress, step, onNavigate }) => {
       opacity,
       pointerEvents: 'none' 
     }}>
+      
       <div className="visual-slot" style={{ 
         transform: `translateY(${imageLift}px) scale(${imageScale})`,
         transition: 'transform 0.1s ease-out'
@@ -32,33 +32,38 @@ const Resume: React.FC<ResumeProps> = ({ progress, step, onNavigate }) => {
         <img src="/images/dvm-profile-pic.jpg" className="main-photo shadow-raised" alt="Identity" />
       </div>
 
-      <div className="parallax-text" style={{ 
+      <div className="parallax-text center-contents" style={{ 
         transform: `translateY(${textLift}px)`,
         transition: 'transform 0.1s ease-out'
       }}>
-        <h2 className="layer-tag">// {step.tag}</h2>
-        <h1 className="hero-title">DAVID VINCENT MILLER</h1>
+        
+        {/* Swapped Hierarchy */}
+        <h1 className="hero-title">David Vincent Miller</h1>
+        <h2 className="layer-tag bottom-tag">// {step.tag}</h2>
+        
         <p className="quip">{step.text}</p>
         
-        <div className="resume-actions" style={{ pointerEvents: 'auto' }}>
+        <div className="resume-actions" style={{ 
+          pointerEvents: 'auto',
+          marginTop: '1.2rem',
+          justifyContent: 'center',
+          width: '100%'              
+        }}>
           <a href="/dvm-resume.pdf" target="_blank" className="resume-btn raised">
-            <VscFilePdf /> VIEW_RESUME
+            <VscFilePdf /> View Resume
           </a>
           <button 
             onClick={() => onNavigate('fit_check')} 
             className="resume-btn raised"
-            style={{ 
-              border: 'none', 
-              cursor: 'pointer',
-              fontSize: '13px'
-            }}
+            style={{ border: 'none' }} // Keeps your existing border fix
           >
-            <VscCircuitBoard /> FIT_CHECK
+            <VscCircuitBoard /> Determine My Fit
           </button>
         </div>
+
       </div>
     </div>
   );
-};
+}
 
 export default Resume;

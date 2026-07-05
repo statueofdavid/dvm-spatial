@@ -58,6 +58,28 @@
   box-shadow: 0 8px 0 #9b4e05; 
 }
 
+/* =========================================
+   SAFE MODIFIERS FOR CENTERED LAYOUT
+========================================= */
+
+/* Centers the text and items inside the text column */
+.parallax-text.center-contents {
+  align-items: center;
+  text-align: center;
+}
+
+/* Adjusts the spacing since the tag is now below the title */
+.layer-tag.bottom-tag {
+  margin-top: 12px;
+  margin-bottom: 24px;
+}
+
+/* Centers the buttons inside the flex row without breaking the gap */
+.resume-actions.centered-actions {
+  justify-content: center;
+  width: 100%;
+}
+
 @media (max-width: 1024px) {
   .layer-identity { grid-template-columns: 320px 1fr; gap: 5vw; }
   .layer-identity .main-photo { width: 320px; height: 440px; }

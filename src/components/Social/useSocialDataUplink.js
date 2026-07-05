@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { logger } from '../../utils/logger';
 
 export function useSocialDataUplink() {
   const [telemetry, setTelemetry] = useState({
@@ -123,5 +124,23 @@ export function useSocialDataUplink() {
     return () => clearInterval(heartbeat);
   }, []);
 
-  return telemetry;
+  useEffect(() => {
+    // 1. If we are still waiting for the initial fetch, don't log anything yet.
+    if (telemetry.isLoading) return; 
+
+    // 2. Check for offline/locked nodes
+    const offlineNodes = Object.entries(telemetry).filter(([key, data]) => 
+      key !== 'isLoading' && data.status !== 'ONLINE'
+    );
+    
+    // 3. Fire the logger
+    if (offlineNodes.length > 0) {
+      logger.warn(`TELEMETRY_PARTIAL_OFFLINE`, { count: offlineNodes.length, nodes: offlineNodes.map(n => n[0]) });
+    } else {
+      logger.debug(`TELEMETRY_UPLINK_STABLE`);
+    }
+  }, [telemetry]); // <-- Array with 'telemetry': Runs every time the data updates!
+
+
+  return telemetry; 
 }
