@@ -1,62 +1,79 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { BRAIN_REGIONS } from './data/regions.js';
+import { View } from '@react-three/drei';
+
+// Adjust these import paths if your folder structure is slightly different
+import { BRAIN_REGIONS } from './data/regions';
 import NeuralCore from './engine/NeuralCore';
 import NeuralExperience from './engine/NeuralExperience';
+import CTAPrompting from './engine/CTAPrompting';
 import FitCheck from './components/AboutMe/FitCheck';
-import CTAPrompting from './engine/CTAPrompting.jsx';
+import { useSpatialRouter } from './hooks/useSpatialRouter'; 
 import './App.css';
 
 export default function App() {
-  const [lightMode, setLightMode] = useState(false)
-  const [selectedId, setSelectedId] = useState(null)
-  const [mastery, setMastery] = useState({ zoomed: false, rotated: false, selected: false })
-  
+  const [lightMode, setLightMode] = useState(false);
+  const [mastery, setMastery] = useState({ zoomed: false, rotated: false, selected: false });
+
+  const brainTracker = useRef();
+  const labelPortal = useRef();
+
+  const { currentRoute, navigate } = useSpatialRouter();
+
   const handleMastery = useCallback((action) => {
-    setMastery(prev => ({ ...prev, [action]: true }))
-  }, [])
+    setMastery(prev => ({ ...prev, [action]: true }));
+  }, []);
 
   const selectedRegion = useMemo(() => 
-    BRAIN_REGIONS.find(r => r.id === selectedId), [selectedId]
-  )
+    BRAIN_REGIONS.find(r => r.id === currentRoute), [currentRoute]
+  );
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: lightMode ? '#f0f0f0' : '#030303', transition: 'background 0.6s ease-in-out', touchAction: 'none' }}>
-      <Canvas shadows dpr={[1, 2]} gl={{ antialias: true, logarithmicDepthBuffer: true }}>
-        {/* NeuralCore is INSIDE Canvas, so useThree() will now work */}
-        <NeuralCore 
-          lightMode={lightMode} 
-          selectedId={selectedId} 
-          setSelectedId={setSelectedId}
-          mastery={mastery}
-          onMastered={handleMastery}
-        />
+      
+      <div ref={brainTracker} className="brain-tracking-container" style={{ zIndex: 0 }} />
+
+      <Canvas 
+        shadows 
+        dpr={[1, 2]} 
+        gl={{ antialias: true, logarithmicDepthBuffer: true }}
+        eventSource={document.getElementById('root')}
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+      >
+        
+        <View track={brainTracker}>
+          <NeuralCore
+            lightMode={lightMode}
+            selectedId={currentRoute}
+            setSelectedId={navigate}
+            mastery={mastery}
+            onMastered={handleMastery}
+            portal={labelPortal}
+          />
+        </View>
+
       </Canvas>
 
-      {!selectedId && <CTAPrompting lightMode={lightMode} mastery={mastery} />}
+      <div ref={labelPortal} className="brain-tracking-container" style={{ zIndex: 5, pointerEvents: 'none' }} />
 
-      {selectedRegion && (
-        <NeuralExperience 
-          region={selectedRegion} 
-          onExit={() => setSelectedId(null)}
-          onNavigate={(id) => setSelectedId(id)}
+      <CTAPrompting lightMode={lightMode} mastery={mastery} />
+
+      {/* Top Level Overlays */}
+      {currentRoute === 'fit_check' && (
+        <FitCheck 
+          onNavigate={navigate} 
           lightMode={lightMode} 
         />
       )}
 
-      {selectedId === 'fit_check' && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 99999 }}>
-          <FitCheck 
-            onExit={() => setSelectedId(null)} 
-            onNavigate={(id) => setSelectedId(id)} 
-            lightMode={lightMode} 
-          />
-        </div>
+      {selectedRegion && currentRoute !== 'fit_check' && (
+        <NeuralExperience 
+          region={selectedRegion} 
+          onNavigate={navigate}
+          onExit={() => navigate(null)}
+          lightMode={lightMode}
+        />
       )}
-
-      <button className={`theme-toggle ${lightMode ? 'light' : 'dark'}`} onClick={() => setLightMode(!lightMode)}>
-        {lightMode ? 'LIGHT MODE OFF' : 'LIGHT MODE ON'}
-      </button>
     </div>
-  )
+  );
 }
