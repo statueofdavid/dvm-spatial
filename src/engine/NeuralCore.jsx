@@ -15,7 +15,8 @@ function BrainPiece({ region, selectedId, onSelect, lightMode }) {
   const isSelected = selectedId === region.id;
   const isOtherSelected = !!selectedId && selectedId !== region.id;
 
-  const { meshRef, center, labelOffset, geometry } = useBrainPieceLogic(region, isSelected, isOtherSelected, hovered);
+  // Grab just the center and geometry
+  const { meshRef, center, geometry } = useBrainPieceLogic(region, isSelected, isOtherSelected, hovered);
 
   if (!geometry) return null;
 
@@ -36,24 +37,26 @@ function BrainPiece({ region, selectedId, onSelect, lightMode }) {
         side={THREE.DoubleSide}
       />
       
-      {(isSelected || hovered) && (
-        <Html 
-          position={[labelOffset.x, labelOffset.y, labelOffset.z]} 
-          center 
-          zIndexRange={[100, 100]} 
-        >
-          <div 
-            className="region-label"
-            style={{
-              '--region-color': region.color,
-              '--region-shadow': `${region.color}40`,
-              '--region-bg': lightMode ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.8)'
-            }}
-          >
-            {region.label || region.id.toUpperCase()}
-          </div>
-        </Html>
-      )}
+      {/* OUTER WRAPPER: Managed by WebGL. */}
+      <Html 
+        position={[center.x, center.y, center.z]} 
+        center 
+        style={{
+          transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+          opacity: (hovered || isSelected) ? 1 : 0, 
+          pointerEvents: 'none',
+          transform: `translateY(${hovered ? '-8px' : '0px'})` 
+        }}
+      >
+        {/* INNER WRAPPER: Managed by CSS. */}
+        <div className={`
+          region-card 
+          ${lightMode ? 'light-mode' : 'dark-mode'} 
+          ${hovered ? 'is-active' : ''}
+        `}>
+          {region.label || region.id.toUpperCase()}
+        </div>
+      </Html>
     </mesh>
   );
 }
