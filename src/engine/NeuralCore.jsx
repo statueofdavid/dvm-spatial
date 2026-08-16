@@ -37,26 +37,25 @@ function BrainPiece({ region, selectedId, onSelect, lightMode }) {
         side={THREE.DoubleSide}
       />
       
-      {/* OUTER WRAPPER: Managed by WebGL. */}
-      <Html 
-        position={[center.x, center.y, center.z]} 
-        center 
-        style={{
-          transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-          opacity: (hovered || isSelected) ? 1 : 0, 
-          pointerEvents: 'none',
-          transform: `translateY(${hovered ? '-8px' : '0px'})` 
-        }}
-      >
-        {/* INNER WRAPPER: Managed by CSS. */}
-        <div className={`
-          region-card 
-          ${lightMode ? 'light-mode' : 'dark-mode'} 
-          ${hovered ? 'is-active' : ''}
-        `}>
-          {region.label || region.id.toUpperCase()}
-        </div>
-      </Html>
+      <group position={[center.x, center.y, 400]}>
+        <Html 
+          center 
+          zIndexRange={[100, 100]}
+          style={{
+            opacity: (hovered || isSelected) ? 1 : 0, 
+            transition: 'opacity 0.3s ease',
+            pointerEvents: 'none'
+          }}
+        >
+          <div className={`
+            region-card 
+            ${lightMode ? 'light-mode' : 'dark-mode'} 
+            ${hovered ? 'is-active' : ''}
+          `}>
+            {region.label || region.id.toUpperCase()}
+          </div>
+        </Html>
+      </group>
     </mesh>
   );
 }
