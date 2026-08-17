@@ -13,7 +13,7 @@ import '../App.css';
 // ==========================================
 // BRAIN PIECE
 // ==========================================
-function BrainPiece({ region, selectedId, onSelect, lightMode, portal }) {
+function BrainPiece({ region, selectedId, onSelect, lightMode, portal, isMobile }) {
   const [hovered, setHover] = useState(false);
   const isSelected = selectedId === region.id;
   const isOtherSelected = !!selectedId && selectedId !== region.id;
@@ -25,9 +25,20 @@ function BrainPiece({ region, selectedId, onSelect, lightMode, portal }) {
   return (
     <mesh
       ref={meshRef}
-      onPointerOver={(e) => { e.stopPropagation(); setHover(true); }}
-      onPointerOut={() => setHover(false)}
-      onClick={(e) => { e.stopPropagation(); onSelect(isSelected ? null : region.id); }}
+      onPointerOver={(e) => { 
+        if (isMobile) return;
+        e.stopPropagation(); 
+        setHover(true); 
+      }}
+      onPointerOut={() => {
+        if (isMobile) return;
+        setHover(false);
+      }}
+      onClick={(e) => { 
+        if (isMobile) return;
+        e.stopPropagation(); 
+        onSelect(isSelected ? null : region.id); 
+      }}
     >
       <primitive object={geometry} attach="geometry" />
       
@@ -38,20 +49,21 @@ function BrainPiece({ region, selectedId, onSelect, lightMode, portal }) {
         side={THREE.DoubleSide}
       />
 
-      <Html 
-        portal={portal}
-        position={[center.x, center.y, frontZ]} 
-        center 
-        zIndexRange={[100, 0]}
-        // We only keep the wrapper styles strictly necessary for the Html component structure
-        style={{ pointerEvents: 'none' }} 
-      >
-        <div 
-          className={`region-card ${lightMode ? 'light-mode' : 'dark-mode'} ${(hovered || isSelected) ? 'is-visible' : ''}`}
+      {!isMobile && (
+        <Html 
+          portal={portal}
+          position={[center.x, center.y, frontZ]} 
+          center 
+          zIndexRange={[100, 0]}
+          style={{ pointerEvents: 'none' }} 
         >
-          {region.label}
-        </div>
-      </Html>
+          <div 
+            className={`region-card ${lightMode ? 'light-mode' : 'dark-mode'} ${hovered ? 'is-visible' : ''}`}
+          >
+            {region.label || region.id.toUpperCase()}
+          </div>
+        </Html>
+      )}
     </mesh>
   );
 }
@@ -59,10 +71,9 @@ function BrainPiece({ region, selectedId, onSelect, lightMode, portal }) {
 // ==========================================
 // MAIN CORE COMPONENT
 // ==========================================
-export default function NeuralCore({ lightMode, selectedId, setSelectedId, mastery, onMastered, portal }) {
+export default function NeuralCore({ lightMode, selectedId, setSelectedId, mastery, onMastered, portal, onOpenRadialMenu }) {
   const controls = useRef();
   const isMobile = useIsMobile();
-
   const initialDist = useRef(null);
 
   const brainScale = isMobile ? 0.05 : 0.08;
@@ -74,7 +85,7 @@ export default function NeuralCore({ lightMode, selectedId, setSelectedId, maste
     if (initialDist.current === null) {
       initialDist.current = controls.current.getDistance();
     }
-
+    
     if (!mastery.rotated && controls.current.getAzimuthalAngle() !== 0) {
       onMastered('rotated');
     }
@@ -117,6 +128,12 @@ export default function NeuralCore({ lightMode, selectedId, setSelectedId, maste
         scale={[brainScale, -brainScale, brainScale]}
         position={brainPosition}
         rotation={[0.15, 0, 0]}
+        onClick={(e) => {
+          if (isMobile) {
+            e.stopPropagation();
+            onOpenRadialMenu();
+          }
+        }}
       >
         <Center>
           {BRAIN_REGIONS.map(region => (
@@ -127,6 +144,7 @@ export default function NeuralCore({ lightMode, selectedId, setSelectedId, maste
               onSelect={setSelectedId}
               lightMode={lightMode}
               portal={portal}
+              isMobile={isMobile}
             />
           ))}
         </Center>

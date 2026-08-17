@@ -21,7 +21,7 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
       <header className="portal-header" style={{ position: 'relative', zIndex: 10000 }}>
         <div className="container-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {/* This flex container ensures buttons stay on the same horizontal plane */}
-          <button className="portal-exit exit-view-button" onClick={onExit}>[ EXIT_VIEW ]</button>
+          <button className="portal-exit exit-view-button" onClick={onExit}>Exit</button>
           {/* Light mode toggle should live here or be caught by the same flex alignment */}
         </div>
       </header>

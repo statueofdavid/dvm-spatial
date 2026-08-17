@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 
 export default function CTAPrompting({ lightMode, mastery }) {
-  const [systemMessage, setSystemMessage] = useState("WELCOME // SYSTEM_READY")
+  const [systemMessage, setSystemMessage] = useState("Welcome to Declared Space")
   const [isFading, setIsFading] = useState(false)
   const msgIndexRef = useRef(0)
 
@@ -19,9 +19,9 @@ export default function CTAPrompting({ lightMode, mastery }) {
     const runCycle = (delay = 4000) => {
       timeoutId = setTimeout(() => {
         const currentPool = [];
-        if (!mastery.selected) currentPool.push("SELECT_BRAIN_NODE_TO_EXPLORE");
-        if (!mastery.zoomed) currentPool.push("SCROLL_TO_ZOOM");
-        if (!mastery.rotated) currentPool.push("DRAG_TO_ROTATE");
+        if (!mastery.selected) currentPool.push("Select Brain Section to Explore More");
+        if (!mastery.zoomed) currentPool.push("Scroll to Zoom");
+        if (!mastery.rotated) currentPool.push("Drag to Rotate");
 
         if (currentPool.length === 0) {
           setIsFading(true);
