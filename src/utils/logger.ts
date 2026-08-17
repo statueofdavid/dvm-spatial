@@ -1,5 +1,3 @@
-// src/utils/logger.ts
-
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 const IS_DEV = import.meta.env.DEV; // Vite's built-in env check

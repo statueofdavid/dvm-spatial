@@ -172,6 +172,63 @@
 .card-content { display: flex; align-items: center; gap: 20px; }
 .card-icon { color: var(--neon-cyan); min-width: 24px; display: flex; justify-content: center; font-size: 1.2rem; }
 
+/* Mobile first: The tracking div takes up the whole screen. */
+.brain-tracking-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 0; /* Keeps it strictly behind your UI overlays */
+  pointer-events: auto; 
+  touch-action: none;
+}
+
+.region-card {
+  font-family: 'monospace';
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  padding: 8px 16px;
+  border-radius: 4px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* 1. CRITICAL: Start hidden by default */
+  opacity: 0; 
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 2. Visibility State - Triggered by React */
+.region-card.is-visible {
+  opacity: 1;
+}
+
+/* Light / Dark Mode Tokens */
+.region-card.dark-mode {
+  color: #ffffff;
+  background-color: rgba(15, 15, 15, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.region-card.light-mode {
+  color: #111111;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Desktop: The tracking div shrinks to the right side of the screen. */
+@media (min-width: 1024px) {
+  .brain-tracking-container {
+    width: 95%; 
+  }
+}
+
 /* 5. RESPONSIVE & FOOTER */
 @media (max-width: 768px) {
   .experience-portal { width: 100% !important; padding: 80px 25px 30px !important; }

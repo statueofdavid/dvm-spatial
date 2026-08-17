@@ -2,35 +2,32 @@ import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { createBrainGeometry } from './GeometryFactory';
-import { PATH_DATA } from '../data/regions'; // Check path!
+import { PATH_DATA } from '../data/regions'; 
 import { logger } from '../utils/logger';
 
 export function useBrainPieceLogic(region, isSelected, isOtherSelected, hovered) {
   const meshRef = useRef();
 
-  const { center, geometry } = useMemo(() => {
+  const { center, geometry, frontZ } = useMemo(() => {
     const geo = createBrainGeometry(PATH_DATA[region.id]);
     
-    if (!geo) return { center: new THREE.Vector3(), geometry: null };
+    if (!geo) return { center: new THREE.Vector3(), geometry: null, frontZ: 0 };
 
-    // 1. Get the center point of the bounds (for reference if needed)
     geo.computeBoundingBox();
+    
+    // Get the center for orbital rotation
     const centerVec = new THREE.Vector3();
     geo.boundingBox.getCenter(centerVec);
 
-    // 🔥 DO NOT translate the geometry! Let the SVG coordinates dictate position.
-    
-    const polyCount = geo.attributes.position.count / 3;
-    logger.debug(`GEOMETRY_LOADED // ${region.id}`, { polygons: polyCount });
+    // 💥 NEW: Get the absolute front face of the geometry
+    const frontZ = geo.boundingBox.max.z;
 
-    return { center: centerVec, geometry: geo };
+    return { center: centerVec, geometry: geo, frontZ };
   }, [region.id]);
 
   useFrame(() => {
     if (!meshRef.current) return;
     
-    // 🔥 Because we aren't translating the geometry to 0,0,0, our lerp base 
-    // needs to be relative to the initial Z position
     let tZ = isSelected ? 600 : (hovered && !isSelected ? 150 : 0);
     let tS = isSelected ? 4 : (isOtherSelected ? 0.2 : 1);
     
@@ -42,5 +39,5 @@ export function useBrainPieceLogic(region, isSelected, isOtherSelected, hovered)
     }
   });
 
-  return { meshRef, center, geometry };
+  return { meshRef, center, geometry, frontZ };
 }
