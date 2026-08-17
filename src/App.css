@@ -198,9 +198,15 @@
   align-items: center;
   justify-content: center;
   
-  /* Smooth transition for the hover lift and color changes */
+  /* 1. CRITICAL: Start hidden by default */
+  opacity: 0; 
+  pointer-events: none;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  transform: translateY(-40px);
+}
+
+/* 2. Visibility State - Triggered by React */
+.region-card.is-visible {
+  opacity: 1;
 }
 
 /* Light / Dark Mode Tokens */
@@ -214,11 +220,6 @@
   color: #111111;
   background-color: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-/* The Hover Interaction */
-.region-card.is-active {
-  transform: translateY(-48px);
 }
 
 /* Desktop: The tracking div shrinks to the right side of the screen. */

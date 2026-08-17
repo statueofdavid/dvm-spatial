@@ -10,13 +10,15 @@ import { useBrainPieceLogic } from './useBrainPieceLogic';
 
 import '../App.css';
 
-function BrainPiece({ region, selectedId, onSelect, lightMode }) {
+// ==========================================
+// BRAIN PIECE
+// ==========================================
+function BrainPiece({ region, selectedId, onSelect, lightMode, portal }) {
   const [hovered, setHover] = useState(false);
   const isSelected = selectedId === region.id;
   const isOtherSelected = !!selectedId && selectedId !== region.id;
 
-  // Grab just the center and geometry
-  const { meshRef, center, geometry } = useBrainPieceLogic(region, isSelected, isOtherSelected, hovered);
+  const { meshRef, center, geometry, frontZ } = useBrainPieceLogic(region, isSelected, isOtherSelected, hovered);
 
   if (!geometry) return null;
 
@@ -32,42 +34,37 @@ function BrainPiece({ region, selectedId, onSelect, lightMode }) {
       <meshStandardMaterial
         color={region.color}
         wireframe={false}
-        opacity={isOtherSelected ? 0 : 0.9}
         transparent
         side={THREE.DoubleSide}
       />
-      
-      <group position={[center.x, center.y, 400]}>
-        <Html 
-          center 
-          zIndexRange={[100, 100]}
-          style={{
-            opacity: (hovered || isSelected) ? 1 : 0, 
-            transition: 'opacity 0.3s ease',
-            pointerEvents: 'none'
-          }}
+
+      <Html 
+        portal={portal}
+        position={[center.x, center.y, frontZ]} 
+        center 
+        zIndexRange={[100, 0]}
+        // We only keep the wrapper styles strictly necessary for the Html component structure
+        style={{ pointerEvents: 'none' }} 
+      >
+        <div 
+          className={`region-card ${lightMode ? 'light-mode' : 'dark-mode'} ${(hovered || isSelected) ? 'is-visible' : ''}`}
         >
-          <div className={`
-            region-card 
-            ${lightMode ? 'light-mode' : 'dark-mode'} 
-            ${hovered ? 'is-active' : ''}
-          `}>
-            {region.label || region.id.toUpperCase()}
-          </div>
-        </Html>
-      </group>
+          {region.label}
+        </div>
+      </Html>
     </mesh>
   );
 }
 
-export default function NeuralCore({ lightMode, selectedId, setSelectedId, mastery, onMastered }) {
-  const controls = useRef(null);
-  const { viewport } = useThree();
+// ==========================================
+// MAIN CORE COMPONENT
+// ==========================================
+export default function NeuralCore({ lightMode, selectedId, setSelectedId, mastery, onMastered, portal }) {
+  const controls = useRef();
   const isMobile = useIsMobile();
-  
-  const brainPosition = [0, 60, 40];
-  
+
   const brainScale = isMobile ? 0.05 : 0.08;
+  const brainPosition = isMobile ? [0, 10, 0] : [0, 0, 0];
 
   const handleOrbitChange = useCallback((e) => {
     if (!controls.current) return;
@@ -88,7 +85,7 @@ export default function NeuralCore({ lightMode, selectedId, setSelectedId, maste
       <ambientLight intensity={lightMode ? 1.5 : 0.3} />
       <Environment preset={lightMode ? "city" : "studio"} />
       
-      <PerspectiveCamera makeDefault position={[0, 0, 140]} fov={45} />
+      <PerspectiveCamera makeDefault position={[0, -80, 140]} fov={45} />
 
       <OrbitControls
         ref={controls}
@@ -119,6 +116,7 @@ export default function NeuralCore({ lightMode, selectedId, setSelectedId, maste
               selectedId={selectedId}
               onSelect={setSelectedId}
               lightMode={lightMode}
+              portal={portal}
             />
           ))}
         </Center>

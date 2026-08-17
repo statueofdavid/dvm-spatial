@@ -54,7 +54,7 @@ export default function App() {
 
       </Canvas>
 
-      <div ref={labelPortal} className="brain-tracking-container" style={{ zIndex: 5, pointerEvents: 'none' }} />
+      <div ref={labelPortal} className="brain-tracking-container" style={{ zIndex: 9, pointerEvents: 'none' }} />
 
       <CTAPrompting lightMode={lightMode} mastery={mastery} />
 
