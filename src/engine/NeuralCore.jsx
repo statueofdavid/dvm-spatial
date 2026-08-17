@@ -63,14 +63,24 @@ export default function NeuralCore({ lightMode, selectedId, setSelectedId, maste
   const controls = useRef();
   const isMobile = useIsMobile();
 
+  const initialDist = useRef(null);
+
   const brainScale = isMobile ? 0.05 : 0.08;
   const brainPosition = isMobile ? [0, 10, 0] : [0, 0, 0];
 
   const handleOrbitChange = useCallback((e) => {
     if (!controls.current) return;
     
+    if (initialDist.current === null) {
+      initialDist.current = controls.current.getDistance();
+    }
+
     if (!mastery.rotated && controls.current.getAzimuthalAngle() !== 0) {
       onMastered('rotated');
+    }
+
+    if (!mastery.zoomed && initialDist.current !== null && Math.abs(controls.current.getDistance() - initialDist.current) > 2) {
+      onMastered('zoomed');
     }
   }, [mastery, onMastered]);
 
