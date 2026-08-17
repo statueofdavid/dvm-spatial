@@ -1,25 +1,37 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+
 import { Canvas } from '@react-three/fiber';
 import { View } from '@react-three/drei';
 
+import { useIsMobile } from './hooks/useIsMobile';
+import { useSpatialRouter } from './hooks/useSpatialRouter'; 
 import { BRAIN_REGIONS } from './data/regions';
+
+import ThemeToggle from './components/ThemeToggle';
+import MobileRadialMenu from './components/MobileRadialMenu';
+import FitCheck from './components/AboutMe/FitCheck';
+
 import NeuralCore from './engine/NeuralCore';
 import NeuralExperience from './engine/NeuralExperience';
 import CTAPrompting from './engine/CTAPrompting';
-import FitCheck from './components/AboutMe/FitCheck';
-import ThemeToggle from './components/ThemeToggle';
-import { useSpatialRouter } from './hooks/useSpatialRouter'; 
+
 import './App.css';
 
 export default function App() {
+  const { currentRoute, navigate } = useSpatialRouter();
   const [theme, setTheme] = useState('dark');
-  const [mastery, setMastery] = useState({ zoomed: false, rotated: false, selected: false });
   const [isMounted, setIsMounted] = useState(false);
+
+  const [mastery, setMastery] = useState({ zoomed: false, rotated: false, selected: false });
+  const [isRadialMenuOpen, setIsRadialMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    setIsRadialMenuOpen(false);
+  }, [isMobile, currentRoute]);
 
   const brainTracker = useRef();
   const labelPortal = useRef();
-
-  const { currentRoute, navigate } = useSpatialRouter();
 
   const handleMastery = useCallback((action) => {
     setMastery(prev => ({ ...prev, [action]: true }));
@@ -61,9 +73,18 @@ export default function App() {
               mastery={mastery}
               onMastered={handleMastery}
               portal={labelPortal}
+              onOpenRadialMenu={() => setIsRadialMenuOpen(true)}
             />
           </View>
         </Canvas>
+      )}
+
+      {isMobile && isRadialMenuOpen && !currentRoute && (
+        <MobileRadialMenu 
+          theme={theme}
+          onNavigate={navigate}
+          onClose={() => setIsRadialMenuOpen(false)}
+        />
       )}
 
       <CTAPrompting lightMode={lightMode} mastery={mastery} />
