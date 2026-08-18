@@ -9,7 +9,7 @@ import CTAPrompting from './engine/CTAPrompting';
 import FitCheck from './components/AboutMe/FitCheck';
 import ThemeToggle from './components/ThemeToggle';
 import MobileRadialMenu from './components/MobileRadialMenu';
-import A11yOverlay from './components/A11yOverlay'; // 1. Import the overlay
+import A11yOverlay from './components/A11yOverlay';
 import { useSpatialRouter } from './hooks/useSpatialRouter'; 
 import { useIsMobile } from './hooks/useIsMobile';
 import './App.css';
@@ -79,11 +79,31 @@ export default function App() {
         </Canvas>
       )}
 
-      {/* 4. Render the A11y Overlay ONLY on desktop (mobile uses the radial menu) */}
+      {/* Render the A11y Overlay ONLY on desktop AND when no experience is active */}
       {!isMobile && !currentRoute && (
         <A11yOverlay 
           onFocusRegion={setFocusedId} 
           onSelectRegion={navigate} 
+        />
+      )}
+
+      {/* The Mobile A11y Trigger */}
+      {isMobile && !isRadialMenuOpen && !currentRoute && (
+        <button 
+          onClick={() => setIsRadialMenuOpen(true)}
+          style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}
+          aria-label="Open Brain Navigation Menu"
+        >
+          Open Menu
+        </button>
+      )}
+
+      {/* Conditionally render the radial menu if on mobile and the menu is open */}
+      {isMobile && isRadialMenuOpen && !currentRoute && (
+        <MobileRadialMenu 
+          theme={theme}
+          onNavigate={navigate}
+          onClose={() => setIsRadialMenuOpen(false)}
         />
       )}
 

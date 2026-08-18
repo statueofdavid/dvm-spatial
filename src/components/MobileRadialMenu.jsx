@@ -1,8 +1,23 @@
 import React from 'react';
 import { BRAIN_REGIONS } from '../data/regions'; 
 
+useEffect(() => {
+    if (firstButtonRef.current) {
+      firstButtonRef.current.focus();
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
 export default function MobileRadialMenu({ onNavigate, onClose, theme }) {
-  // Custom positioning map: angle in degrees, radius in pixels.
   const POSITION_MAP = {
     'action':  { angle: -45,  radius: 115 }, // Top (Me)
     'plan':    { angle: 0,  radius: 170 }, // Top-Right (Projects)
