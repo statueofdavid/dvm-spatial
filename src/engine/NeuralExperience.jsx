@@ -20,13 +20,22 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
     <div className={`experience-portal ${lightMode ? 'light' : 'dark'}`} style={{ borderTop: `6px solid ${region.color}` }}>
       <header className="portal-header" style={{ position: 'relative', zIndex: 10000 }}>
         <div className="container-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* This flex container ensures buttons stay on the same horizontal plane */}
           <button className="portal-exit exit-view-button" onClick={onExit}>Exit</button>
-          {/* Light mode toggle should live here or be caught by the same flex alignment */}
         </div>
       </header>
       
-      <div className="portal-scroll-area" ref={scrollRef}>
+      <div 
+        className="portal-scroll-area" 
+        ref={scrollRef}
+        tabIndex={0} 
+        aria-label={`${region.label} Experience Timeline. Use arrow keys or spacebar to scroll.`}
+        onKeyDown={(e) => {
+          if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+            e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation(); 
+          }
+        }}
+      >
         {region.id !== 'fit_check' && (
           <div className="container-inner">
             <h1 className="portal-title" style={{ textAlign: 'center', marginBottom: '2vh' }}>{region.label}</h1>
@@ -40,7 +49,6 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
         ) : region.id === 'action' ? (
             <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
         ) : region.id === 'feel' ? (
-          // We must give this div a height, or the Canvas will be invisible!
           <div className="container-inner" style={{ height: '60vh', width: '100%' }}>
             <Canvas camera={{ position: [0, 0, 5] }}>
               <ambientLight intensity={lightMode ? 1 : 0.2} />
