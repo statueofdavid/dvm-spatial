@@ -276,6 +276,74 @@
   from { opacity: 0; transform: translate(-50%, -50%) scale(0); }
 }
 
+/* Highly granular frame-by-frame breakdown of the bounce and shrink */
+@keyframes bounceOut {
+  /* -- THE ANTICIPATION PHASE -- */
+  0% {
+    scale: 1;       /* Starts at normal size */
+    opacity: 1;     /* Fully visible */
+  }
+  10% {
+    scale: 1.05;    /* Begins to stretch outward */
+    opacity: 1;
+  }
+  20% {
+    scale: 1.1;     /* Peak inflation! */
+    opacity: 1;
+  }
+  
+  /* -- THE COLLAPSE PHASE -- */
+  30% {
+    scale: 1.0;     /* Snaps back to original size */
+    opacity: 0.9;   /* Just starting to fade */
+  }
+  40% {
+    scale: 0.85;    
+    opacity: 0.8;
+  }
+  50% {
+    scale: 0.7;     /* Halfway shrunk */
+    opacity: 0.65;
+  }
+  60% {
+    scale: 0.55;    
+    opacity: 0.5;   /* Halfway faded out */
+  }
+  70% {
+    scale: 0.4;     
+    opacity: 0.35;
+  }
+  80% {
+    scale: 0.25;    
+    opacity: 0.2;
+
+    box-shadow: none;
+    border-color: transparent;
+  }
+  90% {
+    scale: 0.1;     /* Barely a speck */
+    opacity: 0.1;
+  }
+  100% {
+    scale: 0;       /* Completely shrunk to nothing */
+    opacity: 0;     /* Completely invisible */
+  }
+}
+
+/* Apply the animation to the wrapper when the state is triggered */
+.radial-overlay.is-closing {
+  animation: fadeOutBackground 0.3s forwards ease-in;
+}
+
+@keyframes fadeOutBackground {
+  to { opacity: 0; }
+}
+
+/* Apply the bounce out to the nodes */
+.radial-node.node-closing {
+  animation: bounceOut 0.3s forwards ease-in-out;
+}
+
 /* Desktop: The tracking div shrinks to the right side of the screen. */
 @media (min-width: 1024px) {
   .brain-tracking-container {
