@@ -16,11 +16,25 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
 
   if (viewState === 'intro') return (
     <div className={`fit-module-container ${themeClass}`} style={{ color: textColor }}>
-      <div className="fit-content-wrapper">
-        <span className="fit-label">// SYSTEM_CHECK</span>
+      <div className="fit-content-wrapper" style={{ textAlign: 'center' }}>
+        <span className="fit-label">Check System Alignment</span>
         <h1 className="fit-question">Compatibility Assessment</h1>
-        <button className="resume-btn raised" onClick={handleStart} style={{ border: 'none' }}>INITIALIZE_SCAN</button>
-        <button className="fit-option-btn" onClick={() => onNavigate('action')}>CANCEL</button>
+        <div className="fit-options-grid">
+          <button 
+            className="resume-btn raised" 
+            onClick={handleStart} 
+            style={{ border: 'none', margin: '0 auto' }}
+          >
+            Get Started
+          </button>
+          <button 
+            className="fit-option-btn" 
+            onClick={() => onNavigate('action')}
+            style={{ margin: '0 auto' }}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
