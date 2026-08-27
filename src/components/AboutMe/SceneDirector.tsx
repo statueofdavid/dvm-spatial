@@ -1,4 +1,3 @@
-// src/components/AboutMe/SceneDirector.tsx
 import React from 'react';
 import { SceneType, StoryStep } from '../../data/StorySteps';
 import Resume from './scenes/Resume';
