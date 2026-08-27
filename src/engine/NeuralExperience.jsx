@@ -1,12 +1,17 @@
-import React, { useEffect, useRef } from 'react'
-import { Canvas } from '@react-three/fiber'
+import React, { useEffect, useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { useIsMobile } from '../hooks/useIsMobile';
 import SocialMatrix from '../components/Social/SocialMatrix'
 import TimelineManager from '../components/AboutMe/TimelineManager';
+import MobileStoryManager from '../components/AboutMe/MobileStoryManager';
 import Pillow from '../components/Pillow/Pillow';
 import FitCheck from '../components/AboutMe/FitCheck';
 
+
 export default function NeuralExperience({ region, onExit, onNavigate, lightMode }) {
   const scrollRef = useRef(null);
+
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -17,7 +22,7 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
   if (!region) return null;
 
   return (
-    <div className={`experience-portal ${lightMode ? 'light' : 'dark'}`} style={{ borderTop: `6px solid ${region.color}` }}>
+    <div className={`experience-portal ${lightMode ? 'light' : 'dark'}`}>
       <header className="portal-header" style={{ position: 'relative', zIndex: 10000 }}>
         <div className="container-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <button className="portal-exit exit-view-button" onClick={onExit}>Exit</button>
@@ -47,7 +52,11 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
             <SocialMatrix lightMode={lightMode} />
           </div>
         ) : region.id === 'action' ? (
-            <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
+            isMobile ? (
+              <MobileStoryManager lightMode={lightMode} onNavigate={onNavigate} />
+            ) : (
+              <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
+            )
         ) : region.id === 'feel' ? (
           <div className="container-inner" style={{ height: '60vh', width: '100%' }}>
             <Canvas camera={{ position: [0, 0, 5] }}>
@@ -103,8 +112,12 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
       /* MOBILE RESPONSIVE TWEAK */
       @media (max-width: 800px) {
         .portal-exit {
-          top: 20px;
-          left: 20px;
+          /* Use clamp to mirror the responsive spacing of the lightbulb */
+          top: clamp(20px, 4vh, 30px);
+          left: clamp(20px, 5vw, 30px);
+          /* Add safe-area spacing so it doesn't clip into mobile notches */
+          margin-top: env(safe-area-inset-top);
+          margin-left: env(safe-area-inset-left);
         }
       }
 

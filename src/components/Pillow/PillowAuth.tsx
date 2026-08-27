@@ -7,31 +7,31 @@ interface PillowAuthProps {
 
 export default function PillowAuth({ onAuthenticated, onCancel }: PillowAuthProps) {
   const [pass, setPass] = useState('')
-  const [status, setStatus] = useState('AWAITING_KEY')
+  const [status, setStatus] = useState('Waiting')
 
   const handleVerify = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Reverted back to the local test bypass so it actually works!
     if (pass === "admin") { 
-      setStatus('ACCESS_GRANTED');
+      setStatus('GRANTED');
       setTimeout(onAuthenticated, 1000);
     } else {
-      setStatus('ACCESS_DENIED');
+      setStatus('DENIED');
       setPass('');
     }
   }
 
   return (
     <div className="auth-terminal">
-      <div className="status-line">SYS_STATUS: {status}</div>
+      <div className="status-line" aria-live="polite">Access Status: {status}</div>
       <form onSubmit={handleVerify}>
         <input 
           type="password" 
           autoFocus 
           value={pass}
           onChange={(e) => setPass(e.target.value)}
-          placeholder="ENTER_NEURAL_KEY..."
+          placeholder="Enter Password..."
         />
       </form>
       <style>{`

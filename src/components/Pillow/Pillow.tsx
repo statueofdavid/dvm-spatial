@@ -22,7 +22,7 @@ export default function Pillow({ lightMode }: PillowProps) {
     if (!thoughtText.trim()) return; 
 
     try {
-      logger.info("TRANSMITTING_THOUGHT...", { length: thoughtText.length });
+      logger.info("Transmitting Thoughts...", { length: thoughtText.length });
       
       const token = localStorage.getItem('neural_token');
       const response = await fetch('http://localhost:3000/api/journal', {
@@ -48,10 +48,8 @@ export default function Pillow({ lightMode }: PillowProps) {
 
   return (
     <group>
-      {/* The Deep Data Sea */}
       <WordCloud lightMode={lightMode} />
 
-      {/* 1. THE ROOT ACCESS BUTTON */}
       {!showPrompt && !showAuth && (
         <Html position={[0, -2.5, 0]} center zIndexRange={[100, 0]}>
           <button 
@@ -80,17 +78,19 @@ export default function Pillow({ lightMode }: PillowProps) {
               e.currentTarget.style.opacity = '0.5';
             }}
           >
-            {isAuthorized ? '[ ROOT_ACCESS ]' : '[ SCROLL_TO_EXPLORE ]'}
+            {isAuthorized ? '[ Root Access ]' : '[ Scroll to Explore ]'}
           </button>
         </Html>
       )}
 
-      {/* 2. THE AUTH TERMINAL */}
       {showAuth && !isAuthorized && (
         <Html position={[0, 0, 0]} center zIndexRange={[100, 0]}>
           <div 
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Root Access Authentication Terminal"
             style={{ 
               background: 'rgba(0,0,0,0.85)',
               padding: '2rem',
@@ -111,12 +111,14 @@ export default function Pillow({ lightMode }: PillowProps) {
         </Html>
       )}
 
-      {/* 3. THE PROMPT ENTRY */}
       {showPrompt && (
         <Html position={[0, 0, 0]} center zIndexRange={[100, 0]}>
           <div 
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Journal Entry Terminal"
             style={{ 
               background: 'rgba(0,0,0,0.85)',
               padding: '2rem',
@@ -126,12 +128,13 @@ export default function Pillow({ lightMode }: PillowProps) {
             }}
           >
             <div style={{ width: '400px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ color: '#0f0', fontFamily: 'monospace' }}>SYS_READY: AWAITING_INPUT...</div>
+              <div style={{ color: '#0f0', fontFamily: 'monospace' }}>Readiness: Awaiting Input...</div>
               <textarea
                 autoFocus
                 value={thoughtText}
                 onChange={(e) => setThoughtText(e.target.value)}
                 placeholder="Type your thought here..."
+                aria-label="Type your thought to record in the journal entry"
                 rows={4}
                 style={{
                   background: 'transparent', border: '1px solid #333', color: '#fff',
@@ -139,7 +142,7 @@ export default function Pillow({ lightMode }: PillowProps) {
                 }}
               />
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={handleAppendThought} className="pillow-gate-btn" style={{ flex: 1, borderColor: '#0f0', color: '#0f0' }}>COMMIT_RECORD</button>
+                <button onClick={handleAppendThought} className="pillow-gate-btn" style={{ flex: 1, borderColor: '#0f0', color: '#0f0' }}>Commit Thought</button>
                 <button onClick={() => setShowPrompt(false)} className="logout-btn">CANCEL</button>
               </div>
             </div>
