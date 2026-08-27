@@ -8,7 +8,7 @@ import { WeightVector, WeightedOption } from '../../data/FitCheckConst';
 export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
   const { 
     viewState, bucket, currentStep, activeQuestions, 
-    totalScore, fitPercentage, handleStart, handleRetry, handleAnswer 
+    totalScore, fitPercentage, handleStart, handleRetry, handleAnswer, handleBack
   } = useFitCheck();
 
   const themeClass = lightMode ? 'light-theme' : 'dark-theme';
@@ -42,20 +42,20 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
   if (viewState === 'calculating') return (
     <div className={`fit-module-container ${themeClass}`} style={{ color: textColor }}>
       <div className="fit-content-wrapper">
-        <div className="fit-loader">ANALYZING SIGNAL...</div>
+        <div className="fit-loader">Finding Alignment...</div>
       </div>
     </div>
   );
 
-  // 💥 THE RESTORED RESULTS VIEW 💥
   if (viewState === 'result') {
     const dominantVector = (Object.keys(totalScore) as Array<keyof WeightVector>).reduce((a, b) => totalScore[a] > totalScore[b] ? a : b);
-    const resultHeader = fitPercentage < 45 ? "PROTOCOL_MISMATCH" : `${dominantVector.toUpperCase()}_RESONANCE`;
+    const capitalizedVector = dominantVector.charAt(0).toUpperCase() + dominantVector.slice(1);
+    const resultHeader = fitPercentage < 45 ? "Not a Fit" : `${capitalizedVector} Resonance`;
     
     return (
       <div className={`fit-module-container ${themeClass}`} style={{ color: textColor }}>
         <div className="fit-content-wrapper" style={{ textAlign: 'center' }}>
-          <span className="fit-label">// ASSESSMENT_COMPLETE</span>
+          <span className="fit-label">Fit Has Been Calculated</span>
           <h2 className="fit-question" style={{ marginBottom: '16px' }}>{resultHeader}</h2>
           
           <div style={{ fontSize: '3rem', margin: '20px 0' }}>
@@ -66,7 +66,7 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
             {fitPercentage}%
           </div>
           <div style={{ fontFamily: 'monospace', letterSpacing: '2px', marginBottom: '32px', color: 'var(--fit-text-muted)' }}>
-            ALIGNMENT_MATCH
+            Alignment Reached
           </div>
 
           <p style={{ color: 'var(--fit-text-main)', lineHeight: 1.6, marginBottom: '40px', fontSize: '1.1rem' }}>
@@ -100,7 +100,7 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
           <div className="fit-progress-fill" style={{ width: `${(currentStep / activeQuestions.length) * 100}%` }} />
         </div>
 
-        <span className="fit-label">{bucket ? `// ${bucket}_SEQ_0${currentStep}` : '// PROTOCOL_SELECTION'}</span>
+        <span className="fit-label">{bucket ? `// ${bucket}_SEQ_0${currentStep}` : 'High Level'}</span>
         <h2 className="fit-question">{question.text}</h2>
         
         <div className="fit-options-grid">
@@ -112,9 +112,39 @@ export default function FitCheck({ onExit, onNavigate, lightMode }: any) {
         </div>
       </div>
 
-      <div className="fit-cancel-container">
-        <button className="fit-cancel-btn" onClick={() => onNavigate('action')}>
-          [ CANCEL_PROTOCOL ]
+      <div 
+        className="fit-cancel-container" 
+        style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '12px', 
+          alignItems: 'center', 
+          width: '100%',
+          padding: '0 24px' // Keeps them from touching the absolute edges of the screen
+        }}
+      >
+        
+        {/* Only show the Back button if they have answered at least one question */}
+        {currentStep > 0 && (
+          <button 
+            type="button"
+            className="fit-option-btn" 
+            onClick={handleBack}
+            aria-label="Return to the previous question"
+            style={{ width: '100%', maxWidth: '320px', margin: 0 }}
+          >
+            Go Back
+          </button>
+        )}
+
+        <button 
+          type="button"
+          className="resume-btn raised" 
+          onClick={() => onNavigate('action')}
+          aria-label="Cancel protocol and return to the timeline"
+          style={{ width: '100%', maxWidth: '320px', margin: 0 }}
+        >
+          Cancel Fit Calculator
         </button>
       </div>
     </div>
