@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StoryStep } from '../../../data/StorySteps';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import CubeGame from './CubeGame';
 import "./style/Gallery.css";
 
 interface GalleryProps {
@@ -13,52 +14,120 @@ interface GalleryProps {
 const Gallery: React.FC<GalleryProps> = ({ progress, step, isExiting = false, exitFactor = 0 }) => {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showCubeGame, setShowCube] = useState<boolean>(false); 
   const isMobile = useIsMobile();
   
   if (!step?.images) return null;
 
-  // --- MOBILE PUZZLE MOSAIC EXPERIENCE ---
-  if (isMobile) {
+  const safeImages = step.images || [];
+
+const getPuzzlePath = (idx: number, total: number) => {
+    const isTopRow = idx < 2;
+    const isBottomRow = idx >= total - (total % 2 === 0 ? 2 : 1);
+    const isLeftCol = idx % 2 === 0;
+    const isEvenRow = Math.floor(idx / 2) % 2 === 0;
+
+    // Top Edge (Flat or Pinched Horseshoe)
+    let top = `M 0,0 L 100,0`; 
+    if (!isTopRow) {
+      top = isEvenRow 
+        ? `M 0,0 L 35,0 C 35,-10 25,-10 25,-20 C 25,-40 75,-40 75,-20 C 75,-10 65,-10 65,0 L 100,0` 
+        : `M 0,0 L 35,0 C 35,10 25,10 25,20 C 25,40 75,40 75,20 C 75,10 65,10 65,0 L 100,0`; 
+    }
+
+    // Right Edge
+    let right = `L 100,100`; 
+    if (isLeftCol) {
+      right = `L 100,35 C 110,35 110,25 120,25 C 140,25 140,75 120,75 C 110,75 110,65 100,65 L 100,100`; 
+    }
+
+    // Bottom Edge
+    let bottom = `L 0,100`; 
+    if (!isBottomRow) {
+      bottom = isEvenRow
+        ? `L 65,100 C 65,110 75,110 75,120 C 75,140 25,140 25,120 C 25,110 35,110 35,100 L 0,100` 
+        : `L 65,100 C 65,90 75,90 75,80 C 75,60 25,60 25,80 C 25,90 35,90 35,100 L 0,100`; 
+    }
+
+    // Left Edge
+    let left = `L 0,0`; 
+    if (!isLeftCol) {
+       left = `L 0,65 C 10,65 10,75 20,75 C 40,75 40,25 20,25 C 10,25 10,35 0,35 L 0,0`; 
+    }
+
+    return `${top} ${right} ${bottom} ${left} Z`;
+  };
+
+// --- MOBILE PUZZLE MOSAIC EXPERIENCE ---
+
+if (isMobile) {
     return (
       <div 
         className="layer-priorities mobile-mosaic-viewport" 
         style={{ 
           opacity: isExiting ? 1 - exitFactor : 1,
-          pointerEvents: 'auto' // 💥 CRITICAL FIX: Overrides SceneDirector's pointer-events: none[cite: 13]
+          pointerEvents: 'auto' 
         }}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
       >
         <div className="mobile-mosaic-content">
-          {/* 1. Quip is now securely at the top of the scrollable flow */}
           <div className="parallax-text center-contents mobile-quip-container">
             <h2 className="layer-tag">// {step.tag}</h2>
             <p className="large-quip">{step.text}</p>
           </div>
 
-          {/* 2. Connected 2-per-row puzzle mosaic grid */}
           <div className="mobile-mosaic-grid">
-            {step.images.map((img, idx) => (
+            {safeImages.map((img, idx) => (
               <div 
                 key={idx} 
                 className="mobile-mosaic-tile"
                 onClick={() => setSelectedImage(img.src)}
               >
-                <img 
-                  src={img.src} 
-                  className="mobile-mosaic-img" 
-                  alt="Memory tile" 
-                />
+                <svg 
+                  viewBox="0 0 100 100" 
+                  className="mobile-mosaic-svg"
+                  overflow="visible" 
+                >
+                  <defs>
+                    <clipPath id={`puzzle-clip-${idx}`}>
+                      <path d={getPuzzlePath(idx, safeImages.length)} />
+                    </clipPath>
+                  </defs>
+                  
+                  <image 
+                    href={img.src} 
+                    x="-50" y="-50" 
+                    width="200" height="200" 
+                    preserveAspectRatio="xMidYMid slice" 
+                    clipPath={`url(#puzzle-clip-${idx})`}
+                    className="mobile-mosaic-img"
+                  />
+                  
+                  <path 
+                    d={getPuzzlePath(idx, safeImages.length)} 
+                    fill="none" 
+                    stroke="#ff810a" 
+                    strokeWidth="1.5" 
+                    className="mobile-mosaic-border"
+                  />
+                </svg>
               </div>
             ))}
           </div>
         </div>
 
-        {/* 3. Full-Screen Color Lightbox View for Tapped Photos */}
         {selectedImage && (
           <div className="mosaic-lightbox" onClick={() => setSelectedImage(null)}>
-            <button className="mosaic-close-btn" onClick={() => setSelectedImage(null)}>
+            <img src={selectedImage} alt="Expanded view" className="mosaic-lightbox-img" />
+            
+            <button className="mosaic-close-btn" onClick={(e) => {
+              e.stopPropagation();
+              setSelectedImage(null);
+            }}>
               [ CLOSE ]
             </button>
-            <img src={selectedImage} alt="Expanded view" className="mosaic-lightbox-img" />
           </div>
         )}
       </div>
@@ -121,8 +190,40 @@ const Gallery: React.FC<GalleryProps> = ({ progress, step, isExiting = false, ex
         <div className="parallax-text" style={{ opacity: isExiting ? 1 - exitFactor : 1 }}>
           <h2 className="layer-tag">// {step.tag}</h2>
           <p className="large-quip">{step.text}</p>
+          <button 
+            className="puzzle-desktop-cta" 
+            onClick={() => 
+              setShowCube(true)
+            }
+            style={{
+              marginTop: '32px',
+              background: 'transparent',
+              border: '1px solid #ff810a',
+              color: '#ff810a',
+              padding: '12px 24px',
+              fontFamily: 'monospace',
+              fontSize: '14px',
+              letterSpacing: '2px',
+              cursor: 'pointer',
+              borderRadius: '4px',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 129, 10, 0.1)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            Play Photos Piece Paster
+          </button>
         </div>
       </div>
+      {showCubeGame && (
+        <CubeGame onClose={() => setShowCube(false)} />
+      )}
     </div>
   );
 };
