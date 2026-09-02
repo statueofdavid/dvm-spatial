@@ -187,7 +187,12 @@ if (isMobile) {
             })}
           </div>
         </div>
-        <div className="parallax-text" style={{ opacity: isExiting ? 1 - exitFactor : 1 }}>
+        <div className="parallax-text" 
+          style={{ 
+            opacity: isExiting ? 1 - exitFactor : 1,
+            pointerEvents: 'auto'  
+          }}
+        >
           <h2 className="layer-tag">// {step.tag}</h2>
           <p className="large-quip">{step.text}</p>
           <button 
@@ -222,10 +227,14 @@ if (isMobile) {
         </div>
       </div>
       {showCubeGame && (
-        <CubeGame onClose={() => setShowCube(false)} />
+        (() => {
+          console.log("🛠️ GALLERY LOG: Launching CubeGame. safeImages length:", safeImages.length);
+          console.log("🛠️ GALLERY LOG: Image data:", safeImages);
+          return <CubeGame onClose={() => setShowCube(false)} images={safeImages} />;
+        })()
       )}
     </div>
   );
-};
+};;
 
 export default Gallery;
