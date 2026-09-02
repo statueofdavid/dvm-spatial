@@ -177,6 +177,7 @@ const BlankCube = ({ faceLocks, facePieces }: { faceLocks: Record<number, number
       {faces.map((face) => {
         const isLocked = faceLocks[face.id] !== null;
         const placedPieces = facePieces[face.id];
+        const isCompleted = placedPieces.length === 9;
 
         return (
           <mesh
@@ -192,7 +193,7 @@ const BlankCube = ({ faceLocks, facePieces }: { faceLocks: Record<number, number
             
             <lineSegments>
               <edgesGeometry args={[new THREE.PlaneGeometry(CUBE_SIZE, CUBE_SIZE)]} />
-              <lineBasicMaterial color={isLocked ? "#44ff44" : "#ff810a"} />
+              <lineBasicMaterial color={isCompleted ? "#00ffff" : (isLocked ? "#44ff44" : "#ff810a")} />
             </lineSegments>
           </mesh>
         );
@@ -241,21 +242,29 @@ const CubeGame: React.FC<CubeGameProps> = ({ onClose, images }) => {
     }
   });
 
-  const handlePieceDrop = useCallback((faceId: number, piece: Piece) => {
-    setFaceLocks((prevLocks) => {
-      const currentLock = prevLocks[faceId];
-      if (currentLock === null || currentLock === piece.imgIdx) {
-        setFacePieces((prev) => {
-          if (prev[faceId].some(p => p.pieceIdx === piece.pieceIdx)) return prev;
-          return { ...prev, [faceId]: [...prev[faceId], piece] };
-        });
+const handlePieceDrop = useCallback((faceId: number, piece: Piece) => {
+  setFaceLocks((prevLocks) => {
+    const currentLock = prevLocks[faceId];
+    if (currentLock === null || currentLock === piece.imgIdx) {
+      setFacePieces((prev) => {
+        if (prev[faceId].some(p => p.pieceIdx === piece.pieceIdx)) return prev;
+        const updatedFacePieces = [...prev[faceId], piece];
 
-        setTrayPieces((prev) => prev.filter(p => !(p.imgIdx === piece.imgIdx && p.pieceIdx === piece.pieceIdx)));
-        return { ...prevLocks, [faceId]: piece.imgIdx };
-      }
-      return prevLocks;
-    });
-  }, []);
+        // 💥 WIN-STATE CHECK: Check if the face now has all 9 pieces
+        if (updatedFacePieces.length === 9) {
+          console.log(`🎉 SUCCESS: Face ${faceId} is fully solved for image ${piece.imgIdx}!`);
+          // Optional: Trigger custom victory logic or sound here
+        }
+
+        return { ...prev, [faceId]: updatedFacePieces };
+      });
+
+      setTrayPieces((prev) => prev.filter(p => !(p.imgIdx === piece.imgIdx && p.pieceIdx === piece.pieceIdx)));
+      return { ...prevLocks, [faceId]: piece.imgIdx };
+    }
+    return prevLocks;
+  });
+}, []);
 
   const clearDropEvent = useCallback(() => {
     setDropEvent(null);
@@ -264,7 +273,7 @@ const CubeGame: React.FC<CubeGameProps> = ({ onClose, images }) => {
   const gameUI = (
     <div style={{ position: 'fixed', inset: 0, zIndex: 99999, backgroundColor: '#0a0a0a' }}>
       <header style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '80px', padding: '20px', borderBottom: '1px solid rgba(255, 129, 10, 0.2)', display: 'flex', justifyContent: 'space-between', boxSizing: 'border-box' }}>
-        <h2 style={{ color: '#fff', fontSize: '1.2rem', margin: 0, fontFamily: 'monospace' }}>// MASTER CUBE</h2>
+        <h2 style={{ color: '#fff', fontSize: '1.2rem', margin: 0, fontFamily: 'monospace' }}>// Puzzle Piece Picker</h2>
         <button onClick={onClose} style={{ background: 'transparent', border: '1px solid #ff810a', color: '#ff810a', padding: '6px 12px', cursor: 'pointer', fontFamily: 'monospace', pointerEvents: 'auto' }}>
           [ EXIT ]
         </button>
