@@ -13,12 +13,16 @@ import '../App.css';
 // ==========================================
 // BRAIN PIECE
 // ==========================================
-function BrainPiece({ region, selectedId, onSelect, lightMode, portal, isMobile }) {
+function BrainPiece({ region, selectedId, onSelect, lightMode, portal, isMobile, focusedId }) {
   const [hovered, setHover] = useState(false);
   const isSelected = selectedId === region.id;
   const isOtherSelected = !!selectedId && selectedId !== region.id;
+  const isFocused = focusedId === region.id;
+  const isEffectivelyHovered = hovered || isFocused;
 
-  const { meshRef, center, geometry, frontZ } = useBrainPieceLogic(region, isSelected, isOtherSelected, hovered);
+  const showLabel = isEffectivelyHovered && !selectedId;
+
+  const { meshRef, center, geometry, frontZ } = useBrainPieceLogic(region, isSelected, isOtherSelected, hovered, isEffectivelyHovered);
 
   if (!geometry) return null;
 
@@ -58,7 +62,7 @@ function BrainPiece({ region, selectedId, onSelect, lightMode, portal, isMobile 
           style={{ pointerEvents: 'none' }} 
         >
           <div 
-            className={`region-card ${lightMode ? 'light-mode' : 'dark-mode'} ${hovered ? 'is-visible' : ''}`}
+            className={`region-card ${lightMode ? 'light-mode' : 'dark-mode'} ${showLabel ? 'is-visible' : ''}`}
           >
             {region.label || region.id.toUpperCase()}
           </div>
@@ -71,7 +75,7 @@ function BrainPiece({ region, selectedId, onSelect, lightMode, portal, isMobile 
 // ==========================================
 // MAIN CORE COMPONENT
 // ==========================================
-export default function NeuralCore({ lightMode, selectedId, setSelectedId, mastery, onMastered, portal, onOpenRadialMenu }) {
+export default function NeuralCore({ lightMode, selectedId, setSelectedId, mastery, onMastered, portal, onOpenRadialMenu, focusedId }) {
   const controls = useRef();
   const isMobile = useIsMobile();
   const initialDist = useRef(null);
@@ -145,6 +149,7 @@ export default function NeuralCore({ lightMode, selectedId, setSelectedId, maste
               lightMode={lightMode}
               portal={portal}
               isMobile={isMobile}
+              focusedId={focusedId}
             />
           ))}
         </Center>

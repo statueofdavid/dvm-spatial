@@ -1,5 +1,9 @@
 .timeline-parallax-container { width: 100%; position: relative; }
 
+.experience-portal {
+  border: none !important;
+}
+
 .scene-viewport {
   position: fixed;
   inset: 0;

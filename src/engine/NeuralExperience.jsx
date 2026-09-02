@@ -1,12 +1,17 @@
-import React, { useEffect, useRef } from 'react'
-import { Canvas } from '@react-three/fiber'
+import React, { useEffect, useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { useIsMobile } from '../hooks/useIsMobile';
 import SocialMatrix from '../components/Social/SocialMatrix'
 import TimelineManager from '../components/AboutMe/TimelineManager';
+import MobileStoryManager from '../components/AboutMe/MobileStoryManager';
 import Pillow from '../components/Pillow/Pillow';
 import FitCheck from '../components/AboutMe/FitCheck';
 
+
 export default function NeuralExperience({ region, onExit, onNavigate, lightMode }) {
   const scrollRef = useRef(null);
+
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -17,16 +22,25 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
   if (!region) return null;
 
   return (
-    <div className={`experience-portal ${lightMode ? 'light' : 'dark'}`} style={{ borderTop: `6px solid ${region.color}` }}>
+    <div className={`experience-portal ${lightMode ? 'light' : 'dark'}`}>
       <header className="portal-header" style={{ position: 'relative', zIndex: 10000 }}>
         <div className="container-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* This flex container ensures buttons stay on the same horizontal plane */}
           <button className="portal-exit exit-view-button" onClick={onExit}>Exit</button>
-          {/* Light mode toggle should live here or be caught by the same flex alignment */}
         </div>
       </header>
       
-      <div className="portal-scroll-area" ref={scrollRef}>
+      <div 
+        className="portal-scroll-area" 
+        ref={scrollRef}
+        tabIndex={0} 
+        aria-label={`${region.label} Experience Timeline. Use arrow keys or spacebar to scroll.`}
+        onKeyDown={(e) => {
+          if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+            e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation(); 
+          }
+        }}
+      >
         {region.id !== 'fit_check' && (
           <div className="container-inner">
             <h1 className="portal-title" style={{ textAlign: 'center', marginBottom: '2vh' }}>{region.label}</h1>
@@ -38,9 +52,12 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
             <SocialMatrix lightMode={lightMode} />
           </div>
         ) : region.id === 'action' ? (
-            <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
+            isMobile ? (
+              <MobileStoryManager lightMode={lightMode} onNavigate={onNavigate} />
+            ) : (
+              <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
+            )
         ) : region.id === 'feel' ? (
-          // We must give this div a height, or the Canvas will be invisible!
           <div className="container-inner" style={{ height: '60vh', width: '100%' }}>
             <Canvas camera={{ position: [0, 0, 5] }}>
               <ambientLight intensity={lightMode ? 1 : 0.2} />
@@ -95,8 +112,12 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
       /* MOBILE RESPONSIVE TWEAK */
       @media (max-width: 800px) {
         .portal-exit {
-          top: 20px;
-          left: 20px;
+          /* Use clamp to mirror the responsive spacing of the lightbulb */
+          top: clamp(20px, 4vh, 30px);
+          left: clamp(20px, 5vw, 30px);
+          /* Add safe-area spacing so it doesn't clip into mobile notches */
+          margin-top: env(safe-area-inset-top);
+          margin-left: env(safe-area-inset-left);
         }
       }
 

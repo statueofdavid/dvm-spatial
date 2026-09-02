@@ -1,5 +1,4 @@
-// src/components/AboutMe/hooks/useFitCheck.ts
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { logger } from '../../../utils/logger';
 import { 
   WeightVector, UserBucket, Question, WeightedOption, 
@@ -15,13 +14,53 @@ export function useFitCheck() {
     tech: 0, vision: 0, velocity: 0, experience: 0, affinity: 0 
   });
   const [fitPercentage, setFitPercentage] = useState(0);
+  
+  const [scoreHistory, setScoreHistory] = useState<WeightVector[]>([]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (viewState === 'result' || viewState === 'calculating') {
+        setViewState('active');
+        setScoreHistory(prev => {
+          const newHistory = [...prev];
+          const previousScore = newHistory.pop();
+          if (previousScore) setTotalScore(previousScore);
+          return newHistory;
+        });
+      } else if (viewState === 'active') {
+        if (currentStep > 0) {
+          if (currentStep === 1) {
+            setBucket(null);
+            setActiveQuestions([ROUTER_QUESTION]);
+          }
+          setCurrentStep(prev => prev - 1);
+          setScoreHistory(prev => {
+            const newHistory = [...prev];
+            const previousScore = newHistory.pop();
+            if (previousScore) setTotalScore(previousScore);
+            return newHistory;
+          });
+        } else {
+          setViewState('intro');
+          setScoreHistory([]);
+        }
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [viewState, currentStep]);
 
   const handleStart = () => {
     logger.info("FIT_CHECK // SESSION_STARTED");
     setViewState('active');
+    window.history.pushState({ fitCheck: true }, ''); 
   };
 
   const handleAnswer = (option: WeightedOption) => {
+    setScoreHistory(prev => [...prev, totalScore]);
+    window.history.pushState({ fitCheck: true }, ''); 
+
     const newScore = {
       tech: totalScore.tech + option.weight.tech,
       vision: totalScore.vision + option.weight.vision,
@@ -31,10 +70,7 @@ export function useFitCheck() {
     };
     setTotalScore(newScore);
 
-    // Initial Router Logic
     if (currentStep === 0 && bucket === null) {
-      // Improved selection: Look for a specific ID or category on the option
-      // For now, keeping your text-based logic but moved here for cleanliness
       let selected: UserBucket = 'EXPERIMENTAL';
       const txt = option.text;
       if (txt.includes("Mobile")) selected = 'MOBILE';
@@ -55,20 +91,19 @@ export function useFitCheck() {
     }
   };
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
   const calculateFinalFit = (finalScores: WeightVector) => {
     setViewState('calculating');
-    
-    // Dynamic calculation based on actual question length
     const numQuestions = activeQuestions.length;
     const coreScore = finalScores.tech + finalScores.vision + finalScores.velocity;
     const boostScore = finalScores.experience + finalScores.affinity;
-
     const maxCoreTotal = 30 * numQuestions;
     const maxBoostTotal = 20 * numQuestions;
-
     const weightedTotal = ((coreScore / maxCoreTotal) * 90) + ((boostScore / maxBoostTotal) * 10);
     setFitPercentage(Math.min(100, Math.round(weightedTotal)));
-
     setTimeout(() => setViewState('result'), 2000);
   };
   
@@ -78,11 +113,13 @@ export function useFitCheck() {
     setCurrentStep(0);
     setTotalScore({ tech: 0, vision: 0, velocity: 0, experience: 0, affinity: 0 });
     setFitPercentage(0);
+    setScoreHistory([]); 
     setViewState('intro');
   };
 
   return {
     viewState, bucket, currentStep, activeQuestions, totalScore, fitPercentage,
-    handleStart, handleAnswer, handleRetry, setViewState
+    handleStart, handleAnswer, handleRetry, setViewState, 
+    handleBack
   };
 }

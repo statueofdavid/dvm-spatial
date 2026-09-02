@@ -13,7 +13,7 @@ import React from 'react';
 import { 
   VscTerminal, 
   VscTelescope, 
-  VscRocket,   // <-- Swapped VscZap for VscRocket to fix the type error!
+  VscRocket,
   VscShield, 
   VscOrganization, 
   VscWarning 
@@ -26,11 +26,11 @@ import {
  */
 export const getResonanceIcon = (dominantVector: string) => {
   switch (dominantVector) {
-    case 'tech': return <VscTerminal />;
-    case 'vision': return <VscTelescope />;
-    case 'velocity': return <VscRocket />; // <-- Updated here
-    case 'experience': return <VscShield />;
-    case 'affinity': return <VscOrganization />;
+    case 'Tech': return <VscTerminal />;
+    case 'Vision': return <VscTelescope />;
+    case 'Velocity': return <VscRocket />;
+    case 'Experience': return <VscShield />;
+    case 'Affinity': return <VscOrganization />;
     default: return <VscWarning />;
   }
 };
@@ -42,37 +42,36 @@ export const getResonanceIcon = (dominantVector: string) => {
  * @returns {string} - The contextual, enterprise-themed output message.
  */
 export const getResultQuip = (dominantVector: string, percentage: number) => {
-  // CRITICAL PATH: Threshold evaluation
   if (percentage < 45) {
-    return "CRITICAL_MISMATCH: Current operational parameters do not align with optimal deployment metrics. Recommend recalibration or alternative routing.";
+    return "Misaligned: Current parameters do not map well to what is required to meet your needs. Recommend recalibration or alternative routing.";
   }
 
   // Determine magnitude of resonance
   const highMatch = percentage >= 80;
 
   // Domain evaluation based on vector type
-  switch (dominantVector) {
+switch (dominantVector) {
     case 'tech':
       return highMatch 
-        ? "SYNERGY_OPTIMIZED: Exceptional alignment in deep technical grit. Ready to architect and deploy complex systems at scale."
-        : "SYNERGY_DETECTED: Solid baseline for technical execution and architectural development.";
+        ? "Exceptional alignment in deep technical grit, architectural scalability, and complex system deployment."
+        : "Solid baseline established for technical execution and ongoing architectural development.";
     case 'vision':
       return highMatch 
-        ? "SYNERGY_OPTIMIZED: Exceptional strategic foresight. Perfectly aligned to map uncharted product territories."
-        : "SYNERGY_DETECTED: Acceptable alignment for long-term strategic planning and product vision.";
+        ? "Exceptional strategic foresight. Experience profiles are optimally aligned to map uncharted product territories."
+        : "Acceptable baseline alignment for long-term strategic planning and product visioning.";
     case 'velocity':
       return highMatch 
-        ? "SYNERGY_OPTIMIZED: Maximum execution speed detected. Frictionless delivery protocols ready for deployment."
-        : "SYNERGY_DETECTED: Capable of maintaining high-paced iteration cycles and agile delivery.";
+        ? "Maximum execution speed detected. Well-defined delivery protocols primed for frictionless iterative deployment."
+        : "Demonstrated capability in maintaining high-paced iteration cycles and agile delivery structures.";
     case 'experience':
       return highMatch 
-        ? "SYNERGY_OPTIMIZED: Veteran operational stability recognized. Ready to lead mission-critical deployments."
-        : "SYNERGY_DETECTED: Sufficient baseline experience for managing standard operational risks.";
+        ? "Veteran operational stability recognized, fully prepared to govern mission-critical deployments."
+        : "Sufficient baseline experience identified for managing standard enterprise operational risks.";
     case 'affinity':
       return highMatch 
-        ? "SYNERGY_OPTIMIZED: Maximum cultural resonance. Team synchronization and human-centric engineering at optimal levels."
-        : "SYNERGY_DETECTED: Positive alignment with core communication and team integration protocols.";
+        ? "Maximum cultural resonance achieved. Complete team synchronization and human-centric engineering alignment."
+        : "Positive foundational alignment with core communication patterns and team integration protocols.";
     default:
-      return "ANALYSIS_COMPLETE: System ready for next directive.";
+      return "Analysis complete. System stabilized for subsequent operational directives.";
   }
 };

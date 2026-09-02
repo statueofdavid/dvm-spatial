@@ -136,6 +136,9 @@ const TimelineManager: React.FC<TimelineManagerProps> = ({ lightMode, onNavigate
 
   return (
     <div className="timeline-parallax-container">
+      <div aria-live="polite" className="sr-only" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
+        {currentStep ? `Story step: ${currentStep.text}` : ''}
+      </div>
       <SceneDirector 
         currentStep={currentStep} 
         progress={progress} 
@@ -148,7 +151,7 @@ const TimelineManager: React.FC<TimelineManagerProps> = ({ lightMode, onNavigate
         isFinal={isFinal}  
       />
       
-      <div style={{ height: `${totalHeight}px` }}></div>
+      <div style={{ height: `calc(${totalHeight}px + 100vh)` }}></div>
     </div>
   );
 };

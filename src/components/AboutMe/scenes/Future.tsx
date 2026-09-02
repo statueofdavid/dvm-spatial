@@ -21,6 +21,17 @@ const Future = ({ progress, step, onNavigate }: { progress: number; step: any; o
 
   const handleDragEnd = useCallback(() => setIsDragging(false), []);
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    const step = 0.05; // Move by 5% per key press
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault(); // Prevent accidental page scrolling
+      setDividerPos(prev => Math.max(0.01, prev - step));
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      setDividerPos(prev => Math.min(0.99, prev + step));
+    }
+  }, []);
+
   useEffect(() => {
     if (isDragging) {
       window.addEventListener('mousemove', handleDragMove);
@@ -45,7 +56,12 @@ const Future = ({ progress, step, onNavigate }: { progress: number; step: any; o
     >
       {/* 3D Layer */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
-        <Canvas dpr={[1, 1.5]}>
+        <Canvas 
+          dpr={[1, 1.5]}
+          // NEW: Canvas Accessibility
+          role="img"
+          aria-label="Interactive webcam feed with live shaders"
+        >
           <FutureScreen 
             activeFilter={activeFilter} 
             dividerPos={dividerPos} 
@@ -61,6 +77,13 @@ const Future = ({ progress, step, onNavigate }: { progress: number; step: any; o
         onMouseDown={() => setIsDragging(true)}
         onTouchStart={() => setIsDragging(true)}
         style={{ left: `calc(${dividerPos * 100}% - 30px)` }}
+        role="slider"
+        tabIndex={0}
+        aria-label="Adjust split-screen filter effect"
+        aria-valuenow={Math.round(dividerPos * 100)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        onKeyDown={handleKeyDown}
       >
         <div className="future-divider-line" />
         <div className="future-divider-circle">

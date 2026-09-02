@@ -15,7 +15,6 @@ export default function WordCloud({ lightMode }: any) {
       try {
         const res = await fetch('http://localhost:3000/api/wordcloud');
         
-        // If the server returns a 500 or any other error status, throw into the catch block
         if (!res.ok) {
           throw new Error(`SERVER_ERROR_STATUS_${res.status}`);
         }
@@ -31,7 +30,6 @@ export default function WordCloud({ lightMode }: any) {
         }
       } catch (err) {
         logger.warn('WORDCLOUD_SYNC_FAILED', err);
-        // Fallback placeholder terms to keep your visual scene alive
         setWords([
           { word: 'LOCAL_BACKEND_OFFLINE', size: 12 },
           { word: 'CHECK_DATABASE_CONNECTION', size: 8 },
@@ -43,16 +41,13 @@ export default function WordCloud({ lightMode }: any) {
   }, []);
 
   const wordPositions = useMemo(() => {
-    // If it's the failsafe word, anchor it dead center
     if (words.length === 1) {
       return [{ ...words[0], position: new THREE.Vector3(0, 0, 0) }];
     }
 
     return words.map((item, i) => {
-      // TIGHTENED GEOMETRY: Pull the words much closer on the Z axis
       const z = -(i * 0.8); 
       
-      // TIGHTENED GEOMETRY: Keep them within the camera's immediate frustum
       const x = (Math.random() - 0.5) * 8;
       const y = (Math.random() - 0.5) * 5;
 
@@ -63,30 +58,44 @@ export default function WordCloud({ lightMode }: any) {
     });
   }, [words]);
 
-  // Handle native scroll wheel to move the group
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      // Increment target Z based on scroll direction
-      scrollTarget.current += e.deltaY * 0.015; // Softened scroll speed
+      scrollTarget.current += e.deltaY * 0.015;
       
       const maxDepth = words.length * 0.8;
       scrollTarget.current = Math.max(0, Math.min(scrollTarget.current, maxDepth));
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      let step = 0;
+      if (e.key === 'ArrowUp' || e.key === 'w') step = -1.5;
+      if (e.key === 'ArrowDown' || e.key === 's') step = 1.5;
+      if (e.key === 'PageUp') step = -5;
+      if (e.key === 'PageDown') step = 5;
+
+      if (step !== 0) {
+        scrollTarget.current += step;
+        const maxDepth = words.length * 0.8;
+        scrollTarget.current = Math.max(0, Math.min(scrollTarget.current, maxDepth));
+      }
+    };
+
     window.addEventListener('wheel', handleWheel);
-    return () => window.removeEventListener('wheel', handleWheel);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [words.length]);
 
   useFrame((state) => {
     if (groupRef.current) {
-      // 1. Z-Axis Thrust: Pull the sea of words toward the static camera
       groupRef.current.position.z = THREE.MathUtils.lerp(
         groupRef.current.position.z, 
         scrollTarget.current, 
         0.05
       );
 
-      // 2. X/Y Parallax: Subtle opposite push to simulate "looking around"
       const targetX = -(state.pointer.x * 1.5); 
       const targetY = -(state.pointer.y * 1.5); 
 
@@ -117,7 +126,6 @@ export default function WordCloud({ lightMode }: any) {
 
 function StaticWord({ position, text, size, lightMode }: any) {
   const baseSize = 0.4;
-  // Lowered the scale multiplier so giant words don't block the camera lens entirely
   const scale = baseSize + (size * 0.04); 
   
   const opacity = Math.min(0.3 + (size * 0.1), 1);

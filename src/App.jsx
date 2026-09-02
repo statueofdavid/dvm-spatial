@@ -1,37 +1,33 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-
 import { Canvas } from '@react-three/fiber';
 import { View } from '@react-three/drei';
 
-import { useIsMobile } from './hooks/useIsMobile';
-import { useSpatialRouter } from './hooks/useSpatialRouter'; 
 import { BRAIN_REGIONS } from './data/regions';
-
-import ThemeToggle from './components/ThemeToggle';
-import MobileRadialMenu from './components/MobileRadialMenu';
-import FitCheck from './components/AboutMe/FitCheck';
-
 import NeuralCore from './engine/NeuralCore';
 import NeuralExperience from './engine/NeuralExperience';
 import CTAPrompting from './engine/CTAPrompting';
-
+import FitCheck from './components/AboutMe/FitCheck';
+import ThemeToggle from './components/ThemeToggle';
+import MobileRadialMenu from './components/MobileRadialMenu';
+import A11yOverlay from './components/A11yOverlay';
+import { useSpatialRouter } from './hooks/useSpatialRouter'; 
+import { useIsMobile } from './hooks/useIsMobile';
 import './App.css';
 
 export default function App() {
-  const { currentRoute, navigate } = useSpatialRouter();
   const [theme, setTheme] = useState('dark');
-  const [isMounted, setIsMounted] = useState(false);
-
   const [mastery, setMastery] = useState({ zoomed: false, rotated: false, selected: false });
+  const [isMounted, setIsMounted] = useState(false);
   const [isRadialMenuOpen, setIsRadialMenuOpen] = useState(false);
+  
+  // 2. Add state to track keyboard focus
+  const [focusedId, setFocusedId] = useState(null); 
+
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    setIsRadialMenuOpen(false);
-  }, [isMobile, currentRoute]);
-
   const brainTracker = useRef();
   const labelPortal = useRef();
+
+  const { currentRoute, navigate } = useSpatialRouter();
 
   const handleMastery = useCallback((action) => {
     setMastery(prev => ({ ...prev, [action]: true }));
@@ -45,8 +41,11 @@ export default function App() {
     setIsMounted(true);
   }, []);
 
-  const lightMode = theme === 'light';
+  useEffect(() => {
+    setIsRadialMenuOpen(false);
+  }, [isMobile, currentRoute]);
 
+  const lightMode = theme === 'light';
   const handleThemeToggle = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
@@ -74,11 +73,32 @@ export default function App() {
               onMastered={handleMastery}
               portal={labelPortal}
               onOpenRadialMenu={() => setIsRadialMenuOpen(true)}
+              focusedId={focusedId} // 3. Pass focus state to the 3D scene
             />
           </View>
         </Canvas>
       )}
 
+      {/* Render the A11y Overlay ONLY on desktop AND when no experience is active */}
+      {!isMobile && !currentRoute && (
+        <A11yOverlay 
+          onFocusRegion={setFocusedId} 
+          onSelectRegion={navigate} 
+        />
+      )}
+
+      {/* The Mobile A11y Trigger */}
+      {isMobile && !isRadialMenuOpen && !currentRoute && (
+        <button 
+          onClick={() => setIsRadialMenuOpen(true)}
+          style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}
+          aria-label="Open Brain Navigation Menu"
+        >
+          Open Menu
+        </button>
+      )}
+
+      {/* Conditionally render the radial menu if on mobile and the menu is open */}
       {isMobile && isRadialMenuOpen && !currentRoute && (
         <MobileRadialMenu 
           theme={theme}
@@ -88,19 +108,17 @@ export default function App() {
       )}
 
       <CTAPrompting lightMode={lightMode} mastery={mastery} />
+      <ThemeToggle theme={theme} onToggle={handleThemeToggle} />
 
-      <ThemeToggle 
-        theme={theme} 
-        onToggle={handleThemeToggle} 
-      />
-
-      {/* Top Level Overlays */}
-      {currentRoute === 'fit_check' && (
-        <FitCheck 
-          onNavigate={navigate} 
-          lightMode={lightMode} 
+      {isMobile && isRadialMenuOpen && !currentRoute && (
+        <MobileRadialMenu 
+          theme={theme}
+          onNavigate={navigate}
+          onClose={() => setIsRadialMenuOpen(false)}
         />
       )}
+
+      {currentRoute === 'fit_check' && <FitCheck onNavigate={navigate} lightMode={lightMode} />}
 
       {selectedRegion && currentRoute !== 'fit_check' && (
         <NeuralExperience 

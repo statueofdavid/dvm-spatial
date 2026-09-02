@@ -161,10 +161,11 @@
    CANCEL BUTTON (Bottom of screen)
 ========================================= */
 .fit-cancel-container {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
+  margin-top: 32px;
+  padding-bottom: 24px; 
+  width: 100%;
+  text-align: center;
 }
 
 .fit-cancel-btn {
@@ -180,4 +181,44 @@
 
 .fit-cancel-btn:hover {
   color: var(--fit-text-main);
+}
+
+/* =========================================
+   MOBILE RESPONSIVE OVERRIDES
+========================================= */
+@media (max-width: 768px) {
+  /* Reduce the massive outer padding on small screens */
+  .fit-module-container {
+    padding: 16px;
+  }
+
+  /* Compress the inner card padding so content has room to breathe */
+  .fit-content-wrapper {
+    padding: 32px 24px;
+    border-radius: 8px;
+  }
+
+  /* Slightly shrink the typography */
+  .fit-question {
+    font-size: 24px;
+    margin-bottom: 32px;
+  }
+
+  /* Force buttons to take up more width for easier tapping */
+  .fit-option-btn {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  /* Ensure the raised action buttons stretch uniformly */
+  .resume-btn.raised {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Bring the bottom cancel text up slightly */
+  .fit-cancel-container {
+    bottom: 24px;
+  }
 }
