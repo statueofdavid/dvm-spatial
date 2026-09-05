@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StoryStep } from '../../../data/StorySteps';
 import { useIsMobile } from '../../../hooks/useIsMobile';
-import CubeGame from './CubeGame';
+import CubeGame from '../PuzzleCube/CubeGame';
 import "./style/Gallery.css";
 
 interface GalleryProps {
