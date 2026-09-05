@@ -4,6 +4,10 @@
   border: none !important;
 }
 
+.portal-title {
+  display: none !important;
+}
+
 .scene-viewport {
   position: fixed;
   inset: 0;
