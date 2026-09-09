@@ -1,17 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { useIsMobile } from '../hooks/useIsMobile';
-import SocialMatrix from '../components/Social/SocialMatrix'
-import TimelineManager from '../components/AboutMe/TimelineManager';
-import MobileStoryManager from '../components/AboutMe/MobileStoryManager';
+import SocialMatrix from '../components/Social/SocialMatrix';
+import TimelineManager from '../components/AboutMe/TimelineManager'; 
 import Pillow from '../components/Pillow/Pillow';
 import FitCheck from '../components/AboutMe/FitCheck';
 
-
 export default function NeuralExperience({ region, onExit, onNavigate, lightMode }) {
   const scrollRef = useRef(null);
-
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -23,49 +18,50 @@ export default function NeuralExperience({ region, onExit, onNavigate, lightMode
 
   return (
     <div className={`experience-portal ${lightMode ? 'light' : 'dark'}`}>
-      <header className="portal-header" style={{ position: 'relative', zIndex: 10000 }}>
+      <header className="portal-header">
         <div className="container-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <button className="portal-exit exit-view-button" onClick={onExit}>Exit</button>
+          <button className="portal-exit exit-view-button" onClick={onExit}>
+            Exit
+          </button>
         </div>
       </header>
-      
-      <div 
-        className="portal-scroll-area" 
+
+      <div
+        className="portal-scroll-area"
         ref={scrollRef}
-        tabIndex={0} 
+        tabIndex={0}
         aria-label={`${region.label} Experience Timeline. Use arrow keys or spacebar to scroll.`}
         onKeyDown={(e) => {
           if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
             e.stopPropagation();
-            e.nativeEvent.stopImmediatePropagation(); 
+            e.nativeEvent.stopImmediatePropagation();
           }
         }}
       >
-        {region.id !== 'fit_check' && (
+        {region.id !== 'fit_check' && region.id !== 'action' && (
           <div className="container-inner">
-            <h1 className="portal-title" style={{ textAlign: 'center', marginBottom: '2vh' }}>{region.label}</h1>
+            <h1 className="portal-title">{region.label}</h1>
           </div>
         )}
-          
+
         {region.id === 'passion' ? (
           <div className="container-inner">
             <SocialMatrix lightMode={lightMode} />
           </div>
         ) : region.id === 'action' ? (
-            isMobile ? (
-              <MobileStoryManager lightMode={lightMode} onNavigate={onNavigate} />
-            ) : (
-              <TimelineManager lightMode={lightMode} onNavigate={onNavigate} />
-            )
+            <TimelineManager 
+              lightMode={lightMode} 
+              onNavigate={onNavigate} 
+              onExit={onExit} />
         ) : region.id === 'feel' ? (
           <div className="container-inner" style={{ height: '60vh', width: '100%' }}>
             <Canvas camera={{ position: [0, 0, 5] }}>
               <ambientLight intensity={lightMode ? 1 : 0.2} />
-              <Pillow lightMode={lightMode} onNavigate={onNavigate}/>
+              <Pillow lightMode={lightMode} onNavigate={onNavigate} />
             </Canvas>
           </div>
         ) : region.id === 'fit_check' ? (
-            <FitCheck onExit={onExit} lightMode={lightMode} onNavigate={onNavigate} />
+          <FitCheck onExit={onExit} lightMode={lightMode} onNavigate={onNavigate} />
         ) : (
           <div className="container-inner">
             <div className="placeholder-text">{`Initializing ${region.id} module...`}</div>

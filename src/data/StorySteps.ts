@@ -94,7 +94,7 @@ export const storySteps: StoryStep[] = [
   { 
     tag: "FUTURE", 
     scene: "FUTURE", 
-    text: "With my system ready, What will we build together?", 
+    text: "What will we build together?", 
     isFinal: true 
   }
 ];

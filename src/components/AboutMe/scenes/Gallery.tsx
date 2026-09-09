@@ -28,18 +28,18 @@ const Gallery: React.FC<GalleryProps> = ({ progress, step, isExiting = false, ex
           className="layer-priorities mobile-mosaic-viewport" 
           style={{ 
             opacity: isExiting ? 1 - exitFactor : 1,
-            pointerEvents: 'auto',
+            /* 💥 1. Set to 'none' so swipes pass through to .portal-scroll-area */
+            pointerEvents: 'none',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '100vh'
+            height: '100vh',
+            /* 💥 2. Ensure touch-action allows vertical scrolling */
+            touchAction: 'pan-y'
           }}
-          onTouchStart={(e) => e.stopPropagation()}
-          onTouchMove={(e) => e.stopPropagation()}
-          onTouchEnd={(e) => e.stopPropagation()}
         >
-          <div className="mobile-mosaic-content" style={{ textAlign: 'center' }}>
+          <div className="mobile-mosaic-content" style={{ textAlign: 'center', pointerEvents: 'none' }}>
             <div className="parallax-text center-contents mobile-quip-container">
               <h2 className="layer-tag">// {step.tag}</h2>
               <p className="large-quip">{step.text}</p>
@@ -49,6 +49,8 @@ const Gallery: React.FC<GalleryProps> = ({ progress, step, isExiting = false, ex
               className="puzzle-mobile-cta" 
               onClick={() => setShowCube(true)}
               style={{
+                /* 💥 3. Only the button intercepts touches */
+                pointerEvents: 'auto',
                 marginTop: '32px',
                 background: 'transparent',
                 border: '1px solid #ff810a',

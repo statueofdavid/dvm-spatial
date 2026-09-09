@@ -30,7 +30,7 @@
 .resume-actions {
   display: flex;
   flex-direction: row;
-  gap: 24px;
+  gap: 1px;
   margin-top: 2.5rem;
   pointer-events: auto;
   flex-wrap: wrap;
@@ -152,6 +152,55 @@
     justify-content: center; 
     padding: 14px 24px;
     box-sizing: border-box;
+  }
+}
+
+/* Update breakpoint from 800px to 900px to cleanly catch iPad Air (820px) portrait */
+@media (max-width: 900px) {
+  .layer-identity { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: clamp(60px, 8vh, 100px) !important; 
+    text-align: center; 
+    width: 90% !important;
+    margin: 0 auto !important;
+    padding-left: 20px !important; 
+    padding-right: 20px !important;
+    box-sizing: border-box !important; 
+    min-height: 100dvh;        
+  }
+
+  .layer-identity .main-photo { 
+    width: 65vw; 
+    max-width: 320px; /* Slightly relaxed for tablet screens */
+    max-height: 40vh;
+    height: auto; 
+    aspect-ratio: 420 / 580; 
+    object-fit: cover;
+    margin: 0 auto 1.5rem; 
+  }
+
+  .hero-title {
+    font-size: clamp(32px, 5vw, 48px);
+    margin-bottom: 8px;
+  }
+
+  .quip {
+    width: 100%;
+    font-size: 1.05rem;
+    max-width: 520px;
+    margin: 0.5rem auto 1.5rem;
+    box-sizing: border-box;
+  }
+
+  .resume-actions { 
+    display: flex;
+    flex-direction: row; /* Tablet has enough width for horizontal buttons */
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
   }
 }
 

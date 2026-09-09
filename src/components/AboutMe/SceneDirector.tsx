@@ -2,13 +2,8 @@ import React from 'react';
 import { SceneType, StoryStep } from '../../data/StorySteps';
 import Resume from './scenes/Resume';
 import Gallery from './scenes/Gallery';
-import Forge from './scenes/Forge';
-import Leap from './scenes/Leap';
-import Value from './scenes/Value';
-import Control from './scenes/Control';
-import Mirror from './scenes/Mirror';
 import Future from './scenes/Future';
-import "./AboutMeTimeline.css"
+import './AboutMeTimeline.css';
 
 interface SceneDirectorProps {
   currentStep: StoryStep;
@@ -21,47 +16,59 @@ interface SceneDirectorProps {
 const SceneMap: Partial<Record<SceneType, React.FC<any>>> = {
   RESUME: Resume,
   GALLERY: Gallery,
-  // FORGE: Forge,
-  // LEAP: Leap,
-  // VALUE: Value,
-  // CONTROL: Control,
-  // MIRROR: Mirror,
   FUTURE: Future,
 };
 
-const SceneDirector: React.FC<SceneDirectorProps> = ({ currentStep, progress, nextStep, transitionProgress = 0, onNavigate }) => {
+const SceneDirector: React.FC<SceneDirectorProps> = ({ 
+  currentStep, 
+  progress, 
+  nextStep, 
+  transitionProgress = 0, 
+  onNavigate 
+}) => {
   const ActiveScene = SceneMap[currentStep.scene];
-  const NextScene = (nextStep && nextStep.scene) ? SceneMap[nextStep.scene] : null;
+  const NextScene = nextStep?.scene ? SceneMap[nextStep.scene] : null;
 
-  const isForgeEnd = currentStep.scene === 'FORGE' && progress > 0.94;
-  const revealProgress = isForgeEnd ? (progress - 0.94) / 0.06 : 0;
+  // Clean, symmetric cross-fade calculation
+  const activeOpacity = Math.max(0, 1 - transitionProgress);
+  const nextOpacity = Math.max(0, (transitionProgress - 0.2) / 0.8);
 
   return (
-    <div className="scene-viewport" style={{ position: 'fixed', inset: 0, zIndex: 3000, pointerEvents: 'none' }}>
+    <div className="scene-viewport">
+      {/* Currently Active Scene */}
       {ActiveScene && (
-        <div style={{ opacity: 1 - transitionProgress }}>
+        <div style={{ opacity: activeOpacity, width: '100%', height: '100%' }}>
           <ActiveScene 
             progress={progress} 
             step={currentStep} 
-            isExiting={!!nextStep}
+            isExiting={Boolean(nextStep)}
             exitFactor={transitionProgress} 
             onNavigate={onNavigate}
           />
         </div>
       )}
-      {NextScene && (
-        <div style={{ 
-          position: 'absolute', 
-          inset: 0, 
-                    opacity: Math.max(transitionProgress > 0.5 ? (transitionProgress - 0.5) * 2 : 0, revealProgress), 
-          pointerEvents: 'none',
-          visibility: transitionProgress > 0.1 ? 'visible' : 'hidden'
-        }}>
-          <NextScene progress={0} isEntering={true} step={nextStep} />
+
+      {/* Next Incoming Scene (Pre-rendered during overlap transition) */}
+      {NextScene && transitionProgress > 0 && (
+        <div 
+          style={{ 
+            position: 'absolute', 
+            inset: 0, 
+            opacity: nextOpacity, 
+            pointerEvents: 'none',
+            visibility: transitionProgress > 0.05 ? 'visible' : 'hidden'
+          }}
+        >
+          <NextScene 
+            progress={0} 
+            isEntering={true} 
+            step={nextStep} 
+            onNavigate={onNavigate}
+          />
         </div>
       )}
     </div>
   );
 };
 
-export default SceneDirector;
+export default React.memo(SceneDirector);

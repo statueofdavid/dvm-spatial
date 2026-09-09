@@ -8,6 +8,32 @@
   display: none !important;
 }
 
+.portal-scroll-area {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;             /* Dynamic viewport height for mobile/tablet URL bars */
+  overflow-y: auto;           /* Creates the scrollable viewport for TimelineManager */
+  overflow-x: hidden;
+  
+  /* Enables native momentum & inertial swiping on iPadOS and iOS */
+  -webkit-overflow-scrolling: touch;
+  
+  /* Informs the browser that touch swipes strictly handle vertical scrolling */
+  touch-action: pan-y;
+  
+  /* Prevents unwanted pull-to-refresh bounces */
+  overscroll-behavior-y: none;
+  
+  /* Keeps accessibility intact without harsh focus borders when clicked */
+  outline: none;
+}
+
+.portal-scroll-area:focus-visible {
+  outline: 2px solid rgba(255, 129, 10, 0.5);
+  outline-offset: -2px;
+}
+
 .scene-viewport {
   position: fixed;
   inset: 0;

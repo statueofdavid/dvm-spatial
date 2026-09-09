@@ -52,13 +52,16 @@ const Future = ({ progress, step, onNavigate }: { progress: number; step: any; o
   return (
     <div 
       className="future-scene-wrapper" 
-      style={{ cursor: isDragging ? 'ew-resize' : 'default' }}
+      style={{
+        pointerEvents: 'none',
+        touchAction: 'pan-y',
+        cursor: isDragging ? 'ew-resize' : 'default',
+       }}
     >
       {/* 3D Layer */}
       <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
         <Canvas 
           dpr={[1, 1.5]}
-          // NEW: Canvas Accessibility
           role="img"
           aria-label="Interactive webcam feed with live shaders"
         >
@@ -76,7 +79,11 @@ const Future = ({ progress, step, onNavigate }: { progress: number; step: any; o
         className="future-drag-handle"
         onMouseDown={() => setIsDragging(true)}
         onTouchStart={() => setIsDragging(true)}
-        style={{ left: `calc(${dividerPos * 100}% - 30px)` }}
+        style={{ 
+          left: `calc(${dividerPos * 100}% - 30px)`,
+          pointerEvents: 'auto',
+          touchAction: 'none',
+        }}
         role="slider"
         tabIndex={0}
         aria-label="Adjust split-screen filter effect"
@@ -94,12 +101,16 @@ const Future = ({ progress, step, onNavigate }: { progress: number; step: any; o
       {/* Permissions/Init Layer */}
       {!isInitialized && (
         <div className="future-init-overlay">
-           <h3>// SYSTEM_READY</h3>
-           <button className="future-init-btn" onClick={() => setInitialized(true)}>
-             [ INITIALIZE_CAMERA ]
+           <h3>The Future is Augmented</h3>
+           <button 
+           className="future-init-btn" 
+           onClick={() => setInitialized(true)}
+           style={{ pointerEvents: 'auto' }}
+           >
+             Turn On Your Camera
            </button>
            <p style={{ color: '#666', fontFamily: 'monospace', fontSize: '12px' }}>
-             Input required for neural handshake.
+             The Camera Feed for Needed for this Experience
            </p>
         </div>
       )}
@@ -116,6 +127,7 @@ const Future = ({ progress, step, onNavigate }: { progress: number; step: any; o
             onClick={() => setActiveFilter(f.id)} 
             className="future-filter-btn"
             style={{
+              pointerEvents: 'auto',
               borderLeft: activeFilter === f.id ? '3px solid #fff' : '1px solid rgba(255,255,255,0.2)',
               color: activeFilter === f.id ? '#fff' : '#666',
             }}

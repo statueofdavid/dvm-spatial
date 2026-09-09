@@ -169,3 +169,68 @@
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVE OVERRIDES (TABLET & PHONE)
+   Prevents filter and button overlap on narrow viewports
+   ========================================================================== */
+@media (max-width: 800px) {
+  /* Shift CTA container into the empty bottom third of the screen */
+  .future-cta-container {
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: clamp(20px, 4vh, 36px);
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 360px;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Scale title down so it doesn't monopolize vertical space */
+  .future-title {
+    font-size: clamp(1.1rem, 4vw, 1.35rem);
+    margin-bottom: 0.85rem;
+    text-align: center;
+    line-height: 1.25;
+  }
+
+  /* Center and streamline the buttons */
+  .future-actions {
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 10px 18px;
+    font-size: 11px;
+  }
+
+  /* Shift and tighten the filter stack on the left */
+  .future-filter-stack {
+    left: 14px;
+    top: clamp(65px, 11vh, 90px); /* Sits comfortably below the top Exit button */
+    transform: none;              /* Clears the rigid desktop 50% vertical centering */
+    gap: 4px;
+  }
+
+  .future-filter-label {
+    font-size: 9px;
+    margin-bottom: 4px;
+  }
+
+  .future-filter-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  /* Make divider circle slightly more touch-friendly */
+  .future-divider-circle {
+    width: 36px;
+    height: 36px;
+  }
+}
