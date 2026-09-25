@@ -5,6 +5,20 @@ import {
   ROUTER_QUESTION, QUESTION_BANK 
 } from '../../../data/FitCheckConst';
 
+export interface DimensionScore {
+  key: keyof WeightVector;
+  label: string;
+  percentage: number;
+}
+
+const DIMENSION_LABELS: Record<keyof WeightVector, string> = {
+  tech: 'Tech',
+  vision: 'Vision',
+  velocity: 'Velocity',
+  experience: 'Experience',
+  affinity: 'Affinity'
+};
+
 export function useFitCheck() {
   const [viewState, setViewState] = useState<'intro' | 'active' | 'calculating' | 'result'>('intro');
   const [bucket, setBucket] = useState<UserBucket | null>(null);
@@ -14,7 +28,6 @@ export function useFitCheck() {
     tech: 0, vision: 0, velocity: 0, experience: 0, affinity: 0 
   });
   const [fitPercentage, setFitPercentage] = useState(0);
-  
   const [scoreHistory, setScoreHistory] = useState<WeightVector[]>([]);
 
   useEffect(() => {
@@ -61,7 +74,7 @@ export function useFitCheck() {
     setScoreHistory(prev => [...prev, totalScore]);
     window.history.pushState({ fitCheck: true }, ''); 
 
-    const newScore = {
+    const newScore: WeightVector = {
       tech: totalScore.tech + option.weight.tech,
       vision: totalScore.vision + option.weight.vision,
       velocity: totalScore.velocity + option.weight.velocity,
@@ -117,8 +130,26 @@ export function useFitCheck() {
     setViewState('intro');
   };
 
+  // Compute percentages for each dimension and sort top-3
+  const maxPossiblePerVector = activeQuestions.length * 10 || 30;
+  
+  const allDimensionScores: DimensionScore[] = (Object.keys(totalScore) as Array<keyof WeightVector>).map(key => ({
+    key,
+    label: DIMENSION_LABELS[key],
+    percentage: Math.min(100, Math.round(((totalScore[key] || 0) / maxPossiblePerVector) * 100))
+  }));
+
+  const topDimensions = [...allDimensionScores]
+    .sort((a, b) => b.percentage - a.percentage)
+    .slice(0, 3);
+
+  const dominantVector = (Object.keys(totalScore) as Array<keyof WeightVector>).reduce(
+    (a, b) => (totalScore[a] > totalScore[b] ? a : b)
+  );
+
   return {
     viewState, bucket, currentStep, activeQuestions, totalScore, fitPercentage,
+    dominantVector, topDimensions,
     handleStart, handleAnswer, handleRetry, setViewState, 
     handleBack
   };

@@ -11,6 +11,7 @@
     "preflight": "./scripts/preflight.sh"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@types/three": "^0.182.0",

@@ -91,7 +91,7 @@
 .fit-options-grid {
   display: flex;
   flex-direction: column;
-  /* 💥 THE FIX 1: This stops the buttons from stretching full-width */
+  /* This stops the buttons from stretching full-width */
   align-items: center; 
   gap: 12px;
 }
@@ -103,7 +103,7 @@
   padding: 18px 32px; /* Increased side padding slightly so they don't look squished */
   font-size: 15px;
   
-  /* 💥 THE FIX 2: Center the text! */
+  /* Center the text! */
   text-align: center; 
   
   border-radius: 8px;
@@ -133,7 +133,7 @@
   cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease;
   
-  /* 💥 THE FIX 3: Remove width: 100% and center the button! */
+  /*  Remove width: 100% and center the button! */
   width: auto; 
   margin: 0 auto 12px auto; 
   display: block; /* Ensures margin: 0 auto works to center it */
@@ -184,7 +184,26 @@
 }
 
 /* =========================================
-   MOBILE RESPONSIVE OVERRIDES
+   Pill helpers
+========================================= */
+.fit-metric-pill {
+  font-family: monospace;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--fit-text-muted);
+}
+
+.light-theme .fit-metric-pill {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #555;
+}
+
+/* =========================================
+   Mobile Responsive Overrides
 ========================================= */
 @media (max-width: 768px) {
   /* Reduce the massive outer padding on small screens */

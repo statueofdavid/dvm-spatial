@@ -3,51 +3,65 @@ import { useFrame } from '@react-three/fiber';
 import { Text, Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 import { logger } from '../../utils/logger';
+import { getWordCloud } from '../../engine/db';
+import type { WordCloudItem } from '../../utils/sanitizer';
 
-export default function WordCloud({ lightMode }: any) {
-  const [words, setWords] = useState<any[]>([]);
+interface WordCloudProps {
+  lightMode: boolean;
+}
+
+interface PositionedWord extends WordCloudItem {
+  position: THREE.Vector3;
+}
+
+export default function WordCloud({ lightMode }: WordCloudProps) {
+  const [words, setWords] = useState<WordCloudItem[]>([]);
   const groupRef = useRef<THREE.Group>(null!);
-  
   const scrollTarget = useRef(0);
 
   useEffect(() => {
-    async function fetchCloud() {
+    async function loadCloud() {
       try {
-        const res = await fetch('http://localhost:3000/api/wordcloud');
-        
-        if (!res.ok) {
-          throw new Error(`SERVER_ERROR_STATUS_${res.status}`);
-        }
-
-        const json = await res.json();
-        if (json.status === 'SUCCESS' && json.data && json.data.length > 0) {
-          const sorted = json.data
-            .sort((a: any, b: any) => (b.size || b.value || 0) - (a.size || a.value || 0))
-            .slice(0, 150); 
+        const cloudData = await getWordCloud();
+        if (cloudData.length > 0) {
+          const sorted = [...cloudData]
+            .sort((a, b) => b.size - a.size)
+            .slice(0, 150);
           setWords(sorted);
         } else {
-          setWords([{ word: 'AWAITING_UPLINK_DATA', size: 10 }]);
+          setWords([{ word: 'AWAITING_LOCAL_DATA', size: 10 }]);
         }
       } catch (err) {
         logger.warn('WORDCLOUD_SYNC_FAILED', err);
         setWords([
-          { word: 'LOCAL_BACKEND_OFFLINE', size: 12 },
-          { word: 'CHECK_DATABASE_CONNECTION', size: 8 },
+          { word: 'PGLITE_DATABASE_OFFLINE', size: 12 },
+          { word: 'CHECK_BROWSER_STORAGE', size: 8 },
           { word: 'PILLOW_SCENE_READY', size: 6 }
         ]);
       }
     }
-    fetchCloud();
+
+    loadCloud();
+
+    // Event listener so WordCloud refreshes whenever a thought is inserted into PGlite
+    const onEntryAdded = () => {
+      loadCloud();
+    };
+
+    window.addEventListener('journal:entry_added', onEntryAdded);
+    return () => {
+      window.removeEventListener('journal:entry_added', onEntryAdded);
+    };
   }, []);
 
-  const wordPositions = useMemo(() => {
+  const wordPositions: PositionedWord[] = useMemo(() => {
+    if (words.length === 0) return [];
     if (words.length === 1) {
       return [{ ...words[0], position: new THREE.Vector3(0, 0, 0) }];
     }
 
     return words.map((item, i) => {
-      const z = -(i * 0.8); 
-      
+      const z = -(i * 0.8);
       const x = (Math.random() - 0.5) * 8;
       const y = (Math.random() - 0.5) * 5;
 
@@ -61,7 +75,6 @@ export default function WordCloud({ lightMode }: any) {
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       scrollTarget.current += e.deltaY * 0.015;
-      
       const maxDepth = words.length * 0.8;
       scrollTarget.current = Math.max(0, Math.min(scrollTarget.current, maxDepth));
     };
@@ -91,13 +104,13 @@ export default function WordCloud({ lightMode }: any) {
   useFrame((state) => {
     if (groupRef.current) {
       groupRef.current.position.z = THREE.MathUtils.lerp(
-        groupRef.current.position.z, 
-        scrollTarget.current, 
+        groupRef.current.position.z,
+        scrollTarget.current,
         0.05
       );
 
-      const targetX = -(state.pointer.x * 1.5); 
-      const targetY = -(state.pointer.y * 1.5); 
+      const targetX = -(state.pointer.x * 1.5);
+      const targetY = -(state.pointer.y * 1.5);
 
       groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.05);
       groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.05);
@@ -106,32 +119,31 @@ export default function WordCloud({ lightMode }: any) {
 
   return (
     <group ref={groupRef}>
-      {wordPositions.map((item, i) => {
-        const safeText = item.word || item.text || "ANOMALY";
-        const safeSize = item.size || item.value || 1;
-
-        return (
-          <StaticWord 
-            key={i} 
-            position={item.position} 
-            text={safeText} 
-            size={safeSize} 
-            lightMode={lightMode}
-          />
-        );
-      })}
+      {wordPositions.map((item, i) => (
+        <StaticWord
+          key={`${item.word}-${i}`}
+          position={item.position}
+          text={item.word}
+          size={item.size}
+          lightMode={lightMode}
+        />
+      ))}
     </group>
   );
 }
 
-function StaticWord({ position, text, size, lightMode }: any) {
-  const baseSize = 0.4;
-  const scale = baseSize + (size * 0.04); 
-  
-  const opacity = Math.min(0.3 + (size * 0.1), 1);
-  const color = lightMode ? '#1a1a1a' : '#00ffcc';
+interface StaticWordProps {
+  position: THREE.Vector3;
+  text: string;
+  size: number;
+  lightMode: boolean;
+}
 
-  const displayString = typeof text === 'string' ? text : String(text);
+function StaticWord({ position, text, size, lightMode }: StaticWordProps) {
+  const baseSize = 0.4;
+  const scale = baseSize + size * 0.04;
+  const opacity = Math.min(0.3 + size * 0.1, 1);
+  const color = lightMode ? '#1a1a1a' : '#00ffcc';
 
   return (
     <group position={position}>
@@ -143,9 +155,9 @@ function StaticWord({ position, text, size, lightMode }: any) {
           anchorX="center"
           anchorY="middle"
           outlineWidth={0.015}
-          outlineColor={lightMode ? "#ffffff" : "#000000"}
+          outlineColor={lightMode ? '#ffffff' : '#000000'}
         >
-          {displayString.toUpperCase()}
+          {text.toUpperCase()}
         </Text>
       </Billboard>
     </group>

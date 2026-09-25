@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => {
     // Pre-bundles heavy Three.js dependencies in dev
     optimizeDeps: {
       include: ['three', '@react-three/fiber', '@react-three/drei'],
+      exclude: ['@electric-sql/pglite'],
     },
 
     // Local Development Proxy to backend on port 3000
