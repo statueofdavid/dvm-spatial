@@ -19,7 +19,7 @@ export function useBrainPieceLogic(region, isSelected, isOtherSelected, hovered)
     const centerVec = new THREE.Vector3();
     geo.boundingBox.getCenter(centerVec);
 
-    // 💥 NEW: Get the absolute front face of the geometry
+    // Get the absolute front face of the geometry
     const frontZ = geo.boundingBox.max.z;
 
     return { center: centerVec, geometry: geo, frontZ };
