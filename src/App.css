@@ -31,7 +31,7 @@
   --hud-bg: rgba(0, 255, 255, 0.12);
 }
 
-/* 1. FLUID HUD & LABELS */
+/* FLUID HUD & LABELS */
 .lab-hud { 
   padding: 1.5vh 3vw; 
   width: clamp(260px, 85vw, 450px); 
@@ -45,29 +45,35 @@
 .top-hud { transform: translateY(-100%); margin-bottom: 20px; }
 .hud-title { font-size: clamp(16px, 5vw, 28px); font-weight: 800; text-transform: uppercase; }
 
-/* 2. EXPERIENCE PORTAL */
+/* EXPERIENCE PORTAL */
 .experience-portal { 
-  position: absolute; 
-  top: 0; 
-  right: 0; 
-  width: 45%; 
-  height: 100%; 
-  z-index: 500; 
-  padding: clamp(40px, 8vw, 80px); 
+  position: fixed; 
+  inset: 0; 
+  width: 100vw; 
+  height: 100vh; 
+  height: 100dvh;
+  z-index: 2000; 
   display: flex; 
   flex-direction: column; 
-  animation: slideIn 0.8s forwards;
+  animation: portalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: auto;
   background: var(--portal-bg);
   color: var(--portal-text);
-  backdrop-filter: blur(24px);
-  transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
-  border-left-width: 6px;
-  border-left-style: solid;
+  overflow: hidden;
 }
 
-@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes portalFadeIn { 
+  from { 
+    opacity: 0; 
+    transform: scale(0.98); 
+  } 
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  } 
+}
 
-/* 3. TOP CONTROLS */
+/* TOP CONTROLS */
 .portal-exit, .theme-toggle {
   position: absolute;
   top: clamp(15px, 4vh, 30px);
@@ -114,7 +120,7 @@
 .theme-toggle.dark { color: var(--neon-cyan); border-color: rgba(0,255,255,0.4); background: rgba(0,0,0,0.7); }
 .theme-toggle.light { color: #555; border-color: rgba(0,0,0,0.2); background: rgba(255,255,255,0.8); }
 
-/* 4. SOCIAL MATRIX & LIVE FEED */
+/* SOCIAL MATRIX & LIVE FEED */
 .social-matrix-container { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
 
 .matrix-stat-bar { 
@@ -175,12 +181,12 @@
 /* Mobile first: The tracking div takes up the whole screen. */
 .brain-tracking-container {
   position: absolute;
-  top: 0;
-  right: 0;
+  inset: 0;
   width: 100%;
-  height: 100vh;
-  z-index: 0; /* Keeps it strictly behind your UI overlays */
-  pointer-events: auto; 
+  height: 100%;
+  height: 100dvh;
+  z-index: 0;
+  pointer-events: auto;
   touch-action: none;
 }
 
@@ -356,6 +362,8 @@
   .experience-portal { width: 100% !important; padding: 80px 25px 30px !important; }
   .links-grid { grid-template-columns: 1fr; }
 }
+
+
 
 .fixed-footer { position: absolute; bottom: 5vh; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; }
 .terminal-cta { color: var(--neon-cyan); font-family: 'monospace'; letter-spacing: 0.6vw; font-size: clamp(11px, 2.5vw, 18px); }

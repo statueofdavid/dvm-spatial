@@ -1,6 +1,3 @@
-/**
- * SHARED TYPES
- */
 export interface WeightVector {
   tech: number;       
   vision: number;     
@@ -22,31 +19,29 @@ export interface Question {
 
 export type UserBucket = 'MOBILE' | 'CREATIVE' | 'TESTING' | 'INFRA' | 'EXPERIMENTAL';
 
-// --- DATA CONSTANTS ---
-
 export const ROUTER_QUESTION: Question = {
   id: 'router',
-  text: "What gaps need to be bridged?",
+  text: "What technical problem needs attention?",
   options: [
     { 
-      text: "Mobile Tactical Awareness", 
-      weight: { tech: 10, vision: 8, velocity: 5, experience: 9, affinity: 7 } 
+      text: "Mobile Development", 
+      weight: { tech: 10, vision: 8, velocity: 6, experience: 9, affinity: 8 } 
     }, 
     { 
       text: "Creative Web Experiences", 
-      weight: { tech: 9, vision: 10, velocity: 6, experience: 7, affinity: 10 } 
+      weight: { tech: 9, vision: 10, velocity: 7, experience: 7, affinity: 10 } 
     },
     { 
       text: "Testing and Delivery", 
-      weight: { tech: 8, vision: 4, velocity: 10, experience: 10, affinity: 5 } 
+      weight: { tech: 8, vision: 5, velocity: 10, experience: 10, affinity: 7 } 
     },
     { 
       text: "Digital Infrastructure", 
-      weight: { tech: 9, vision: 5, velocity: 7, experience: 10, affinity: 6 } 
+      weight: { tech: 9, vision: 6, velocity: 7, experience: 10, affinity: 8 } 
     },
     { 
-      text: "Something New and Experimental", 
-      weight: { tech: 8, vision: 10, velocity: 8, experience: 8, affinity: 9 } 
+      text: "Experimental Prototypes", 
+      weight: { tech: 8, vision: 10, velocity: 9, experience: 8, affinity: 9 } 
     }
   ]
 };
@@ -54,91 +49,101 @@ export const ROUTER_QUESTION: Question = {
 export const QUESTION_BANK: Record<UserBucket, Question[]> = {
   MOBILE: [
     { 
-      id: 'mob_platform', text: "The target environment is:", 
+      id: 'mob_env', 
+      text: "Operating environment & architecture:", 
       options: [
-        { text: "Native Android / Field Hardware", weight: { tech: 10, vision: 7, velocity: 6, experience: 10, affinity: 9 } },
-        { text: "Cross-Platform (React Native)", weight: { tech: 8, vision: 6, velocity: 9, experience: 8, affinity: 7 } }, 
-        { text: "Consumer Mobile Web", weight: { tech: 4, vision: 4, velocity: 7, experience: 5, affinity: 3 } }
+        { text: "Native Android & Field Hardware / ATAK", weight: { tech: 10, vision: 8, velocity: 6, experience: 10, affinity: 10 } },
+        { text: "Cross-Platform Frameworks (React Native, Ionic)", weight: { tech: 8, vision: 6, velocity: 9, experience: 8, affinity: 7 } }, 
+        { text: "IoT Hardware & Peripheral Communication", weight: { tech: 9, vision: 9, velocity: 7, experience: 9, affinity: 9 } }
       ]
     },
     { 
-      id: 'mob_connectivity', text: "Operational connectivity:", 
+      id: 'mob_connectivity', 
+      text: "Data synchronization requirements:", 
       options: [
-        { text: "Offline / Mesh / Tactical", weight: { tech: 10, vision: 10, velocity: 4, experience: 9, affinity: 10 } },
-        { text: "Real-time Cloud Sync", weight: { tech: 7, vision: 6, velocity: 8, experience: 7, affinity: 6 } },
-        { text: "Standard API Polling", weight: { tech: 3, vision: 2, velocity: 10, experience: 10, affinity: 2 } }
+        { text: "Offline-First / Tactical Mesh / UDP", weight: { tech: 10, vision: 9, velocity: 5, experience: 10, affinity: 10 } },
+        { text: "Real-time WebSockets / Push Notifications", weight: { tech: 7, vision: 7, velocity: 8, experience: 8, affinity: 7 } },
+        { text: "Standard REST / OpenAPI Integration", weight: { tech: 6, vision: 5, velocity: 10, experience: 9, affinity: 6 } }
       ]
     }
   ],
   CREATIVE: [
     { 
-      id: 'cr_fidelity', text: "Visual output priority:", 
+      id: 'cr_engine', 
+      text: "Visual presentation architecture:", 
       options: [
-        { text: "High-end WebGL / Narrative", weight: { tech: 10, vision: 10, velocity: 5, experience: 8, affinity: 10 } },
-        { text: "Clean Micro-interactions", weight: { tech: 6, vision: 5, velocity: 8, experience: 7, affinity: 7 } },
-        { text: "Static / Informational", weight: { tech: 2, vision: 1, velocity: 10, experience: 4, affinity: 1 } }
+        { text: "Spatial 3D / WebGL / Three.js / R3F", weight: { tech: 10, vision: 10, velocity: 7, experience: 6, affinity: 10 } },
+        { text: "Data-Dense Dashboards & Reactive UI", weight: { tech: 8, vision: 7, velocity: 9, experience: 7, affinity: 6 } },
+        { text: "Procedural Shaders & Animation Pipelines", weight: { tech: 7, vision: 10, velocity: 6, experience: 4, affinity: 9 } }
       ]
     },
     { 
-      id: 'cr_assets', text: "Creative asset pipeline:", 
+      id: 'cr_state', 
+      text: "Client state execution layer:", 
       options: [
-        { text: "Assets provided, ready to code", weight: { tech: 5, vision: 4, velocity: 10, experience: 9, affinity: 6 } },
-        { text: "Need procedural / Generative", weight: { tech: 9, vision: 10, velocity: 6, experience: 7, affinity: 10 } },
-        { text: "Stock assets / Standard UI", weight: { tech: 1, vision: 1, velocity: 10, experience: 5, affinity: 1 } }
+        { text: "In-Browser WebAssembly / Local-First Database", weight: { tech: 10, vision: 10, velocity: 7, experience: 6, affinity: 10 } },
+        { text: "Reactive Client State (Zustand, Redux)", weight: { tech: 7, vision: 6, velocity: 9, experience: 7, affinity: 6 } },
+        { text: "Direct Server-Rendered UI", weight: { tech: 6, vision: 4, velocity: 8, experience: 8, affinity: 5 } }
       ]
     }
   ],
   TESTING: [
     { 
-      id: 'qa_culture', text: "Current testing suite status:", 
+      id: 'qa_focus', 
+      text: "Primary quality bottleneck:", 
       options: [
-        { text: "Non-existent / Needs Architect", weight: { tech: 10, vision: 8, velocity: 6, experience: 10, affinity: 8 } },
-        { text: "Exists, needs optimization", weight: { tech: 7, vision: 5, velocity: 10, experience: 9, affinity: 6 } },
-        { text: "Manual QA only", weight: { tech: 2, vision: 2, velocity: 2, experience: 5, affinity: 2 } }
+        { text: "Test automation pipeline needs architecture (0 to 1)", weight: { tech: 10, vision: 8, velocity: 7, experience: 10, affinity: 9 } },
+        { text: "CI/CD builds & execution cycles are too slow", weight: { tech: 8, vision: 6, velocity: 10, experience: 10, affinity: 8 } },
+        { text: "Security, compliance & vulnerability auditing (SAST/DAST)", weight: { tech: 9, vision: 7, velocity: 6, experience: 9, affinity: 8 } }
       ]
     },
     { 
-      id: 'qa_scale', text: "Deployment frequency target:", 
+      id: 'qa_cadence', 
+      text: "Deployment model and release risk:", 
       options: [
-        { text: "Continuous / Multiple per day", weight: { tech: 10, vision: 8, velocity: 10, experience: 9, affinity: 8 } },
-        { text: "Bi-weekly sprints", weight: { tech: 6, vision: 5, velocity: 7, experience: 10, affinity: 6 } },
-        { text: "Quarterly releases", weight: { tech: 3, vision: 2, velocity: 3, experience: 4, affinity: 3 } }
+        { text: "Multi-team coordination across frequent release trains", weight: { tech: 10, vision: 10, velocity: 9, experience: 10, affinity: 5 } },
+        { text: "Flaky integration testing causing production rollbacks", weight: { tech: 9, vision: 10, velocity: 10, experience: 10, affinity: 6 } },
+        { text: "Legacy system regression verification", weight: { tech: 8, vision: 3, velocity: 8, experience: 10, affinity: 4 } }
       ]
     }
   ],
   INFRA: [
     { 
-      id: 'inf_scale', text: "System load expectations:", 
+      id: 'inf_domain', 
+      text: "Infrastructure domain context:", 
       options: [
-        { text: "Massive scale / High Uptime", weight: { tech: 10, vision: 6, velocity: 4, experience: 10, affinity: 7 } },
-        { text: "Complex Physical/Digital Link", weight: { tech: 9, vision: 9, velocity: 5, experience: 9, affinity: 9 } },
-        { text: "Internal Tool / Low Traffic", weight: { tech: 4, vision: 2, velocity: 9, experience: 8, affinity: 4 } }
+        { text: "Physical/Digital Interoperability (Robotics / Warehousing)", weight: { tech: 10, vision: 9, velocity: 6, experience: 10, affinity: 5 } },
+        { text: "High-Availability Distributed Systems (99.9%+ target)", weight: { tech: 10, vision: 7, velocity: 6, experience: 10, affinity: 7 } },
+        { text: "Enterprise Integration & API Orchestration", weight: { tech: 8, vision: 6, velocity: 10, experience: 10, affinity: 5 } }
       ]
     },
     { 
-      id: 'inf_stack', text: "Backend philosophy:", 
+      id: 'inf_deployment', 
+      text: "Deployment target & environment:", 
       options: [
-        { text: "Cloud Native / Serverless", weight: { tech: 9, vision: 7, velocity: 9, experience: 8, affinity: 8 } },
-        { text: "Edge / On-Prem / Hybrid", weight: { tech: 10, vision: 5, velocity: 4, experience: 10, affinity: 6 } },
-        { text: "Monolithic Legacy", weight: { tech: 3, vision: 1, velocity: 3, experience: 9, affinity: 2 } }
+        { text: "Embedded Linux & Edge Hardware", weight: { tech: 10, vision: 8, velocity: 6, experience: 9, affinity: 10 } },
+        { text: "Cloud Systems & CI/CD Pipelines (AWS, Azure)", weight: { tech: 8, vision: 7, velocity: 7, experience: 9, affinity: 6 } },
+        { text: "Multi-Facility On-Premise Network Infrastructure", weight: { tech: 9, vision: 10, velocity: 10, experience: 10, affinity: 8 } }
       ]
     }
   ],
   EXPERIMENTAL: [
     { 
-      id: 'exp_ambiguity', text: "How defined is the end goal?", 
+      id: 'exp_nature', 
+      text: "Nature of the exploratory project:", 
       options: [
-        { text: "Problem known, solution unknown", weight: { tech: 9, vision: 10, velocity: 6, experience: 8, affinity: 10 } },
-        { text: "Rough prototype to refine", weight: { tech: 8, vision: 8, velocity: 9, experience: 9, affinity: 9 } },
-        { text: "Just chasing a buzzword", weight: { tech: 1, vision: 0, velocity: 4, experience: 2, affinity: 0 } }
+        { text: "Novel architecture with unproven technical feasibility", weight: { tech: 10, vision: 10, velocity: 7, experience: 9, affinity: 10 } },
+        { text: "Rapid proof-of-concept prototype to prove value", weight: { tech: 8, vision: 9, velocity: 10, experience: 9, affinity: 9 } },
+        { text: "Porting complex legacy systems into modern runtimes", weight: { tech: 9, vision: 7, velocity: 6, experience: 9, affinity: 10 } }
       ]
     },
     { 
-      id: 'exp_risk', text: "Failure consequence:", 
+      id: 'exp_governance', 
+      text: "Working constraints:", 
       options: [
-        { text: "Mission Critical / Must adapt", weight: { tech: 10, vision: 8, velocity: 5, experience: 10, affinity: 9 } },
-        { text: "Pivot and learn (R&D Budget)", weight: { tech: 7, vision: 10, velocity: 8, experience: 6, affinity: 8 } },
-        { text: "Project cancelled", weight: { tech: 4, vision: 2, velocity: 4, experience: 4, affinity: 3 } }
+        { text: "Direct R&D with high ambiguity and autonomous direction", weight: { tech: 9, vision: 10, velocity: 8, experience: 9, affinity: 10 } },
+        { text: "Cross-functional bridge between software and hardware teams", weight: { tech: 9, vision: 8, velocity: 8, experience: 10, affinity: 9 } },
+        { text: "Tight timeline requiring immediate initial output", weight: { tech: 8, vision: 7, velocity: 10, experience: 8, affinity: 6 } }
       ]
     }
   ]
@@ -146,45 +151,45 @@ export const QUESTION_BANK: Record<UserBucket, Question[]> = {
 
 export const RESULT_MATRIX: Record<UserBucket | 'DEFAULT', Record<keyof WeightVector, string>> = {
   MOBILE: {
-    tech: "You need native performance. I've ported complex tactical stacks from React Native to Native Android to ensure field agents never lose a frame.",
-    vision: "You need tactical awareness. I specialize in bridging the gap between IoT devices and mobile interfaces in mission-critical environments.",
-    velocity: "You need to move fast. My background in React Native allows for rapid prototyping without sacrificing the option to drop to native code.",
-    experience: "You need a veteran. I've navigated the chaotic shift from legacy mobile frameworks to modern native architectures.",
-    affinity: "We both believe the device in the pocket is the ultimate edge node."
+    tech: "Ported Mobile Applications from React Native to Native Android and engineered ATAK plugins connecting field IoT devices.",
+    vision: "Architected interfaces for edge hardware where real-time situational awareness is non-negotiable.",
+    velocity: "Built automated GitHub Actions pipelines to turn multi-repo mobile builds into fast release artifacts.",
+    experience: "Track record spans native Android, React Native, and embedded Linux field hardware deployments.",
+    affinity: "Belief that edge devices should function reliably under zero-connectivity conditions."
   },
   CREATIVE: {
-    tech: "Beauty needs a backbone. I apply the same rigorous engineering standards to WebGL that I applied to warehouse logistics systems.",
-    vision: "You have a big idea. I specialize in quantizing complex narratives into procedural 3D clarity.",
-    velocity: "Prototyping is the only way to find the fun. I move from 'Rough Concept' to 'Interactive Experience' at the speed of thought.",
-    experience: "I don't just build pretty demos. I build production-ready systems that can handle real-world scale.",
-    affinity: "We share the conviction that the web is a spatial canvas, not just a document reader."
+    tech: "Delivers production WebGL, Three.js, and client-side WASM architectures with zero-dependency backends.",
+    vision: "Builds spatial interfaces and interactive graphics that communicate technical data intuitively.",
+    velocity: "Iterates rapidly from shader and geometry prototypes to production React applications.",
+    experience: "Combines 10+ years of backend engineering discipline with modern 3D browser graphics.",
+    affinity: "Treats the web browser as an interactive graphics runtime rather than a static document viewer."
   },
   TESTING: {
-    tech: "Efficiency is an engineering discipline. I've increased test execution efficiency by 40% using custom AWS CodePipe integrations.",
-    vision: "Quality Assurance is about foresight. I build systems that predicted and prevented release failures by 10% in complex agile environments.",
-    velocity: "Slow tests kill momentum. I spearheaded pipelines that slashed testing time by 30%, keeping the release train moving.",
-    experience: "I've managed 200+ releases across multiple agile teams. I know exactly where the bottlenecks hide.",
-    affinity: "We both sleep better knowing the green checkmark actually means 'safe'."
+    tech: "Architected frameworks with Selenium, Appium, and AWS CodePipe that improved test efficiency by 40%.",
+    vision: "Implemented CodeQL, ZAP, and Burp Suite scanning to reduce compliance audit cycles by 20%.",
+    velocity: "Engineered automated component testing pipelines that cut testing execution time by 30%.",
+    experience: "Managed over 200 releases across 3 agile teams and reduced release failures by 10% through churn tracking.",
+    affinity: "Treats automated verification as a core system deliverable, not an afterthought."
   },
   INFRA: {
-    tech: "You're building for reliability. I maintained a 99.9% uptime across 20 production sites. I take stability personally.",
-    vision: "Infrastructure is the invisible narrative. I design systems that support massive physical/digital throughput without breaking character.",
-    velocity: "You need to scale fast. I've optimized retrieval system integrations to reduce project cycles by 20%.",
-    experience: "I've conducted many Acceptance Testing events for major warehousing projects. I know the stakes when software meets the physical world.",
-    affinity: "We value the unseen architecture that makes the visible world possible."
+    tech: "Maintained 99.9% uptime across 20 production sites and deployed networking for 100,000 end users.",
+    vision: "Managed system integrations for automated retrieval systems, reducing warehousing execution cycles by 20%.",
+    velocity: "Spearheaded Factory Acceptance Testing (F.A.T.) events across 8 automated warehousing facilities.",
+    experience: "Proven systems delivery across data centers, robotics integrations, and enterprise cloud networks.",
+    affinity: "Focuses on the durable foundation: stability, observability, and deterministic behavior under load."
   },
   EXPERIMENTAL: {
-    tech: "Experiments fail without rigorous code. I apply standard engineering discipline to non-standard problems, ensuring your R&D yields usable IP.",
-    vision: "We are walking off the map. This is my natural habitat—bridging the gap between 'Impossible' and 'MVP'.",
-    velocity: "Fail fast, learn faster. I iterate on novel concepts at the speed of thought, backed by a decade of engineering rigor.",
-    experience: "I've turned vague R&D briefs into deployed tactical solutions. Ambiguity is where I thrive.",
-    affinity: "We both prefer the map edges to the safe roads."
+    tech: "Engineers working prototypes across WASM, embedded Linux, and local-first peer-to-peer protocols.",
+    vision: "Deconstructs ambiguous technical briefs into testable, production-ready system architectures.",
+    velocity: "Built working proof-of-concepts for enterprise clients reducing delivery schedules by 25%.",
+    experience: "Career-long history of stepping into undefined problems and shipping durable software.",
+    affinity: "Operates comfortably at the boundary of unproven technology and real-world deployment."
   },
   DEFAULT: {
-    tech: "You value deep technical grit. My work on complex JNI integrations is the solution you're looking for.",
-    vision: "You value narrative clarity. I turn raw data into semantic visual stories.",
-    velocity: "You value speed. I reduce friction in the release process so we can ship value sooner.",
-    experience: "You need a steady hand. I’ve managed go-live events for major warehousing and network projects.",
-    affinity: "We share a philosophy that code is a means to a human end."
+    tech: "Combines systems programming (Java, C++, SQL) with modern web and mobile platforms.",
+    vision: "Translates complex system telemetry into actionable software solutions.",
+    velocity: "Focuses on continuous delivery pipelines that minimize cycle time to production.",
+    experience: "Experience leading system integrations, test automation frameworks, and infrastructure.",
+    affinity: "Committed to delivering reliable software within budget and on schedule."
   }
 };
