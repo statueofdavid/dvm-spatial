@@ -44,10 +44,7 @@ const Resume: React.FC<ResumeProps> = ({ progress, step, onNavigate }) => {
         
         {/* Swapped Hierarchy */}
         <h1 className="hero-title">David Vincent Miller</h1>
-        <h2 
-          className="layer-tag bottom-tag" 
-          style={{ visibility: 'hidden' }}
-        >
+        <h2 className="layer-tag bottom-tag" style={{ display: 'none' }}>
           {step.tag}
         </h2>
         

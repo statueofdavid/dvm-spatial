@@ -80,7 +80,7 @@ const MobileStoryManager: React.FC<MobileStoryManagerProps> = ({ lightMode, onNa
       className="mobile-story-container"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      style={{ width: '100vw', height: '100vh', position: 'fixed', inset: 0, zIndex: 10 }}
+      style={{ width: '100vw', height: '100dvh', position: 'fixed', inset: 0, zIndex: 10 }}
     >
       <div 
         aria-live="polite" 
