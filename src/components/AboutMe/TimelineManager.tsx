@@ -1,3 +1,4 @@
+// src/components/AboutMe/TimelineManager.tsx
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { storySteps } from '../../data/StorySteps';
 import SceneDirector from './SceneDirector';
@@ -20,12 +21,12 @@ export const TimelineManager: React.FC<TimelineManagerProps> = ({ onNavigate, on
   const touchStartY = useRef<number | null>(null);
   const touchStartX = useRef<number | null>(null);
 
-  // Measure screen width once to calibrate scroll track distance
+  // Calibrated track heights so the Gallery transitions comfortably into the Future scene
   const scrollTrackHeights = useMemo(() => {
     const isSmallScreen = typeof window !== 'undefined' && window.innerWidth <= 900;
     return isSmallScreen
-      ? [1000, 2200, 1000]
-      : [1600, 3800, 1600];
+      ? [800, 1400, 1000] // Reduced from 2200px so mobile can reach Scene 3 in 1-2 swipes
+      : [1200, 2000, 1400]; // Reduced from 3800px so desktop transitions smoothly
   }, []);
 
   const boundaries = useMemo(() => {
@@ -64,44 +65,32 @@ export const TimelineManager: React.FC<TimelineManagerProps> = ({ onNavigate, on
       const deltaY = touchStartY.current - e.changedTouches[0].clientY;
       const deltaX = touchStartX.current - e.changedTouches[0].clientX;
 
-      // Reset coordinates
       touchStartY.current = null;
       touchStartX.current = null;
 
       // Ignore horizontal or minor accidental swipes
-      if (Math.abs(deltaY) < 60 || Math.abs(deltaY) < Math.abs(deltaX)) return;
+      if (Math.abs(deltaY) < 40 || Math.abs(deltaY) < Math.abs(deltaX)) return;
 
       const currentScroll = portalArea.scrollTop;
       let currentIndex = boundaries.findIndex((b) => currentScroll < b);
       if (currentIndex === -1) currentIndex = SHORT_PATH_STEPS.length - 1;
 
       if (deltaY < 0) {
-        // 💥 SWIPE DOWN (GO BACK)
-        if (currentScroll <= 15) {
-          // Already at top: pull down to exit
-          if (onExit) {
-            onExit();
-          } else {
-            onNavigate('');
-          }
+        // SWIPE DOWN (GO BACK)
+        if (currentScroll <= 20) {
+          if (onExit) onExit();
+          else onNavigate('');
         } else {
-          // Snap back to the beginning of the previous scene
           const targetIndex = Math.max(0, currentIndex - 1);
           const targetScroll = targetIndex === 0 ? 0 : boundaries[targetIndex - 1];
-
-          portalArea.scrollTo({
-            top: targetScroll,
-            behavior: 'smooth',
-          });
+          portalArea.scrollTo({ top: targetScroll, behavior: 'smooth' });
         }
       } else if (deltaY > 0) {
-        // 💥 SWIPE UP (GO FORWARD)
+        // SWIPE UP (GO FORWARD INTO NEXT SCENE)
         if (currentIndex < SHORT_PATH_STEPS.length - 1) {
+          // Snap directly to the boundary of the next scene (Scene 1 -> Scene 2 -> Scene 3)
           const targetScroll = boundaries[currentIndex];
-          portalArea.scrollTo({
-            top: targetScroll,
-            behavior: 'smooth',
-          });
+          portalArea.scrollTo({ top: targetScroll, behavior: 'smooth' });
         }
       }
     };
@@ -125,7 +114,8 @@ export const TimelineManager: React.FC<TimelineManagerProps> = ({ onNavigate, on
     const currentHeight = scrollTrackHeights[localIndex];
     const progress = Math.max(0, Math.min(1, (scrollProgress - start) / currentHeight));
 
-    const OVERLAP = 0.95;
+    // Begin crossfade transition at 80% through the current scene instead of 95%
+    const OVERLAP = 0.80;
     const isInOverlap = progress > OVERLAP;
     const nextStep =
       isInOverlap && localIndex < SHORT_PATH_STEPS.length - 1
@@ -138,7 +128,7 @@ export const TimelineManager: React.FC<TimelineManagerProps> = ({ onNavigate, on
       nextStep,
       progress,
       transitionProgress,
-      isFinal: SHORT_PATH_STEPS[localIndex].scene === 'FUTURE',
+      isFinal: SHORT_PATH_STEPS[localIndex]?.scene === 'FUTURE',
     };
   }, [scrollProgress, boundaries, scrollTrackHeights]);
 
@@ -165,8 +155,8 @@ export const TimelineManager: React.FC<TimelineManagerProps> = ({ onNavigate, on
         isFinal={timelineState.isFinal}
       />
 
-      {/* Dynamic virtual scroll track[cite: 23] */}
-      <div style={{ height: `calc(${totalVirtualHeight}px + 100vh)` }} />
+      {/* Virtual scroll track */}
+      <div style={{ height: `calc(${totalVirtualHeight}px + 100vh)`, pointerEvents: 'none' }} />
     </div>
   );
 };

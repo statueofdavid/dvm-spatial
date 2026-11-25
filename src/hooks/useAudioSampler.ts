@@ -194,6 +194,80 @@ export function useAudioSampler() {
     setAllSamples((prev) => prev.filter((s) => s.id !== sampleId));
   };
 
+  const cropActiveSample = async () => {
+  const current = padSlots[activeSlot];
+  if (!current || !loadedBuffers[current.id]) return;
+
+  const originalBuffer = loadedBuffers[current.id];
+  const startIdx = Math.floor((current.trim_start ?? 0) * originalBuffer.length);
+  const endIdx = Math.floor((current.trim_end ?? 1.0) * originalBuffer.length);
+  const newLength = Math.max(128, endIdx - startIdx);
+
+  // Extract sliced PCM buffer
+  const croppedBuffer = audioCore.ctx.createBuffer(
+    originalBuffer.numberOfChannels,
+    newLength,
+    originalBuffer.sampleRate
+  );
+
+  for (let ch = 0; ch < originalBuffer.numberOfChannels; ch++) {
+    const srcData = originalBuffer.getChannelData(ch);
+    const destData = croppedBuffer.getChannelData(ch);
+    for (let i = 0; i < newLength; i++) {
+      destData[i] = srcData[startIdx + i];
+    }
+  }
+
+  // Encode new WAV and persist to PGlite
+  const wavBlob = audioCore.bufferToWavBlob(croppedBuffer);
+  const base64 = await audioCore.blobToBase64(wavBlob);
+
+  const updated: AudioSampleRecord = {
+    ...current,
+    data_base64: base64,
+    duration: croppedBuffer.duration,
+    trim_start: 0,
+    trim_end: 1.0,
+  };
+
+  setLoadedBuffers((prev) => ({ ...prev, [current.id]: croppedBuffer }));
+  setAllSamples((prev) => prev.map((s) => (s.id === current.id ? updated : s)));
+  await saveAudioSample(updated);
+};
+
+// Reverse audio PCM channels
+const reverseActiveSample = async () => {
+  const current = padSlots[activeSlot];
+  if (!current || !loadedBuffers[current.id]) return;
+
+  const originalBuffer = loadedBuffers[current.id];
+  const revBuffer = audioCore.ctx.createBuffer(
+    originalBuffer.numberOfChannels,
+    originalBuffer.length,
+    originalBuffer.sampleRate
+  );
+
+  for (let ch = 0; ch < originalBuffer.numberOfChannels; ch++) {
+    const srcData = originalBuffer.getChannelData(ch);
+    const destData = revBuffer.getChannelData(ch);
+    for (let i = 0; i < originalBuffer.length; i++) {
+      destData[i] = srcData[originalBuffer.length - 1 - i];
+    }
+  }
+
+  const wavBlob = audioCore.bufferToWavBlob(revBuffer);
+  const base64 = await audioCore.blobToBase64(wavBlob);
+
+  const updated: AudioSampleRecord = {
+    ...current,
+    data_base64: base64,
+  };
+
+  setLoadedBuffers((prev) => ({ ...prev, [current.id]: revBuffer }));
+  setAllSamples((prev) => prev.map((s) => (s.id === current.id ? updated : s)));
+  await saveAudioSample(updated);
+};
+
   return {
     allSamples,
     padSlots,

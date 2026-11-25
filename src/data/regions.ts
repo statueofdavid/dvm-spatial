@@ -3,8 +3,15 @@
  * Centralized registry for brain regions, labels, and SVG path geometry.
  */
 
+export interface Region {
+  id: string;
+  color: string;
+  label: string;
+  type: string;
+}
+
 // Ordered for sequential TAB navigation (1-7)
-export const BRAIN_REGIONS = [
+export const BRAIN_REGIONS: Region[] = [
   { id: 'action', color: '#ff810a', label: 'Me', type: 'DATA_SHEET' },
   { id: 'plan', color: '#ffff00', label: 'Projects', type: 'HUB' },
   { id: 'listen', color: '#9900ff', label: 'Sounds', type: 'WIDGET' },

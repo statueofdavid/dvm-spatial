@@ -38,22 +38,36 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       sourcemap: false,
+      chunkSizeWarningLimit: 1500,
 
       rollupOptions: {
         output: {
           manualChunks(id) {
-            // Isolate 3D engine dependencies
+            if (!id.includes('node_modules')) {
+              return; // Keep your application code in app/entry chunks
+            }
+
+            // Group 3D graphics stack
             if (
               id.includes('three') ||
               id.includes('@react-three/fiber') ||
               id.includes('@react-three/drei')
             ) {
-              return 'vendor-three'
+              return 'vendor-three';
             }
 
-            // Isolate React runtime
-            if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
-              return 'vendor-react'
+            // Group React engine
+            if (
+              id.includes('node_modules/react/') ||
+              id.includes('node_modules/react-dom/') ||
+              id.includes('scheduler')
+            ) {
+              return 'vendor-react';
+            }
+
+            // Isolate in-browser Postgres engine
+            if (id.includes('@electric-sql/pglite')) {
+              return 'vendor-pglite';
             }
           },
           entryFileNames: 'assets/[hash].js',
@@ -61,14 +75,6 @@ export default defineConfig(({ mode }) => {
           assetFileNames: 'assets/[hash].[ext]',
         },
       },
-    },
-
-    // Strip console statements in production builds
-    esbuild: isProduction
-      ? {
-          drop: ['console', 'debugger'],
-          legalComments: 'none',
-        }
-      : undefined,
+    }
   }
 })

@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build:sw": "esbuild src/workers/ServiceWorker.ts --bundle --minify --format=esm --outfile=public/sw.js",
+    "build:vault": "npx tsx scripts/packVault.ts",
+    "build": "npm run build:vault && npm run build:sw && tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "preflight": "./scripts/preflight.sh"
@@ -23,13 +25,16 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@types/node": "^26.6.4",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.1.1",
+    "esbuild": "^0.28.2",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vite": "^8.2.2"
   }

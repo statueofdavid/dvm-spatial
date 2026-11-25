@@ -132,17 +132,16 @@ const Gallery: React.FC<GalleryProps> = ({ progress, step, isExiting = false, ex
         <div className="parallax-text" 
           style={{ 
             opacity: isExiting ? 1 - exitFactor : 1,
-            pointerEvents: 'auto'  
+            pointerEvents: 'none'  /* Allow scroll gestures to pass through to portalArea */
           }}
         >
           <h2 className="layer-tag">// {step.tag}</h2>
           <p className="large-quip">{step.text}</p>
           <button 
             className="puzzle-desktop-cta" 
-            onClick={() => 
-              setShowCube(true)
-            }
+            onClick={() => setShowCube(true)}
             style={{
+              pointerEvents: 'auto', /* Only the button intercepts clicks */
               marginTop: '32px',
               background: 'transparent',
               border: '1px solid #ff810a',
