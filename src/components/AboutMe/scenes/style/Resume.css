@@ -136,108 +136,102 @@
   }
 }
 
+/* ==========================================================================
+   MOBILE RESPONSIVE OVERRIDES (TABLET & PHONE)
+   Follows Future.css / Gallery.css 100dvh + fluid clamp() pattern
+   ========================================================================== */
 @media (max-width: 800px) {
-.layer-identity { 
+  .layer-identity {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: clamp(60px, 8vh, 100px) !important; 
-    text-align: center; 
-    
-    width: 90% !important;
-    margin: 0 !important;
-    padding-left: 20px !important; 
-    padding-right: 20px !important;
-    box-sizing: border-box !important; 
-    
-    height: 100vh;
-    max-width: 100%;
-    min-height: 100dvh;        
-    overflow-x: hidden;     
+    width: 90%;
+    max-width: 360px;
+    height: 100dvh;
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding: clamp(56px, 8vh, 80px) 0 clamp(32px, 5vh, 48px) !important;
+    text-align: center;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
-  .layer-identity .main-photo { 
-    width: 65vw; 
-    max-width: 260px;
-    max-height: 35vh;
-    height: auto; 
-    aspect-ratio: 420 / 580; 
+  .layer-identity .main-photo {
+    width: clamp(150px, 44vw, 220px);
+    height: auto;
+    max-height: 29dvh;
+    aspect-ratio: 420 / 580;
     object-fit: cover;
-    margin: 0 auto 1rem; 
+    margin: 0 auto clamp(0.6rem, 1.5vh, 1rem);
   }
 
   .hero-title {
-    font-size: clamp(26px, 7vw, 36px);
-    margin-bottom: 5px;
+    font-size: clamp(24px, 6.8vw, 34px);
+    letter-spacing: -1.5px;
+    margin-bottom: clamp(4px, 1vh, 8px);
   }
 
   .layer-tag.bottom-tag {
-    margin-top: 8px;
-    margin-bottom: 16px;
+    margin-top: 4px;
+    margin-bottom: clamp(8px, 1.5vh, 14px);
   }
 
   .quip {
     width: 100%;
-    font-size: 0.95rem;     /* Slightly tightened for space */
-    padding: 0 10px;
-    margin: 0.5rem 0 1rem; 
-    word-wrap: break-word;  
+    font-size: clamp(0.875rem, 3.6vw, 0.975rem);
+    line-height: 1.4;
+    margin: 0 auto clamp(0.75rem, 2vh, 1.1rem);
+    padding: 0;
+    word-wrap: break-word;
     box-sizing: border-box;
   }
 
-  .resume-actions { 
+  .resume-actions {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
-    gap: 12px;              /* Tighter gap between buttons */
-    margin-top: 0.5rem;
+    gap: clamp(8px, 1.5vh, 12px);
+    margin-top: 0 !important;
     width: 100%;
   }
 
   .resume-btn.raised {
     width: 100%;
-    max-width: 320px; 
-    justify-content: center; 
-    padding: 14px 24px;
+    max-width: 320px;
+    justify-content: center;
+    padding: clamp(11px, 1.8vh, 14px) 20px;
+    font-size: clamp(12px, 3.4vw, 13px);
     box-sizing: border-box;
   }
 }
 
-/* --- SHORT SCREEN OVERRIDE (iPhone SE) --- */
+/* --- SHORT SCREEN OVERRIDE (iPhone SE / <= 700px height) --- */
 @media (max-width: 800px) and (max-height: 700px) {
   .layer-identity {
-    padding-top: 60px !important;
+    padding: 52px 0 28px !important;
   }
-  
+
   .layer-identity .main-photo {
-    max-height: 30vh;
-    max-width: 100%;
+    max-height: 24dvh;
     margin-bottom: 0.5rem;
   }
 
   .hero-title {
-    font-size: 24px;
-  }
-
-  .layer-tag.bottom-tag {
-    margin-bottom: 8px;
+    font-size: 22px;
   }
 
   .quip {
-    margin-top: 0;
+    font-size: 0.85rem;
     margin-bottom: 0.5rem;
-    font-size: 0.85rem; 
   }
 
   .resume-actions {
-    margin-top: 0;
-    gap: 8px; 
+    gap: 8px;
   }
 
   .resume-btn.raised {
-    padding: 12px 20px;
-    font-size: 14px;
-    box-sizing: border-box;
+    padding: 10px 18px;
+    font-size: 12px;
   }
 }
