@@ -88,9 +88,13 @@ export const TimelineManager: React.FC<TimelineManagerProps> = ({ onNavigate, on
       } else if (deltaY > 0) {
         // SWIPE UP (GO FORWARD INTO NEXT SCENE)
         if (currentIndex < SHORT_PATH_STEPS.length - 1) {
-          // Snap directly to the boundary of the next scene (Scene 1 -> Scene 2 -> Scene 3)
-          const targetScroll = boundaries[currentIndex];
-          portalArea.scrollTo({ top: targetScroll, behavior: 'smooth' });
+          const nextIndex = currentIndex + 1;
+          const sceneStart = boundaries[currentIndex];
+          // Land 20% into Gallery so desktop/landscape scatter cloud is already bloomed & visible
+          const settleOffset = SHORT_PATH_STEPS[nextIndex].scene === 'GALLERY'
+            ? scrollTrackHeights[nextIndex] * 0.2
+            : 0;
+          portalArea.scrollTo({ top: sceneStart + settleOffset, behavior: 'smooth' });
         }
       }
     };
